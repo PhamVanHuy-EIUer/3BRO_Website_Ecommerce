@@ -1,0 +1,854 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\ecommerce3bro.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\ecommerce3bro.csproj||{04B8AB82-A572-4FEF-95CE-5222444B6B64}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\implement\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\categoriescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\implement\\categoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\categoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\service\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\service\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\payment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\orderdetail.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\order.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\discount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\discount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\deletedorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\deletedorder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\deletedorderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\deletedorderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\shipment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\getproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\getproductdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\categorydto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\loginmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\loginmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\updatepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\updatepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\getuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\getuserdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\cartitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\repository\\icategoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\icategoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\cart.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\category.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\forgetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\forgetpassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\productdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\changepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\changepassworddto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\product.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\registermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\registermodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\service\\implement\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\service\\implement\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\review.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\role.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\orderdiscount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\orderdiscount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\activationcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\activationcode.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\deletedproduct.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\deletedproduct.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\data\\ecommerce3brocontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\data\\ecommerce3brocontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\userrole.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\ecommerce3bro.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\ecommerce3bro.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\dto\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\dto\\userdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\service\\implement\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\service\\implement\\emailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\model\\deleteduser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\model\\deleteduser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\service\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\service\\iauthservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\service\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\service\\iemailservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\3bro_ecommerce_website\\store3bro\\ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 335,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:2:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:3:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\.gitignore",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\.gitignore",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\.gitignore",
+              "RelativeToolTip": "Ecommerce3BRO\\.gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-12-31T06:14:54.277Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ProductRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
+              "ViewState": "AgIAAJIAAAAAAAAAAAAgwHEAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-31T01:29:55.438Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwJMAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.03Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "CategoryRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\CategoryRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\CategoryRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\CategoryRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\CategoryRepository.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBMAAACJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T04:23:37.863Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CategoriesController.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\CategoriesController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\CategoriesController.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\CategoriesController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\CategoriesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T06:14:56.539Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ProductsController.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductsController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductsController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
+              "ViewState": "AgIAABoAAAAAAAAAAAAgwDgAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-31T03:53:51.738Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Ecommerce3BRO",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "RelativeToolTip": "Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-31T03:53:21.227Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IProductRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\IProductRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\IProductRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
+              "ViewState": "AgIAAAEAAAAAAAAAAAASwAwAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-31T01:29:36.871Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IUserRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\IUserRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\IUserRepository.cs",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAxwBQAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.038Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\AuthController.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\AuthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsAAABVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.049Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ApiResponse.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\ApiResponse.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Service\\ApiResponse.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\ApiResponse.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Service\\ApiResponse.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAADwvwkAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.079Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Payment.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Payment.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Payment.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Payment.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Payment.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.126Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OrderDetail.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\OrderDetail.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\OrderDetail.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\OrderDetail.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\OrderDetail.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.137Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "Order.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Order.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Order.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Order.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Order.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAA1wBwAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.141Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Discount.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Discount.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Discount.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Discount.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Discount.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.074Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "DeletedOrder.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedOrder.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\DeletedOrder.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedOrder.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\DeletedOrder.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAQwBUAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.087Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "DeletedOrderItem.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedOrderItem.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\DeletedOrderItem.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedOrderItem.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\DeletedOrderItem.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.092Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "Shipment.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Shipment.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Shipment.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Shipment.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Shipment.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAYwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.06Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "GetProductDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\GetProductDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\GetProductDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\GetProductDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\GetProductDTO.cs",
+              "ViewState": "AgIAAAoAAAAAAAAAAAAQwAgAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-31T01:38:15.622Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CategoryDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\CategoryDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\CategoryDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\CategoryDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\CategoryDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T04:21:44.469Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "LoginModel.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\LoginModel.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\LoginModel.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\LoginModel.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\LoginModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.111Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "UpdatePasswordDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\UpdatePasswordDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\UpdatePasswordDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\UpdatePasswordDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\UpdatePasswordDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.105Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "GetUserDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\GetUserDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\GetUserDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\GetUserDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\GetUserDTO.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAgwBoAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.053Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "CartItem.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\CartItem.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\CartItem.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\CartItem.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\CartItem.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAkAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.096Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "ICategoryRepository.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\ICategoryRepository.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\ICategoryRepository.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Repository\\ICategoryRepository.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Repository\\ICategoryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T04:23:20.702Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Cart.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Cart.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Cart.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Cart.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Cart.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAAA4AAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.143Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "Category.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Category.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Category.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Category.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Category.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAA0AAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.094Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "Program.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Program.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Program.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Program.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Program.cs",
+              "ViewState": "AgIAAEgAAAAAAAAAAAAAAGEAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.102Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "ForgetPasswordDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ForgetPasswordDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\ForgetPasswordDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ForgetPasswordDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\ForgetPasswordDTO.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAAAkAAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.042Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "ProductDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ProductDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\ProductDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ProductDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\ProductDTO.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwAoAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T04:09:54.752Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 30,
+              "Title": "ChangePasswordDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ChangePasswordDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\ChangePasswordDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\ChangePasswordDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\ChangePasswordDTO.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.072Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 31,
+              "Title": "Product.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Product.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Product.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Product.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Product.cs",
+              "ViewState": "AgIAABcAAAAAAAAAAAA8wCAAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.131Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 32,
+              "Title": "RegisterModel.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\RegisterModel.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\RegisterModel.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\RegisterModel.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\RegisterModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAA2AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.108Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 34,
+              "Title": "User.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\User.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\User.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\User.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\User.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAAkwCQAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.057Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 35,
+              "Title": "Review.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Review.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Review.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Review.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Review.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowBsAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.135Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 33,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\Implement\\AuthService.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Service\\Implement\\AuthService.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\Implement\\AuthService.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Service\\Implement\\AuthService.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAYwEYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.066Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 36,
+              "Title": "Role.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Role.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Role.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\Role.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\Role.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAYwA4AAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.063Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 37,
+              "Title": "OrderDiscount.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\OrderDiscount.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\OrderDiscount.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\OrderDiscount.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\OrderDiscount.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.129Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 38,
+              "Title": "ActivationCode.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\ActivationCode.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\ActivationCode.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\ActivationCode.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\ActivationCode.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.085Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 39,
+              "Title": "DeletedProduct.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedProduct.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\DeletedProduct.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedProduct.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\DeletedProduct.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAPAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.082Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 41,
+              "Title": "Ecommerce3BROContext.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Data\\Ecommerce3BROContext.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Data\\Ecommerce3BROContext.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Data\\Ecommerce3BROContext.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Data\\Ecommerce3BROContext.cs",
+              "ViewState": "AgIAACkAAAAAAAAAAAAmwAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.123Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 40,
+              "Title": "UsersController.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\UsersController.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\UsersController.cs",
+              "ViewState": "AgIAANoAAAAAAAAAAAAYwPAAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.04Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 42,
+              "Title": "UserRole.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\UserRole.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\UserRole.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\UserRole.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\UserRole.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.046Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 44,
+              "Title": "UserDTO.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\UserDTO.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\UserDTO.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\DTO\\UserDTO.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\DTO\\UserDTO.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwBUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.045Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 43,
+              "Title": "Ecommerce3BRO.csproj",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "RelativeToolTip": "Ecommerce3BRO\\Ecommerce3BRO.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-12-30T03:05:48.901Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 45,
+              "Title": "EmailService.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\Implement\\EmailService.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Service\\Implement\\EmailService.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\Implement\\EmailService.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Service\\Implement\\EmailService.cs",
+              "ViewState": "AgIAAA0AAAAAAAAAAAAQwBsAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.068Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 46,
+              "Title": "DeletedUser.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedUser.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\DeletedUser.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Model\\DeletedUser.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Model\\DeletedUser.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAAsAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.077Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 47,
+              "Title": "IAuthService.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\IAuthService.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Service\\IAuthService.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\IAuthService.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Service\\IAuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAABHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.099Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 48,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.114Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 49,
+              "Title": "IEmailService.cs",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\IEmailService.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Service\\IEmailService.cs",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\Service\\IEmailService.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Service\\IEmailService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-30T03:05:49.117Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 50,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\appsettings.json",
+              "ToolTip": "E:\\3BRO_Ecommerce_Website\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
+              "RelativeToolTip": "Ecommerce3BRO\\appsettings.json",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-30T03:05:49.12Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

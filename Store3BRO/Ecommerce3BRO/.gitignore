@@ -1,0 +1,23 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+
+# Build results
+bin/
+obj/
+
+# SQL Server
+*.mdf
+*.ldf
+*.bak
+
+# Cache / DB / binary
+*.db
+*.db-shm
+*.db-wal
+*.bin
+*.v2
+
+# Logs
+*.log

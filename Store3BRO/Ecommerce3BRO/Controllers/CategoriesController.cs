@@ -15,11 +15,15 @@ namespace Ecommerce3BRO.Controllers
         {
             _categoryService = categoryService;
         }
+
+        //Api get all categories
         [HttpGet]
         public Task<ApiResponse<Category>> GetAllCategories()
         {
             return _categoryService.GetAllCategoryAsync();
         }
+
+        //Api add new category
         [HttpPost]
         public async Task<ApiResponse<Category>> AddNewCategory([FromBody] CategoryDTO category)
         {
@@ -32,6 +36,8 @@ namespace Ecommerce3BRO.Controllers
             }
             return await _categoryService.AddNewCategory(category);
         }
+
+        //Api update category
         [HttpPut("{id}")]
         public async Task<ApiResponse<Category>> UpdateCategory(Guid id, [FromBody] CategoryDTO category)
         {
@@ -44,6 +50,8 @@ namespace Ecommerce3BRO.Controllers
             }
             return await _categoryService.UpdateCategory(id, category);
         }
+
+        //Api delete category
         [HttpDelete("{id}")]
         public async Task<ApiResponse<Category>> DeleteCategory(Guid id)
         {

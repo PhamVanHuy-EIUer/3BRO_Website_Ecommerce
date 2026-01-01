@@ -14,11 +14,14 @@ namespace Ecommerce3BRO.Controllers
         {
             _productService = productService;
         }
+
+        //Api get all products
         [HttpGet]
         public async Task<ApiResponse<GetProductDTO>> GetAllProducts()
         {
             return await _productService.GetAllProductAsync();
         }
+        //Api add new product
         [HttpPost]
         public async Task<ApiResponse<GetProductDTO>> AddNewProduct([FromForm] ProductDTO dto, IFormFile image)
         {
@@ -31,6 +34,8 @@ namespace Ecommerce3BRO.Controllers
             }
             return await _productService.AddNewProductAsync(dto, image);
         }
+
+        //Api update product
         [HttpPut("{id}")]
         public async Task<ApiResponse<GetProductDTO>> UpdateProduct(Guid id, [FromForm] ProductDTO dto, IFormFile image)
         {
@@ -44,6 +49,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.UpdateProductAsync(id, dto, image);
         }
 
+        //Api delete product
         [HttpDelete("{id}")]
         public async Task<ApiResponse<GetProductDTO>> DeleteProduct(Guid id)
         {
@@ -55,6 +61,8 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductByIdAsync(id);
 
         }
+
+        //api get products by category id
         [HttpGet("by-category")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryId([FromQuery] Guid categoryId)
         {

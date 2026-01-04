@@ -16,7 +16,7 @@ namespace Ecommerce3BRO.Repository.Implement
             _context = context;
             _cartService = cartService;
         }
-        public async Task<ApiResponse<CartItemDTO>> AddNewItemToCartAsync( Guid productId, Guid userId)
+        public async Task<ApiResponse<CartItemDTO>> AddNewItemToCartAsync( Guid productId, Guid userId,int quantity)
         {
             var cart = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
 
@@ -32,7 +32,7 @@ namespace Ecommerce3BRO.Repository.Implement
             if (product == null)
                 return new ApiResponse<CartItemDTO>(null, null, "404", "Product not found", false, 0, 0, 0, 0, null, null, null);
 
-            if (product.Stock <= 0)
+            if (product.Stock < quantity)
                 return new ApiResponse<CartItemDTO>(null, null, "400", "Out of stock", false, 0, 0, 0, 0, null, null, null);
 
             var cartItem = await _context.CartItem
@@ -40,7 +40,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
             if (cartItem != null)
             {
-                cartItem.Quantity += 1;
+                cartItem.Quantity += quantity;
             }
             else
             {
@@ -48,7 +48,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 {
                     CartId = cart.Id,
                     ProductId = productId,
-                    Quantity = 1,
+                    Quantity = quantity,
                     Price = product.Price,
                     CreatedDate = DateTime.UtcNow
                 };
@@ -64,43 +64,52 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<CartItemDTO>> RemoveItemFromCartAsync(Guid productId, Guid userId)
         {
-            var findCart = _context.Cart.FirstOrDefault(c => c.UserId == userId);
+            var findCart = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
             if (findCart == null)
             {
                 return new ApiResponse<CartItemDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
             }
-            var findCartItem = _context.CartItem.FirstOrDefault(ci => ci.CartId == findCart.Id && ci.ProductId == productId);
+            var findCartItem =await _context.CartItem.FirstOrDefaultAsync(ci => ci.CartId == findCart.Id && ci.ProductId == productId);
             if (findCartItem == null)
             {
                 return new ApiResponse<CartItemDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
             }
             _context.CartItem.Remove(findCartItem);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return new ApiResponse<CartItemDTO>(null, null, "200", "Remove item from cart successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> ShowItemsInCartAsync(Guid userId)
+        public async Task<ApiResponse<CartProductDTO>> ShowItemsInCartAsync(Guid userId)
         {
-            var findCart = _context.Cart.FirstOrDefault(c => c.UserId == userId);
-            if (findCart == null)
+            var cart = await _context.Cart
+                .FirstOrDefaultAsync(c => c.UserId == userId);
+
+            if (cart == null)
             {
-                return new ApiResponse<GetProductDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<CartProductDTO>(
+                    null, null, "404", "Cart not found", false,
+                    0, 0, 0, 0, null, null, null);
             }
-            var cartItems = _context.CartItem.Where(ci => ci.CartId == findCart.Id).ToList();
-            var productListInCart = await _context.CartItem.Where(ci => ci.CartId == findCart.Id).Include(ci => ci.Product)
-            .Select(ci => new GetProductDTO
-            {
 
-                Id = ci.Product.Id,
-                ProductName = ci.Product.ProductName,
-                Description = ci.Product.Description,
-                Price = ci.Product.Price,
-                Stock = ci.Product.Stock,
-                CategoryName = ci.Product.Category.CategoryName,
-                ImageUrl = ci.Product.ImageUrl
+            var productsInCart = await _context.CartItem
+                .Where(ci => ci.CartId == cart.Id)
+                .Include(ci => ci.Product)
+                    .ThenInclude(p => p.Category)
+                .Select(ci => new CartProductDTO
+                {
+                    ProductId = ci.Product.Id,
+                    ProductName = ci.Product.ProductName,
+                    Price = ci.Price,          
+                    Quantity = ci.Quantity,    
+                    CategoryName = ci.Product.Category.CategoryName,
+                    ImageUrl = ci.Product.ImageUrl
+                })
+                .ToListAsync();
 
-            }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(productListInCart, null, "200", "Show items in cart successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<CartProductDTO>(
+                productsInCart, null, "200", "Show items in cart successfully", true,
+                0, 0, 0, 0, null, null, null);
         }
+
     }
 }

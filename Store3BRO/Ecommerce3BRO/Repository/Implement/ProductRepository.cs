@@ -10,10 +10,12 @@ namespace Ecommerce3BRO.Repository.Implement
     {
         private readonly Ecommerce3BROContext _context;
         private readonly IWebHostEnvironment _env;
-        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env)
+        private readonly IHttpContextAccessor _http;
+        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env,IHttpContextAccessor _http)
         {
             _context = context;
             _env = env;
+            _http = _http;
         }
 
         public async Task<ApiResponse<GetProductDTO>> AddNewProductAsync(ProductDTO dto, IFormFile image)
@@ -66,7 +68,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 Price = dto.Price,
                 Stock = dto.Stock,
                 CategoryId = dto.CategoryId,
-                ImageUrl = imageUrl,
+                ImageUrl =  imageUrl,
                 Status = 1,
                 CreatedDate = DateTime.UtcNow
             };
@@ -109,12 +111,9 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(null, null, "200", "Delete product successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> GetAllProductAsync()
-        {
-            var products = await _context.Product
-                .Where(p => p.Status == 1)
-                .Include(p => p.Category)
-                .Select(p => new GetProductDTO
+        public async Task<ApiResponse<GetProductDTO>> GetAllProductAsync() {
+            var products = await _context.Product.Where(p => p.Status == 1).Include(p => p.Category).
+                Select(p => new GetProductDTO
                 {
                     Id = p.Id,
                     ProductName = p.ProductName,
@@ -123,9 +122,8 @@ namespace Ecommerce3BRO.Repository.Implement
                     Stock = p.Stock,
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl
-                })
-                .ToListAsync();
-            return new ApiResponse<GetProductDTO>(products, null, "200", "Get all products successfully", true, 0, 0, 0, 0, null, null, null);
+                }).ToListAsync();
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get all products successfully", true, 0, 0, 0, 0, null, null, null); 
         }
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId)

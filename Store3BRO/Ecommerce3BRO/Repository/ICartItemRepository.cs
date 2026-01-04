@@ -5,8 +5,8 @@ namespace Ecommerce3BRO.Repository
 {
     public interface ICartItemRepository
     {
-        Task<ApiResponse<CartItemDTO>> AddNewItemToCartAsync(Guid productId,Guid userId);
+        Task<ApiResponse<CartItemDTO>> AddNewItemToCartAsync(Guid productId,Guid userId,int quantity);
         Task<ApiResponse<CartItemDTO>> RemoveItemFromCartAsync(Guid productId, Guid userId);
-        Task<ApiResponse<GetProductDTO>> ShowItemsInCartAsync(Guid userId);
+        Task<ApiResponse<CartProductDTO>> ShowItemsInCartAsync(Guid userId);
     }
 }

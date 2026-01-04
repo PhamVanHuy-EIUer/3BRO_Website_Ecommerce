@@ -19,6 +19,7 @@ public partial class OrderDetail
 
     [Column(TypeName = "decimal(10, 2)")]
     public decimal UnitPrice { get; set; }
+    public bool IsReturn { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
@@ -29,4 +30,6 @@ public partial class OrderDetail
     [ForeignKey("ProductId")]
     
     public Product? Product { get; set; }
+
+    public  ICollection<Refund> Refunds { get; set; }
 }

@@ -20,6 +20,8 @@ namespace Ecommerce3BRO.Controllers
             _userService = userService;
             _context = context;
         }
+
+        //api use for login
         [HttpPost("login")]
         public async Task<ApiResponse<UserDTO?>> Login([FromBody] LoginModel login)
         {

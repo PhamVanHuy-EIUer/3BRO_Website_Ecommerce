@@ -26,6 +26,8 @@ builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
 builder.Services.AddDbContext<Ecommerce3BROContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddSwaggerGen(c =>
 {
@@ -97,7 +99,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

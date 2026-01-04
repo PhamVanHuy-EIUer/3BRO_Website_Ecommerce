@@ -1,0 +1,65 @@
+﻿using Ecommerce3BRO.DTO;
+using Ecommerce3BRO.Model;
+using Ecommerce3BRO.Repository;
+using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace Ecommerce3BRO.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class OrdersController : Controller
+    {
+        private readonly IOrderRepository _orderRepository;
+        public OrdersController(IOrderRepository orderRepository)
+        {
+            _orderRepository = orderRepository;
+        }
+
+        //Api get all orders by admin
+        [HttpGet("admin")]
+        public async Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrdersByAdmin()
+        {
+            return await _orderRepository.GetAllOrderByAdminAsync();
+        }
+
+        //Api get all orders by user
+        [HttpGet("user")]
+        public async Task<ApiResponse<UserOrderItem>> GetAllOrdersByUser()
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (findUser == null)
+            {
+                return new ApiResponse<UserOrderItem>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(findUser.Value);
+            return await _orderRepository.GetAllOrderByUserAsync(userId);
+        }
+
+        //Api add new order with items
+        [HttpPost("add-order")]
+        public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItems([FromBody] OrderDTO order)
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = Guid.Parse(findUser.Value);
+            return await _orderRepository.AddNewOrderWithItemsAsync(userId, order);
+        }
+
+        //Api remove order 
+        [HttpDelete("remove-order/{orderId}")]
+
+        public async Task<ApiResponse<Order>> RemoveOrder([FromRoute] Guid orderId)
+        {
+            return await _orderRepository.RemoveOrderAsync(orderId);
+        }
+
+        //api admin use to get order by status
+        [HttpGet("by-status")]
+        public async Task<ApiResponse<GetOrderByAdminDTO>> GetOrderByStatus([FromQuery] string status)
+        {
+            return await _orderRepository.GetOrderByStatus(status);
+
+        }
+    }
+}

@@ -15,7 +15,7 @@ public partial class Order
 
     public DateTime OrderDate { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
+    [Column(TypeName = "decimal(18, 2)")]
     public decimal TotalAmount { get; set; }
 
     [StringLength(50)]

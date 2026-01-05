@@ -343,6 +343,15 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return false;
             }
+            var findCode = await _context.ActivationCode.FirstOrDefaultAsync(c => c.UserId == findUser.Id&&c.IsUsed==false&&c.ExpireDate>DateTime.UtcNow);
+            if (findCode == null) { 
+              return false;
+            }
+            if (findCode.Code != user.ActivationCode)
+            {
+                return false;
+            }
+            findCode.IsUsed = true;
             findUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             await _context.SaveChangesAsync();
             return true;
@@ -350,6 +359,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UserDTO user)
         {
+
             var findUser = await _context.User.FindAsync(id);
             if (findUser == null)
             {
@@ -382,24 +392,24 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<UserDTO?> VerifyActivationCodeAsync(ForgetPasswordDTO user)
-        {
-            var findUser = await _context.User.FirstOrDefaultAsync(fu => fu.Email == user.Email);
-            var findAcitvationCode = await _context.ActivationCode.FirstOrDefaultAsync(a => a.Code == user.Code && a.ExpireDate > DateTime.UtcNow && a.IsUsed == false);
-            if (findUser == null || findAcitvationCode == null || findAcitvationCode.UserId != findUser.Id)
-            {
-                return null;
-            }
-            findAcitvationCode.IsUsed = true;
-            await _context.SaveChangesAsync();
-            UserDTO UserDTO = new UserDTO()
-            {
-                Address = findUser.Address,
-                Email = findUser.Email,
-                FullName = findUser.FullName,
-                Phone = findUser.Phone
-            };
-            return UserDTO;
-        }
+        //public async Task<UserDTO?> VerifyActivationCodeAsync(ForgetPasswordDTO user)
+        //{
+        //    var findUser = await _context.User.FirstOrDefaultAsync(fu => fu.Email == user.Email);
+        //    var findAcitvationCode = await _context.ActivationCode.FirstOrDefaultAsync(a => a.Code == user.Code && a.ExpireDate > DateTime.UtcNow && a.IsUsed == false);
+        //    if (findUser == null || findAcitvationCode == null || findAcitvationCode.UserId != findUser.Id)
+        //    {
+        //        return null;
+        //    }
+        //    findAcitvationCode.IsUsed = true;
+        //    await _context.SaveChangesAsync();
+        //    UserDTO UserDTO = new UserDTO()
+        //    {
+        //        Address = findUser.Address,
+        //        Email = findUser.Email,
+        //        FullName = findUser.FullName,
+        //        Phone = findUser.Phone
+        //    };
+        //    return UserDTO;
+        //}
     }
 }

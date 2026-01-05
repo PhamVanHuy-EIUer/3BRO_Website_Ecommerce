@@ -56,7 +56,7 @@ namespace Ecommerce3BRO.Controllers
             {
                 return new ApiResponse<UserDTO?>(null, null, "400", "Invalid Activation Code", false, 0, 0, 0, 0, null, null, null);
             }
-            if (findActiveCode.ExpireDate < DateTime.Now)
+            if (findActiveCode.ExpireDate < DateTime.UtcNow)
             {
                 return new ApiResponse<UserDTO?>(null, null, "409", " Activation Code is expired", false, 0, 0, 0, 0, null, null, null);
             }
@@ -91,27 +91,7 @@ namespace Ecommerce3BRO.Controllers
             return new ApiResponse<UserDTO?>(null, result, "200", "Sent activecode please check the email", true, 0, 0, 0, 0, null, null, null);
         }
 
-        // api use to verify activecode after user forget password
-        [HttpPost("verify-code")]
-        public async Task<ApiResponse<UserDTO?>> VerifyActivationCode([FromBody] ForgetPasswordDTO user)
-        {
-            if (!ModelState.IsValid)
-            {
-                return new ApiResponse<UserDTO?>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
-            x => x.Key,
-            x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-        ));
-            }
-            var result = await _userService.VerifyActivationCodeAsync(user);
-            if (result == null)
-            {
-                return new ApiResponse<UserDTO?>(null, null, "400", "Activation code is invalid", false, 0, 0, 0, 0, null, null, null);
-            }
-            return new ApiResponse<UserDTO?>(null, result, "200", "Activation code is correct", true, 0, 0, 0, 0, null, null, null);
-
-        }
-
-        //api use for update password due to email
+       
         [HttpPost("update-pass")]
         public async Task<ApiResponse<string>> UpdatePassword(UpdatePasswordDTO user)
         {
@@ -125,7 +105,7 @@ namespace Ecommerce3BRO.Controllers
             var result = await _userService.UpdatePasswordAsync(user);
             if (!result)
             {
-                return new ApiResponse<string>(null, null, "400", "Update failed because email is invalid ", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<string>(null, null, "400", "Update failed because activation code or email is invalid ", false, 0, 0, 0, 0, null, null, null);
             }
             return new ApiResponse<string>(null, null, "200", "Update password successfully", true, 0, 0, 0, 0, null, null, null);
         }

@@ -126,6 +126,33 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get all products successfully", true, 0, 0, 0, 0, null, null, null); 
         }
 
+        public async Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages(int currentPage, int pageSize)
+        {
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var products = await _context.Product
+                .Where(p => p.Status == 1)
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.OrderDetails.Sum(od=>od.Quantity))
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new GetOrderProductDTO
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryName = p.Category.CategoryName,
+                    ImageUrl = p.ImageUrl,
+                    OrderQuantity = p.OrderDetails.Sum(od => od.Quantity)
+                })
+                .ToListAsync();
+            return new ApiResponse<GetOrderProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
+        }
+
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId)
         {
             var  findCategory = await _context.Category.FindAsync(categoryId);

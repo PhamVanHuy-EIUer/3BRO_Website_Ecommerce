@@ -78,5 +78,10 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.GetProductByPages(currentPage, pageSize);
         }
+        [HttpGet("order-product")]
+        public async Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _productService.GetMostOrderedProductByPages(currentPage, pageSize);
+        }
     }
 }

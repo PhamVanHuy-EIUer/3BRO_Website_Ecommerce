@@ -11,6 +11,8 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetProductDTO>> UpdateProductAsync(Guid id, ProductDTO product,IFormFile newImage);
         Task<ApiResponse<GetProductDTO>> DeleteProductAsync(Guid id);
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId);
+        Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword);
+        Task<ApiResponse<GetProductDTO>> GetProductByPages(int currentPage, int pageSize);
     }
 }
  

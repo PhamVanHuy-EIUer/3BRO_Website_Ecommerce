@@ -68,5 +68,15 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.GetProductByCategoryIdAsync(categoryId);
         }
+        [HttpGet("search-product")]
+        public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword)
+        {
+            return await _productService.SearchProductsAsync(keyword);
+        }
+        [HttpGet("by-page")]
+        public async Task<ApiResponse<GetProductDTO>> GetProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _productService.GetProductByPages(currentPage, pageSize);
+        }
     }
 }

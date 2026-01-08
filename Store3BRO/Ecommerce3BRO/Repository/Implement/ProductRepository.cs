@@ -136,6 +136,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 .Where(p => p.Status == 1)
                 .Include(p => p.Category)
                 .OrderByDescending(p => p.OrderDetails.Sum(od=>od.Quantity))
+                .ThenBy(p=>p.ProductName)
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)
                 .Select(p => new GetOrderProductDTO

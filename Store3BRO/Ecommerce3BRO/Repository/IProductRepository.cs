@@ -14,6 +14,7 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword);
         Task<ApiResponse<GetProductDTO>> GetProductByPages(int currentPage, int pageSize);
         Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages(int currentPage, int pageSize);
+        Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId,int currentPage, int pageSize);
     }
 }
  

@@ -55,6 +55,8 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.DeleteProductAsync(id);
         }
+
+        //Api get product by id
         [HttpGet("{id}")]
         public async Task<ApiResponse<GetProductDTO>> GetProductById(Guid id)
         {
@@ -68,20 +70,33 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.GetProductByCategoryIdAsync(categoryId);
         }
+
+        //api search products
         [HttpGet("search-product")]
         public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword)
         {
             return await _productService.SearchProductsAsync(keyword);
         }
+
+        //api get products by page
         [HttpGet("by-page")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.GetProductByPages(currentPage, pageSize);
         }
+
+        //api get most ordered product by page
         [HttpGet("order-product")]
         public async Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.GetMostOrderedProductByPages(currentPage, pageSize);
+        }
+
+        //api get products by category by page
+        [HttpGet("category-pages")]
+        public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync([FromQuery] Guid categoryId, [FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _productService.GetProductByCategoryByPageAsync(categoryId, currentPage, pageSize);
         }
     }
 }

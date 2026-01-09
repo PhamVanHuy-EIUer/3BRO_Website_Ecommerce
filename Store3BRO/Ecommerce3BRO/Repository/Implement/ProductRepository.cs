@@ -154,6 +154,39 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetOrderProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
+       
+
+        public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId, int currentPage, int pageSize)
+        {
+            var findCategory = await _context.Category.FindAsync(categoryId);
+            if (findCategory == null)
+            {
+                return new ApiResponse<GetProductDTO>(null, null, "404", "Category not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Where(p => p.Status == 1&&p.CategoryId==categoryId).Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var products = await _context.Product
+                .Where(p => p.CategoryId == categoryId && p.Status == 1)
+                .Include(p => p.Category).
+                OrderByDescending(p => p.CreatedDate)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new GetProductDTO
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryName = p.Category.CategoryName,
+                    ImageUrl = p.ImageUrl
+                })
+                .ToListAsync();
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by category successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
+        }
+
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId)
         {
             var  findCategory = await _context.Category.FindAsync(categoryId);

@@ -10,12 +10,13 @@ namespace Ecommerce3BRO.Repository.Implement
     {
         private readonly Ecommerce3BROContext _context;
         private readonly IWebHostEnvironment _env;
-        private readonly IHttpContextAccessor _http;
-        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env,IHttpContextAccessor _http)
+        private readonly IProductImageRepository _image;
+        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env,IHttpContextAccessor _http,IProductImageRepository image)
         {
             _context = context;
             _env = env;
             _http = _http;
+            _image = image;
         }
 
         public async Task<ApiResponse<GetProductDTO>> AddNewProductAsync(ProductDTO dto, IFormFile image)
@@ -106,6 +107,11 @@ namespace Ecommerce3BRO.Repository.Implement
 
                 if (File.Exists(oldImagePath))
                     File.Delete(oldImagePath);
+            }
+            var productImageList = await _context.ProductImage.Where(pi => pi.ProductId == find.Id).ToListAsync();
+            foreach (var e in productImageList)
+            {
+                await _image.RemoveImageFromProductAsync(e.Id);
             }
             await _context.SaveChangesAsync();
             return new ApiResponse<GetProductDTO>(null, null, "200", "Delete product successfully", true, 0, 0, 0, 0, null, null, null);

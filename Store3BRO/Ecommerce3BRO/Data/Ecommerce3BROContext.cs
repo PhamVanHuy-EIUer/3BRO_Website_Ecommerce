@@ -50,5 +50,6 @@ public partial class Ecommerce3BROContext : DbContext
 
     public DbSet<UserRole> UserRole { get; set; }
     public DbSet<Refund> Refund { get; set; }
+    public DbSet<ProductImage> ProductImage { get; set; }
 
- }
+    }

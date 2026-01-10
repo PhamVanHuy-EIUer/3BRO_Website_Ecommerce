@@ -6,7 +6,7 @@ import { productService } from "@/services/product.service";
 import { Product } from "@/models/Product";
 import ProductCard from "@/components/products/ProductsCard";
 
-const PAGE_SIZE = 16;
+const PAGE_SIZE = 8;
 
 const Products = () => {
   const [page, setPage] = useState(1);

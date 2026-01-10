@@ -4,4 +4,5 @@ export type Category = {
     description?: string;
     isActive: boolean;
     createdDate: string;
+    imageUrl?: string;
 };

@@ -1,4 +1,4 @@
-import { getImageProduct, getProductById } from "@/app/api/product/product";
+import { getImageProduct, getProductById } from "@/app/api/product/ProductApi";
 import ProductGallery from "@/components/products/ProductGalery";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";

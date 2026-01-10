@@ -8,18 +8,40 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Meta } from "antd/es/list/Item";
 import { productService } from "@/services/product.service";
 import { Product } from "@/models/Product";
 import ProductCard from "@/components/products/ProductsCard";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Category } from "@/models/Category";
+import { categoryService } from "@/services/category.service";
 
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
-  const carouselRef = useRef<any>(null);
+
+  // Tạo ref riêng cho mỗi carousel
+  const categoryCarouselRef = useRef<any>(null);
+  const bestSellingCarouselRef = useRef<any>(null);
+  const productsCarouselRef = useRef<any>(null);
+
   const [error, setError] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [topProducts, setTopProducts] = useState<Product[]>([]);
+  const [category, setCategory] = useState<Category[]>([]);
 
+  const loadCategories = async () => {
+    try {
+      setLoading(true);
+      const data = await categoryService.getCategories();
+      if (Array.isArray(data.list)) {
+        setCategory(data.list);
+      }
+    } catch (error) {
+      console.log(error);
+      setError("Failed to load categories");
+    } finally {
+      setLoading(false);
+    }
+  };
   const loadProducts = async () => {
     try {
       setLoading(true);
@@ -53,7 +75,9 @@ const HomePage = () => {
   useEffect(() => {
     loadProducts();
     loadTopProducts();
+    loadCategories();
   }, []);
+
   if (loading) return <PageLoading />;
 
   const getFirstImage = (imageUrl?: string) => {
@@ -98,9 +122,10 @@ const HomePage = () => {
           </Carousel>
         </div>
       </div>
+
       {/* Category */}
       <div className="py-10 items-center gap-6">
-        <div className="flex justify-between items-center  py-2">
+        <div className="flex justify-between items-center py-2">
           <div className="flex flex-row items-center gap-6">
             <div className="bg-red-500 w-5 h-10 rounded-md"></div>
             <div className="font-semibold text-red-500">Categories</div>
@@ -108,14 +133,14 @@ const HomePage = () => {
           <div>
             <div className="flex gap-2">
               <button
-                onClick={() => carouselRef.current?.prev()}
+                onClick={() => categoryCarouselRef.current?.prev()}
                 className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-gray-100"
               >
                 <LeftOutlined />
               </button>
 
               <button
-                onClick={() => carouselRef.current?.next()}
+                onClick={() => categoryCarouselRef.current?.next()}
                 className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-gray-100"
               >
                 <RightOutlined />
@@ -124,12 +149,14 @@ const HomePage = () => {
           </div>
         </div>
         <div>
-          <h2 className="text-2xl font-bold">Browse By Category</h2>
+          <h2 className="font-bold text-3xl text-neutral-950">
+            Browse By Category
+          </h2>
         </div>
-        <div className="max-w-7xl mx-auto py-10 ">
+        <div className="max-w-7xl mx-auto py-10">
           {/* Slider */}
           <Carousel
-            ref={carouselRef}
+            ref={categoryCarouselRef}
             dots={false}
             slidesToShow={6}
             responsive={[
@@ -137,23 +164,23 @@ const HomePage = () => {
               { breakpoint: 768, settings: { slidesToShow: 2 } },
             ]}
           >
-            {imageCategory.map((item) => (
+            {category.map((item) => (
               <div key={item.id} className="px-2">
-                <Link href={`${item.href}`}>
+                <Link href={`/category/${item.id}`}>
                   <Card
                     hoverable
                     className="flex flex-col items-center justify-center text-center py-6"
                   >
                     <div className="text-3xl mb-8">
                       <Image
-                        src={item.img}
+                        src={getFirstImage(item.imageUrl)}
                         alt=""
                         height={100}
                         width={100}
                         className="h-18 w-18 rounded-full"
                       />
                     </div>
-                    <p className="font-medium">{item.name}</p>
+                    <p className="font-medium">{item.categoryName}</p>
                   </Card>
                 </Link>
               </div>
@@ -163,78 +190,121 @@ const HomePage = () => {
       </div>
 
       {/* Best Selling */}
-      <div className="py-5">
-        <div className="container mx-auto flex items-center justify-between mb-2">
-          {/* LEFT */}
-          <div>
-            <div className="flex items-center gap-4 mb-2">
-              <div className="w-5 h-10 bg-red-500 rounded"></div>
-              <span className="text-red-500 font-semibold text-base">
-                Best Selling
-              </span>
+      <div className="py-12 bg-white">
+        <div className="container mx-auto px-4">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-5 h-10 bg-red-500 rounded"></div>
+                <span className="text-red-500 font-semibold text-base">
+                  This Month
+                </span>
+              </div>
+              <h2 className="font-bold text-3xl text-neutral-950">
+                Best Selling Products
+              </h2>
             </div>
 
-            <h2 className="font-sans font-bold text-2xl text-neutral-950">
-              Best Selling Products
-            </h2>
+            {/* Navigation Arrows */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => bestSellingCarouselRef.current?.prev()}
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => bestSellingCarouselRef.current?.next()}
+                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-        </div>
-        {/* PRODUCTS */}
-        <div className="max-w-7xl mx-auto py-10 mb-12">
-          <Carousel
-            ref={carouselRef}
-            dots={false}
-            rows={2}
-            slidesPerRow={4}
-            responsive={[
-              {
-                breakpoint: 1024,
-                settings: { rows: 2, slidesPerRow: 3 },
-              },
-              {
-                breakpoint: 768,
-                settings: { rows: 2, slidesPerRow: 2 },
-              },
-            ]}
-          >
-            {products.map((product) => (
-              <div key={product.id} className="p-2 h-full">
-                <ProductCard product={product} />
-              </div>
-            ))}
-          </Carousel>
+
+          {/* Products Carousel */}
+          <div className="mb-12">
+            <Carousel
+              ref={bestSellingCarouselRef}
+              dots={false}
+              infinite={false}
+              slidesToShow={4}
+              slidesToScroll={1}
+              responsive={[
+                {
+                  breakpoint: 1280,
+                  settings: {
+                    slidesToShow: 4,
+                  },
+                },
+                {
+                  breakpoint: 1024,
+                  settings: {
+                    slidesToShow: 3,
+                  },
+                },
+                {
+                  breakpoint: 768,
+                  settings: {
+                    slidesToShow: 2,
+                  },
+                },
+                {
+                  breakpoint: 640,
+                  settings: {
+                    slidesToShow: 1,
+                  },
+                },
+              ]}
+            >
+              {products.map((product) => (
+                <div key={product.id} className="px-2">
+                  <ProductCard product={product} />
+                </div>
+              ))}
+            </Carousel>
+          </div>
+
+          {/* View All Button */}
+          <div className="flex justify-center">
+            <Link href="/product">
+              <button className="bg-red-500 text-white px-10 py-2 rounded hover:bg-red-600 transition-colors font-medium">
+                View All
+              </button>
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Our Products */}
       <div className="py-10">
         {/* Title */}
-
-        <div className="container mx-auto flex items-center justify-between mb-2">
+        <div className="container mx-auto flex items-center justify-between mb-8">
           <div>
-            <div className="flex items-center gap-4 mb-2">
+            <div className="flex items-center gap-4 mb-4">
               <div className="w-5 h-10 bg-red-500 rounded"></div>
               <span className="text-red-500 font-semibold text-base">
                 Our Products
               </span>
             </div>
 
-            <h2 className="font-bold text-2xl text-neutral-950">
-              Exploxe Our Products
+            <h2 className="font-bold text-3xl text-neutral-950">
+              Explore Our Products
             </h2>
           </div>
 
           <div className="flex gap-2">
             <button
-              onClick={() => carouselRef.current?.prev()}
-              className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-gray-100"
+              onClick={() => productsCarouselRef.current?.prev()}
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
             >
               <LeftOutlined />
             </button>
 
             <button
-              onClick={() => carouselRef.current?.next()}
-              className="w-10 h-10 rounded-full border flex items-center justify-center hover:bg-gray-100"
+              onClick={() => productsCarouselRef.current?.next()}
+              className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200"
             >
               <RightOutlined />
             </button>
@@ -242,9 +312,9 @@ const HomePage = () => {
         </div>
 
         {/* PRODUCTS */}
-        <div className="max-w-7xl mx-auto py-10 mb-12">
+        <div className="container mx-auto mb-12">
           <Carousel
-            ref={carouselRef}
+            ref={productsCarouselRef}
             dots={false}
             rows={2}
             slidesPerRow={4}
@@ -260,18 +330,20 @@ const HomePage = () => {
             ]}
           >
             {products.map((product) => (
-              <div key={product.id} className="p-2 h-full">
+              <div key={product.id} className="p-2">
                 <ProductCard product={product} />
               </div>
             ))}
           </Carousel>
         </div>
 
-        {/* View button */}
-        <div className="container flex justify-end">
-          <button className="border bg-red-500 text-white px-4 py-2 cursor-pointer rounded-sm">
-            <Link href={`/product`}>View All Products</Link>
-          </button>
+        {/* View All Products Button */}
+        <div className="container mx-auto flex justify-center">
+          <Link href="/product">
+            <button className="bg-red-500 text-white px-10 py-2 rounded hover:bg-red-600 font-medium">
+              View All Products
+            </button>
+          </Link>
         </div>
       </div>
     </div>

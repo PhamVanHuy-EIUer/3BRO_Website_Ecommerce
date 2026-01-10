@@ -6,9 +6,9 @@ namespace Ecommerce3BRO.Repository
 {
     public interface ICategoryRepository
     {
-        Task<ApiResponse<Category>> GetAllCategoryAsync();
-        Task<ApiResponse<Category>> AddNewCategory(CategoryDTO category);
-        Task<ApiResponse<Category>> UpdateCategory(Guid id, CategoryDTO category);
-        Task<ApiResponse<Category>> DeleteCategory(Guid id);
+        Task<ApiResponse<GetCategoryDTO>> GetAllCategoryAsync();
+        Task<ApiResponse<GetCategoryDTO>> AddNewCategory(CategoryDTO category,IFormFile image);
+        Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, CategoryDTO category,IFormFile? newImage);
+        Task<ApiResponse<GetCategoryDTO>> DeleteCategory(Guid id);
     }
 }

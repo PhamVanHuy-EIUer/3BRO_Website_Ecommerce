@@ -17,9 +17,10 @@ public partial class Category
     public string? Description { get; set; }
 
     public bool IsActive { get; set; }
+    public string? ImageUrl { get; set; }
 
     public DateTime? CreatedDate { get; set; }
 
-  
+   
     public ICollection<Product> Products { get; set; } = new List<Product>();
 }

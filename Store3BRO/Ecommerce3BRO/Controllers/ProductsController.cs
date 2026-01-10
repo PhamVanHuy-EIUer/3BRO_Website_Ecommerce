@@ -37,7 +37,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api update product
         [HttpPut("{id}")]
-        public async Task<ApiResponse<GetProductDTO>> UpdateProduct(Guid id, [FromForm] ProductDTO dto, IFormFile image)
+        public async Task<ApiResponse<GetProductDTO>> UpdateProduct(Guid id, [FromForm] ProductDTO dto, IFormFile? image)
         {
             if (!ModelState.IsValid)
             {

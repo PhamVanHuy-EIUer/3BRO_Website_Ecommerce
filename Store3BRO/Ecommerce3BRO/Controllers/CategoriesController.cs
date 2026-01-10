@@ -18,42 +18,42 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all categories
         [HttpGet]
-        public Task<ApiResponse<Category>> GetAllCategories()
+        public Task<ApiResponse<GetCategoryDTO>> GetAllCategories()
         {
             return _categoryService.GetAllCategoryAsync();
         }
 
         //Api add new category
         [HttpPost]
-        public async Task<ApiResponse<Category>> AddNewCategory([FromBody] CategoryDTO category)
+        public async Task<ApiResponse<GetCategoryDTO>> AddNewCategory([FromForm] CategoryDTO category,IFormFile image)
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse<Category>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
+                return new ApiResponse<GetCategoryDTO>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
             x => x.Key,
             x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
         ));
             }
-            return await _categoryService.AddNewCategory(category);
+            return await _categoryService.AddNewCategory(category,image);
         }
 
         //Api update category
         [HttpPut("{id}")]
-        public async Task<ApiResponse<Category>> UpdateCategory(Guid id, [FromBody] CategoryDTO category)
+        public async Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, [FromForm] CategoryDTO category,IFormFile? newImage)
         {
             if (!ModelState.IsValid)
             {
-                return new ApiResponse<Category>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
+                return new ApiResponse<GetCategoryDTO>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
             x => x.Key,
             x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
         ));
             }
-            return await _categoryService.UpdateCategory(id, category);
+            return await _categoryService.UpdateCategory(id, category,newImage);
         }
 
         //Api delete category
         [HttpDelete("{id}")]
-        public async Task<ApiResponse<Category>> DeleteCategory(Guid id)
+        public async Task<ApiResponse<GetCategoryDTO>> DeleteCategory(Guid id)
         {
             return await _categoryService.DeleteCategory(id);
         }

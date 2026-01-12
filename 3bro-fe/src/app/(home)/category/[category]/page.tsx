@@ -5,7 +5,7 @@ import { Product } from "@/models/Product";
 import { productService } from "@/services/product.service";
 import { Pagination, Spin } from "antd";
 import { useParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 8;
 
@@ -49,7 +49,7 @@ const CategoryPage = () => {
         </div>
       )}
 
-      <h2 className="text-xl font-light mb-6">
+      <h2 className="text-xl font-light mb-6 uppercase">
         {products.at(0)?.categoryName} / Products ({total})
       </h2>
 

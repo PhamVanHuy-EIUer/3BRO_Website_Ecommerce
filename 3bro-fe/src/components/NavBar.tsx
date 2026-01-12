@@ -1,32 +1,13 @@
+"use client";
 import Link from "next/link";
 import { IoMdSearch } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import { BsCart3 } from "react-icons/bs";
-
-const menu = [
-  {
-    id: 1,
-    name: "Home",
-    path: "/",
-  },
-  {
-    id: 2,
-    name: "Product",
-    path: "/product",
-  },
-  {
-    id: 3,
-    name: "About",
-    path: "/about",
-  },
-  {
-    id: 4,
-    name: "Contact",
-    path: "/contact",
-  },
-];
+import { quickMenu } from "@/data/data";
+import { usePathname } from "next/navigation";
 
 const NavBar = () => {
+  const pathName = usePathname();
   return (
     <div className="border-b-gray-300 border-b py-4">
       <div className="flex justify-between items-center content-center text-black w-[80vw] mx-auto my-2.5">
@@ -36,9 +17,9 @@ const NavBar = () => {
         </Link>
         {/* Menu */}
         <div className="text-sm md:text-xl ">
-          {menu.map((item) => (
+          {quickMenu.map((item) => (
             <Link
-              href={item.path}
+              href={item.href}
               key={item.id}
               className="px-6 py-4 font-serif text-md"
             >
@@ -57,14 +38,18 @@ const NavBar = () => {
             />
             <IoMdSearch className="absolute text-xl top-2.5 right-3 hidden md:flex" />
           </div>
-          {/* Favorite products */}
-          <Link href="/">
-            <CiHeart className="text-xl" />
-          </Link>
-          {/* Cart */}
-          <Link href="/cart">
-            <BsCart3 className="text-xl" />
-          </Link>
+          {pathName !== "/login" && (
+            <>
+              {/* Favorite products */}
+              <Link href="/">
+                <CiHeart className="text-xl" />
+              </Link>
+              {/* Cart */}
+              <Link href="/cart">
+                <BsCart3 className="text-xl" />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </div>

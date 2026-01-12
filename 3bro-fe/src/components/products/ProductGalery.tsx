@@ -31,7 +31,7 @@ export default function ProductGallery({
     <div className="min-h-screen ">
       {/* Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 py-4">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 uppercase">
           Account / {product.categoryName} /{" "}
           <span className="text-gray-900">{product.productName}</span>
         </p>

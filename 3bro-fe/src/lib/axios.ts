@@ -1,4 +1,5 @@
 import axios from "axios";
+// import { cookies } from "next/headers";
 
 
 const api = axios.create({
@@ -18,5 +19,15 @@ api.interceptors.response.use(
         return Promise.reject(err);
     }
 );
+// api.interceptors.request.use((config) => {
+//     const match = document.cookie.match(/access_token=([^;]+)/);
+//     const token = match?.[1];
+
+//     if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+// });
 
 export default api;
+

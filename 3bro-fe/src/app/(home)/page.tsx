@@ -45,7 +45,7 @@ const HomePage = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const data = await productService.getProducts(1, 12);
+      const data = await productService.getProducts(1, 16);
 
       if (Array.isArray(data.list)) {
         setProducts(data.list);
@@ -175,6 +175,7 @@ const HomePage = () => {
                       <Image
                         src={getFirstImage(item.imageUrl)}
                         alt=""
+                        unoptimized
                         height={100}
                         width={100}
                         className="h-18 w-18 rounded-full"

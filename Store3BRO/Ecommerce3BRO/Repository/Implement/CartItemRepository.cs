@@ -102,7 +102,8 @@ namespace Ecommerce3BRO.Repository.Implement
                     Price = ci.Price,          
                     Quantity = ci.Quantity,    
                     CategoryName = ci.Product.Category.CategoryName,
-                    ImageUrl = ci.Product.ImageUrl
+                    ImageUrl = ci.Product.ImageUrl,
+                    CartItemID = ci.Id
                 })
                 .ToListAsync();
 

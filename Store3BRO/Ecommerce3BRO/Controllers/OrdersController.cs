@@ -26,12 +26,12 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all orders by user
         [HttpGet("user")]
-        public async Task<ApiResponse<UserOrderItem>> GetAllOrdersByUser()
+        public async Task<ApiResponse<UserOrderDTO>> GetAllOrdersByUser()
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
             {
-                return new ApiResponse<UserOrderItem>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<UserOrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
             return await _orderRepository.GetAllOrderByUserAsync(userId);

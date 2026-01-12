@@ -5,10 +5,10 @@ namespace Ecommerce3BRO.Repository
 {
     public interface IDiscountRepository
     {
-        Task <ApiResponse<GetDiscountDTO>> AddNewDiscountAsync(DiscountDTO discountDTO);
-        Task<ApiResponse<GetDiscountDTO>> GetAllDiscountAsycn();
-        Task<ApiResponse<GetDiscountDTO>>GetDiscountByIdAsync(Guid id);
-        Task<ApiResponse<GetDiscountDTO>>UpdateDiscountAsync(Guid id, DiscountDTO discountDTO);
-        Task<ApiResponse<GetDiscountDTO>> DeleteDiscountAsync (Guid id);
+        Task<ApiResponse<GetDiscountDTO>> AddNewDiscountAsync(DiscountDTO discountDTO);
+        Task<ApiResponse<GetDiscountDTO>> GetAllDiscountAsync();
+        Task<ApiResponse<GetDiscountDTO>> GetDiscountByIdAsync(Guid id);
+        Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO);
+        Task<ApiResponse<GetDiscountDTO>> DeleteDiscountAsync(Guid id);
     }
 }

@@ -2,7 +2,7 @@
 {
     public class UserOrderItem
     {
-        public Guid OrderItem { get; set; }
+        public Guid OrderItemId { get; set; }
         public string ProductName { get; set; }
 
         public string? ImageUrl { get; set; }

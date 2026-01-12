@@ -96,9 +96,9 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<GetDiscountDTO>> GetAllDiscountAsycn()
+        public async Task<ApiResponse<GetDiscountDTO>> GetAllDiscountAsync()
         {
-            var discounts = _context.Discount.Where(d=>d.IsActive==true).Select(discount => new GetDiscountDTO()
+            var discounts = _context.Discount.Select(discount => new GetDiscountDTO()
             {
                 Id = discount.Id,
                 Code = discount.Code,
@@ -138,6 +138,7 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             return new ApiResponse<GetDiscountDTO>(null, discountDTO, "200", "Get discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
+
 
         public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO)
         {

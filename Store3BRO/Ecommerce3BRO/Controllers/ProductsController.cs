@@ -1,7 +1,10 @@
-﻿using Ecommerce3BRO.DTO;
+﻿using Ecommerce3BRO.Data;
+using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Ecommerce3BRO.Controllers
 {
@@ -10,9 +13,11 @@ namespace Ecommerce3BRO.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductRepository _productService;
-        public ProductsController(IProductRepository productService)
+        private readonly Ecommerce3BROContext _context;
+        public ProductsController(IProductRepository productService,Ecommerce3BROContext context)
         {
             _productService = productService;
+            _context = context;
         }
 
         //Api get all products
@@ -98,5 +103,46 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.GetProductByCategoryByPageAsync(categoryId, currentPage, pageSize);
         }
-    }
+
+        [HttpGet("product-autodisccount-directly")]
+        public async Task<ApiResponse<DiscountProductDTO>> GetProductsWithAutoDiscountByIdAsync([FromQuery] Guid productId, [FromQuery] int quantity)
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (findUser == null)
+            {
+                return new ApiResponse<DiscountProductDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(findUser.Value);
+            return await _productService.GetProductWithAutoDiscountById(productId, quantity, userId);
+        }
+
+        [HttpGet("product-autodiscount-cartitem")]
+        public async Task<ApiResponse<DiscountProductDTO>> GetProductsWithAutoDiscountByCartItemId([FromQuery] Guid cartItemId)
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (findUser == null)
+            {
+                return new ApiResponse<DiscountProductDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(findUser.Value);
+            return await _productService.GetProductWithAutoDiscountByCartItemId(cartItemId, userId);
+        }
+
+        [HttpGet("product-autodiscount-cart")]
+        public async Task<ApiResponse<DiscountProductDTO>> GetProductWithAutoDiscountByCartId()
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (findUser == null)
+            {
+                return new ApiResponse<DiscountProductDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(findUser.Value);
+            var cartId = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
+            if (cartId == null)
+            {
+                return new ApiResponse<DiscountProductDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            return await _productService.GetProductWithAutoDiscountByCartId(cartId.Id, userId);
+        }
+        }
 }

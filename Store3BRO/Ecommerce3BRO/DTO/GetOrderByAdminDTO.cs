@@ -7,6 +7,7 @@
         public string ProductNames { get; set; } 
         public int Amount { get; set; }        
         public decimal TotalPrice { get; set; }
+        public decimal DiscountPrice { get; set; }
         public decimal RefundPrice { get; set; }
         public decimal NetRevenue { get; set; }
         public string Status { get; set; }

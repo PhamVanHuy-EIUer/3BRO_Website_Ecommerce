@@ -1,8 +1,9 @@
 export const quickMenu = [
     { id: 1, name: "Home", href: "/" },
-    { id: 2, name: "Contact", href: "/contact" },
+    { id: 2, name: "Product", href: "/product" },
     { id: 3, name: "About", href: "/about" },
-    { id: 4, name: "Product", href: "/products" },
+    { id: 4, name: "Contact", href: "/contact" },
+    { id: 5, name: "Sign In", href: "/login" },
 ];
 
 export const support = [
@@ -39,3 +40,4 @@ export const imageCategory = [
     { id: 5, name: "Phones", img: "/Categories/phone.jfif", href: "/category/phones" },
     { id: 6, name: "Laptop", img: "/Categories/computer.jfif", href: "/category/laptops" },
 ]
+

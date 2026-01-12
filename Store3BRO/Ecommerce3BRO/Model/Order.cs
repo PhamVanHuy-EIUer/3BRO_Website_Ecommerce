@@ -25,7 +25,7 @@ public partial class Order
 
     public string ShippingAddress { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
+
     public decimal ShippingFee { get; set; }
 
     public DateTime? CreatedDate { get; set; }

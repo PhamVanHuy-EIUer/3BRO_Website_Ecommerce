@@ -17,7 +17,6 @@ public partial class CartItem
 
     public int Quantity { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
     public decimal Price { get; set; }
 
     public DateTime? CreatedDate { get; set; }

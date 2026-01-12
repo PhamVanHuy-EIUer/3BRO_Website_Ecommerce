@@ -25,8 +25,36 @@ namespace Ecommerce3BRO.Controllers
 
         //api use to add new discount
         [HttpPost]
-        public async Task<ApiResponse<GetDiscountDTO>> AddNewDiscount([FromBody] DiscountDTO discountDTO)
+        public async Task<ApiResponse<GetDiscountDTO>> AddNewDiscount([FromBody] InputDiscountDTO discount)
         {
+            var discountDTO = new DiscountDTO();
+            if (discount.isPercent)
+            {
+              discountDTO = new DiscountDTO
+                {
+                    Code = discount.Code,
+                    Description = discount.Description,
+                    DiscountPercent = discount.discountValue,
+                    MinOrderAmount = discount.MinOrderAmount,
+                    StartDate = discount.StartDate,
+                    ExpiredDate = discount.ExpiredDate,
+                    Quantity = discount.Quantity
+                };
+
+            }
+            else
+            {
+               discountDTO = new DiscountDTO
+                {
+                    Code = discount.Code,
+                    Description = discount.Description,
+                    DiscountAmount = discount.discountValue,
+                    MinOrderAmount = discount.MinOrderAmount,
+                    StartDate = discount.StartDate,
+                    ExpiredDate = discount.ExpiredDate,
+                    Quantity = discount.Quantity
+                };
+            }
             return await _discountRepository.AddNewDiscountAsync(discountDTO);
         }
 
@@ -39,8 +67,36 @@ namespace Ecommerce3BRO.Controllers
 
         // api use to update discount
         [HttpPut]
-        public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscount(Guid id, [FromBody] DiscountDTO discountDTO)
+        public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscount(Guid id, [FromBody] InputDiscountDTO discount)
         {
+            var discountDTO = new DiscountDTO();
+            if (discount.isPercent)
+            {
+                discountDTO = new DiscountDTO
+                {
+                    Code = discount.Code,
+                    Description = discount.Description,
+                    DiscountPercent = discount.discountValue,
+                    MinOrderAmount = discount.MinOrderAmount,
+                    StartDate = discount.StartDate,
+                    ExpiredDate = discount.ExpiredDate,
+                    Quantity = discount.Quantity
+                };
+
+            }
+            else
+            {
+                discountDTO = new DiscountDTO
+                {
+                    Code = discount.Code,
+                    Description = discount.Description,
+                    DiscountAmount = discount.discountValue,
+                    MinOrderAmount = discount.MinOrderAmount,
+                    StartDate = discount.StartDate,
+                    ExpiredDate = discount.ExpiredDate,
+                    Quantity = discount.Quantity
+                };
+            }
             return await _discountRepository.UpdateDiscountAsync(id, discountDTO);
         }
 

@@ -180,6 +180,27 @@ namespace Ecommerce3BRO.Repository.Implement
             return list;
         }
 
+        public async Task<ApiResponse<GetUserDTO>> GetUserByClaim(Guid id)
+        {
+            var findUser = await _context.User.FindAsync(id);
+            if (findUser == null)
+            {
+                return new ApiResponse<GetUserDTO>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            GetUserDTO getUserDTO = new GetUserDTO()
+            {
+                Id = findUser.Id,
+                Address = findUser.Address,
+                CreatedDate = findUser.CreatedDate,
+                Email = findUser.Email,
+                FullName = findUser.FullName,
+                IsActive = findUser.IsActive,
+                Phone = findUser.Phone
+                
+            };
+            return new ApiResponse<GetUserDTO>(null, getUserDTO, "200", "Success", true, 0, 0, 0, 0, null, null, null);
+        }
+
         public async Task<GetUserDTO?> GetUserByIdAsync(Guid id)
         {
             var findUser = await _context.User.FindAsync(id);

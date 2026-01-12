@@ -19,10 +19,10 @@ public partial class Discount
 
     public int? DiscountPercent { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
+ 
     public decimal? DiscountAmount { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
+ 
     public decimal? MinOrderAmount { get; set; }
 
     public DateTime StartDate { get; set; }

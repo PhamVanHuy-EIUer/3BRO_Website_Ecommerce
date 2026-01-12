@@ -10,5 +10,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetDiscountDTO>> GetDiscountByIdAsync(Guid id);
         Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO);
         Task<ApiResponse<GetDiscountDTO>> DeleteDiscountAsync(Guid id);
+        Task<List<GetDiscountDTO>> GetDiscountByUser(decimal price);
     }
 }

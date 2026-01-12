@@ -139,6 +139,26 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetDiscountDTO>(null, discountDTO, "200", "Get discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public Task<List<GetDiscountDTO>> GetDiscountByUser(decimal price)
+        {
+            var findDiscount = _context.Discount
+                .Where(d => d.IsActive == true && d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= price)
+                .Select(discount => new GetDiscountDTO()
+                {
+                    Id = discount.Id,
+                    Code = discount.Code,
+                    CreatedDate = discount.CreatedDate,
+                    Description = discount.Description,
+                    DiscountAmount = discount.DiscountAmount,
+                    DiscountPercent = discount.DiscountPercent,
+                    EndDate = discount.EndDate,
+                    MinOrderAmount = discount.MinOrderAmount,
+                    Quantity = discount.Quantity,
+                    StartDate = discount.StartDate,
+                    IsActive = discount.IsActive
+                }).ToListAsync();
+            return findDiscount;
+        }
 
         public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO)
         {

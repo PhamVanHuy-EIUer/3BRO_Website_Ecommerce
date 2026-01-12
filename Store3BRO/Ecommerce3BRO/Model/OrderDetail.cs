@@ -17,7 +17,6 @@ public partial class OrderDetail
 
     public int Quantity { get; set; }
 
-    [Column(TypeName = "decimal(10, 2)")]
     public decimal UnitPrice { get; set; }
     public bool IsReturn { get; set; }
 

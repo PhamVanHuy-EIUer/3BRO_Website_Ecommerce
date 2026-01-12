@@ -91,7 +91,7 @@ namespace Ecommerce3BRO.Controllers
             return new ApiResponse<UserDTO?>(null, result, "200", "Sent activecode please check the email", true, 0, 0, 0, 0, null, null, null);
         }
 
-       
+
         [HttpPost("update-pass")]
         public async Task<ApiResponse<string>> UpdatePassword(UpdatePasswordDTO user)
         {
@@ -210,7 +210,7 @@ namespace Ecommerce3BRO.Controllers
 
         // update infor by user
         [HttpPut("by-user")]
-        public async Task<ApiResponse<GetUserDTO>> UpdateInfoByUser( [FromBody] UserDTO user)
+        public async Task<ApiResponse<GetUserDTO>> UpdateInfoByUser([FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)
             {
@@ -227,6 +227,18 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<GetUserDTO>(null, null, "400", "User is not exist", false, 0, 0, 0, 0, null, null, null);
             }
             return new ApiResponse<GetUserDTO>(null, result, "200", "Update user successfully", true, 0, 0, 0, 0, null, null, null);
+        }
+        [HttpGet("user-byclaim")]
+        public async Task<ApiResponse<GetUserDTO>> GetUserByClaim()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+            {
+                return new ApiResponse<GetUserDTO>(null, null, "401", "Unauthorize", true, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(userIdClaim.Value);
+            var result = await _userService.GetUserByClaim(userId);
+            return result;
         }
     }
 }

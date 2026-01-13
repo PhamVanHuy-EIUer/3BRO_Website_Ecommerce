@@ -95,6 +95,11 @@ namespace Ecommerce3BRO.Repository.Implement
                 IsUsed = true,
             };
             await _context.OrderDiscount.AddAsync(newOrderDiscount);
+            var findDiscount =await _context.Discount.FirstOrDefaultAsync(d => d.Id == discount);
+            if (findDiscount != null)
+            {
+                findDiscount.Quantity -= 1;
+            }
             await _context.SaveChangesAsync();
         }
 

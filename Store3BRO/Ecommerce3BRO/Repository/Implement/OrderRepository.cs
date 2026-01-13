@@ -68,7 +68,10 @@ namespace Ecommerce3BRO.Repository.Implement
             newOrder.TotalAmount = totalAmount + newOrder.ShippingFee;
             await _context.Order.AddAsync(newOrder);
             await _context.SaveChangesAsync();
-            await _discount.ApplyDiscountToOrder(newOrder.Id, order.DiscountId);
+            if (order.DiscountId != null)
+            {
+                await _discount.ApplyDiscountToOrder(newOrder.Id, (Guid)order.DiscountId);
+            }
             return new ApiResponse<OrderDTO>(null, order, "200", "Order created successfully", true, 0, 0, 0, 0, "Pending", null, null);
         }
 
@@ -150,11 +153,11 @@ namespace Ecommerce3BRO.Repository.Implement
 
                     SubTotal = subTotal,
                     DiscountAmount = discountAmount,
-                    TotalAmount = subTotal-discountAmount
+                    TotalAmount = subTotal - discountAmount
                 };
             }).ToList();
 
-            return new ApiResponse<UserOrderDTO>( result, null, "200","User orders retrieved successfully",true, 0, 0, 0, 0, null, null, null );
+            return new ApiResponse<UserOrderDTO>(result, null, "200", "User orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
 

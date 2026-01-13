@@ -5,15 +5,18 @@ using Ecommerce3BRO.Helper.Enums;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Runtime.InteropServices;
 
 namespace Ecommerce3BRO.Repository.Implement
 {
     public class OrderRepository : IOrderRepository
     {
         private readonly Ecommerce3BROContext _context;
-        public OrderRepository(Ecommerce3BROContext context)
+        private readonly IDiscountRepository _discount;
+        public OrderRepository(Ecommerce3BROContext context, IDiscountRepository discount)
         {
             _context = context;
+            _discount = discount;
         }
         public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItemsAsync(Guid userId, OrderDTO order)
         {
@@ -65,77 +68,95 @@ namespace Ecommerce3BRO.Repository.Implement
             newOrder.TotalAmount = totalAmount + newOrder.ShippingFee;
             await _context.Order.AddAsync(newOrder);
             await _context.SaveChangesAsync();
+            await _discount.ApplyDiscountToOrder(newOrder.Id, order.DiscountId);
             return new ApiResponse<OrderDTO>(null, order, "200", "Order created successfully", true, 0, 0, 0, 0, "Pending", null, null);
         }
 
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrderByAdminAsync()
         {
             var orders = await _context.Order
-                .Include(o => o.User)
-                .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
-                .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
-                .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
-                .Select(o => new GetOrderByAdminDTO
+     .Include(o => o.User)
+     .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+     .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
+     .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
+     .ToListAsync();
+
+            var result = orders.Select(o =>
+            {
+                var refundPrice = o.OrderDetails
+                    .Where(od => od.IsReturn)
+                    .SelectMany(od => od.Refunds)
+                    .Sum(r => r.RefundAmount);
+
+                var discountPrice = o.OrderDiscounts
+                    .Where(od => od.IsUsed)
+                    .Sum(od =>
+                        od.Discount.DiscountAmount ??
+                        (o.TotalAmount * od.Discount.DiscountPercent.Value / 100));
+
+                return new GetOrderByAdminDTO
                 {
                     OrderId = o.Id,
                     CustomerName = o.User.FullName,
-
                     ProductNames = string.Join(", ",
-            o.OrderDetails
-             .Select(od => od.Product.ProductName)
-             .Distinct()
-        ),
-
+                        o.OrderDetails.Select(od => od.Product.ProductName).Distinct()),
                     Amount = o.OrderDetails.Sum(od => od.Quantity),
                     TotalPrice = o.TotalAmount,
                     Status = ((OrderStatus)o.Status).ToString(),
-                    RefundPrice = o.OrderDetails.Where(od => od.IsReturn).SelectMany(od => od.Refunds).Sum(r => r.RefundAmount),
-                    DiscountPrice = o.OrderDiscounts.Where(od => od.IsUsed).Sum(od => od.Discount.DiscountAmount.HasValue
-                    ? od.Discount.DiscountAmount.Value
-                    : o.TotalAmount * od.Discount.DiscountPercent.Value / 100),
-                    NetRevenue = o.TotalAmount - o.OrderDetails.Where(od => od.IsReturn).SelectMany(od => od.Refunds).Sum(r => r.RefundAmount)
-                - o.OrderDiscounts.Where(od => od.IsUsed).Sum(od => od.Discount.DiscountAmount.HasValue
-                ? od.Discount.DiscountAmount.Value
-                : o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
-                }).ToListAsync();
-            return new ApiResponse<GetOrderByAdminDTO>(orders, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
+                    RefundPrice = refundPrice,
+                    DiscountPrice = discountPrice,
+                    NetRevenue = o.TotalAmount - refundPrice - discountPrice
+                };
+            }).ToList();
+            return new ApiResponse<GetOrderByAdminDTO>(result, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId)
         {
             var orders = await _context.Order
-       .Where(o => o.UserId == userId)
-       .Select(o => new UserOrderDTO
-       {
-           OrderId = o.Id,
-           CreatedDate = o.CreatedDate,
-           Status = ((OrderStatus)o.Status).ToString(),
+                .Where(o => o.UserId == userId)
+                .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+                .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
+                .ToListAsync();
 
-           Items = o.OrderDetails
-               .Where(od => !od.IsReturn)
-               .Select(od => new UserOrderItem
-               {
-                   OrderItemId = od.Id,
-                   ProductName = od.Product.ProductName,
-                   ImageUrl = od.Product.ImageUrl,
-                   Price = od.UnitPrice,
-                   Quantity = od.Quantity,
-                   TotalPrice = od.UnitPrice * od.Quantity
-               }).ToList(),
+            var result = orders.Select(o =>
+            {
+                var subTotal = o.OrderDetails
+                    .Sum(od => od.UnitPrice * od.Quantity);
 
-           SubTotal = o.OrderDetails.Sum(od => od.UnitPrice * od.Quantity),
-           DiscountAmount = o.OrderDiscounts
-               .Where(od => od.IsUsed)
-               .Sum(od =>
-                   od.Discount.DiscountAmount.HasValue
-                       ? od.Discount.DiscountAmount.Value
-                       : o.TotalAmount * od.Discount.DiscountPercent.Value / 100
-               ),
+                var discountAmount = o.OrderDiscounts
+                    .Where(od => od.IsUsed)
+                    .Sum(od =>
+                        od.Discount.DiscountAmount ??
+                        (o.TotalAmount * od.Discount.DiscountPercent.Value / 100));
 
-           TotalAmount = o.TotalAmount
-       }) .ToListAsync();
-            return new ApiResponse<UserOrderDTO>(orders, null, "200", "User orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
+                return new UserOrderDTO
+                {
+                    OrderId = o.Id,
+                    CreatedDate = o.CreatedDate,
+                    Status = ((OrderStatus)o.Status).ToString(),
+
+                    Items = o.OrderDetails
+                        .Where(od => !od.IsReturn)
+                        .Select(od => new UserOrderItem
+                        {
+                            OrderItemId = od.Id,
+                            ProductName = od.Product.ProductName,
+                            ImageUrl = od.Product.ImageUrl,
+                            Price = od.UnitPrice,
+                            Quantity = od.Quantity,
+                            TotalPrice = od.UnitPrice * od.Quantity
+                        }).ToList(),
+
+                    SubTotal = subTotal,
+                    DiscountAmount = discountAmount,
+                    TotalAmount = subTotal-discountAmount
+                };
+            }).ToList();
+
+            return new ApiResponse<UserOrderDTO>( result, null, "200","User orders retrieved successfully",true, 0, 0, 0, 0, null, null, null );
         }
+
 
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetOrderByStatus(string status)
         {

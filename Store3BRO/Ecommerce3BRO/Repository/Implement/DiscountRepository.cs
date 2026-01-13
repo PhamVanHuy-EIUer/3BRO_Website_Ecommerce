@@ -16,6 +16,8 @@ namespace Ecommerce3BRO.Repository.Implement
      
         public async Task<ApiResponse<GetDiscountDTO>> AddNewDiscountAsync(DiscountDTO discountDTO)
         {
+            discountDTO.StartDate = DateTime.SpecifyKind(discountDTO.StartDate, DateTimeKind.Utc);
+            discountDTO.ExpiredDate = DateTime.SpecifyKind(discountDTO.ExpiredDate, DateTimeKind.Utc);
             if ((discountDTO.DiscountAmount != null && discountDTO.DiscountPercent != null) || (discountDTO.DiscountAmount == null && discountDTO.DiscountPercent == null))
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "400", "Must set exactly one discount type (amount or percent)", false, 0, 0, 0, 0, null, null, null);
@@ -82,6 +84,19 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetDiscountDTO>(null, result, "201", "Create discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task ApplyDiscountToOrder(Guid orderId, Guid discount)
+        {
+            var newOrderDiscount = new OrderDiscount
+            {
+                OrderId = orderId,
+                AssignedDate = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
+                DiscountId = discount,
+                IsUsed = true,
+            };
+            await _context.OrderDiscount.AddAsync(newOrderDiscount);
+            await _context.SaveChangesAsync();
+        }
 
         public async Task<ApiResponse<GetDiscountDTO>> DeleteDiscountAsync(Guid id)
         {
@@ -162,6 +177,8 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO)
         {
+            discountDTO.StartDate = DateTime.SpecifyKind(discountDTO.StartDate, DateTimeKind.Utc);
+            discountDTO.ExpiredDate = DateTime.SpecifyKind(discountDTO.ExpiredDate, DateTimeKind.Utc);
             if ((discountDTO.DiscountAmount != null && discountDTO.DiscountPercent != null) || (discountDTO.DiscountAmount == null && discountDTO.DiscountPercent == null))
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "400", "Must set exactly one discount type (amount or percent)", false, 0, 0, 0, 0, null, null, null);

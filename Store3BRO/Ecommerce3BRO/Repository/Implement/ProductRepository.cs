@@ -92,20 +92,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<string>> ApplyDiscountToOrder(Guid orderId, Guid discount)
-        {
-            var newOrderDiscount = new OrderDiscount
-            {
-                OrderId = orderId,
-                AssignedDate = DateTime.UtcNow,
-                CreatedDate = DateTime.UtcNow,
-                DiscountId = discount,
-                IsUsed = true,
-            };
-            await _context.OrderDiscount.AddAsync(newOrderDiscount);
-            await _context.SaveChangesAsync();
-            return new ApiResponse<string>(null, null, "200", "Apply discount to order successfully", true, 0, 0, 0, 0, null, null, null);
-        }
+        
 
 
 

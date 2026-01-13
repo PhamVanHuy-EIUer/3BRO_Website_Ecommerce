@@ -21,7 +21,7 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountById(Guid productId, int quantity,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId(Guid cartId,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartItemId(Guid cartItemId,Guid userId);
-        Task<ApiResponse<string>> ApplyDiscountToOrder(Guid orderId, Guid discount);
+       
     }
 }
  

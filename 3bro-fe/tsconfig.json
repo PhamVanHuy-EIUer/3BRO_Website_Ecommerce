@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-  ],
+, "src/lib/axios.js", "src/hook/useAuth.js"  ],
   "exclude": ["node_modules"]
 }

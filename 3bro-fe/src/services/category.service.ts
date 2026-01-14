@@ -1,5 +1,5 @@
-import api from "@/lib/axios";
+import axiosClient from "@/lib/axios";
 
 export const categoryService = {
-    getCategories: () => api.get("/Categories").then(res => res.data),
+    getCategories: () => axiosClient.get("/Categories").then(res => res.data),
 };

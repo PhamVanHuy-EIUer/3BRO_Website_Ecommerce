@@ -1,5 +1,6 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Service;
+using Google.Apis.Auth;
 
 namespace Ecommerce3BRO.Repository
 {
@@ -20,5 +21,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetUserDTO>> GetUserByClaim(Guid id); 
         Task<IEnumerable<GetUserDTO>> GetUserByPageAsync(int currentPage, int pageSize);
         Task<ApiResponse<string>> ChangePasswordAsync(Guid id,ChangePasswordDTO user);
+       
     }
 }

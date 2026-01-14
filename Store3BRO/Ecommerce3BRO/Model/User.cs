@@ -21,9 +21,8 @@ public partial class User
     public string Email { get; set; }
 
     [StringLength(255)]
-    [Required(ErrorMessage = "Password is required")]
     [MinLength(8, ErrorMessage = "Password must have more  8 characters")]
-    public string Password { get; set; }
+    public string? Password { get; set; }
 
     [StringLength(20)]
     [RegularExpression(@"^(0[3|5|7|8|9])[0-9]{8}$",
@@ -37,8 +36,11 @@ public partial class User
     public bool IsDeleted { get; set; }
 
     public DateTime? CreatedDate { get; set; }
+    public string Provider { get; set; }
 
-    
+    public string GoogleId { get; set; }
+
+
     public  ICollection<ActivationCode> ActivationCodes { get; set; } 
 
     

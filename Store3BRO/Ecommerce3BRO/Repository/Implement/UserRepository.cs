@@ -50,7 +50,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 FullName = user.FullName,
                 IsActive = false,
                 Phone = user.Phone,
-                Password = "123456789"
+                Password = "123456789",
+                Provider = "Local"
             };
             await _context.User.AddAsync(newUser);
             await _context.SaveChangesAsync();

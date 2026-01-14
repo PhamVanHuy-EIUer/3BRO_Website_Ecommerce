@@ -157,8 +157,8 @@ namespace Ecommerce3BRO.Repository.Implement
                         }).ToList(),
 
                     SubTotal = subTotal,
-                    DiscountAmount = discountAmount -o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice,
-                    TotalAmount = subTotal- discountAmount
+                    DiscountAmount = discountAmount -(o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice),
+                    TotalAmount = subTotal- (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
                 };
             }).ToList();
 

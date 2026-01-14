@@ -33,7 +33,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 Id = Guid.NewGuid(),
                 OrderDetailId = findOrderDetail.Id,
-                RefundAmount = subtotal- appliedDiscount *(order.TotalAmount/subtotal),
+                RefundAmount = subtotal- appliedDiscount *(subtotal/order.TotalAmount),
                 CreatedDate = DateTime.UtcNow
             };
             await _context.Refund.AddAsync(newRefund);

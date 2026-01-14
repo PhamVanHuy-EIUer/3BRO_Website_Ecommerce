@@ -119,12 +119,17 @@ namespace Ecommerce3BRO.Repository.Implement
             var orders = await _context.Order
                 .Where(o => o.UserId == userId)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+                 .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
                 .ToListAsync();
 
             var result = orders.Select(o =>
             {
-                var subTotal = o.OrderDetails
+                var refundPrice = o.OrderDetails
+                  .Where(od => od.IsReturn)
+                  .SelectMany(od => od.Refunds)
+                  .Sum(r => r.RefundAmount);
+                var subTotal = o.OrderDetails.Where(od => !od.IsReturn)
                     .Sum(od => od.UnitPrice * od.Quantity);
 
                 var discountAmount = o.OrderDiscounts
@@ -152,8 +157,8 @@ namespace Ecommerce3BRO.Repository.Implement
                         }).ToList(),
 
                     SubTotal = subTotal,
-                    DiscountAmount = discountAmount,
-                    TotalAmount = subTotal - discountAmount
+                    DiscountAmount = discountAmount -o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice,
+                    TotalAmount = subTotal- discountAmount
                 };
             }).ToList();
 

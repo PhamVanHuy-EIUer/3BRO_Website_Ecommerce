@@ -50,7 +50,7 @@ function LoginPage() {
         duration: 2,
       });
 
-      // Redirect sau login
+      // Redirect sau login'
       router.push("/");
     } catch (err: any) {
       api.error({

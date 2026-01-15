@@ -51,7 +51,7 @@ namespace Ecommerce3BRO.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
             return new ApiResponse<UserDTO?>(null, null, "200", "Login successfully", true, 0, 0, 0, 0, token, null, null);
@@ -65,7 +65,7 @@ namespace Ecommerce3BRO.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Strict,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
             return Ok(new ApiResponse<string?>(null, null, "200", "Logout successfully", true, 0, 0, 0, 0, null, null, null));

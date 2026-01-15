@@ -181,14 +181,19 @@ namespace Ecommerce3BRO.Repository.Implement
             return list;
         }
 
-        public async Task<ApiResponse<GetUserDTO>> GetUserByClaim(Guid id)
+        public async Task<ApiResponse<GetUserWithRole>> GetUserByClaim(Guid id)
         {
             var findUser = await _context.User.FindAsync(id);
             if (findUser == null)
             {
-                return new ApiResponse<GetUserDTO>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetUserWithRole>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
             }
-            GetUserDTO getUserDTO = new GetUserDTO()
+            var roles= await _context.UserRole
+                .Where(ur => ur.UserId == findUser.Id)
+                .Include(ur => ur.Role)
+                .Select(ur => ur.Role.RoleName)
+                .ToListAsync();
+            GetUserWithRole getUserDTO = new GetUserWithRole()
             {
                 Id = findUser.Id,
                 Address = findUser.Address,
@@ -196,10 +201,10 @@ namespace Ecommerce3BRO.Repository.Implement
                 Email = findUser.Email,
                 FullName = findUser.FullName,
                 IsActive = findUser.IsActive,
-                Phone = findUser.Phone
-                
+                Phone = findUser.Phone,
+                RoleList = roles
             };
-            return new ApiResponse<GetUserDTO>(null, getUserDTO, "200", "Success", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetUserWithRole>(null, getUserDTO, "200", "Success", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<GetUserDTO?> GetUserByIdAsync(Guid id)

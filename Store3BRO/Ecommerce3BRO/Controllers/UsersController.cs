@@ -229,12 +229,12 @@ namespace Ecommerce3BRO.Controllers
             return new ApiResponse<GetUserDTO>(null, result, "200", "Update user successfully", true, 0, 0, 0, 0, null, null, null);
         }
         [HttpGet("user-byclaim")]
-        public async Task<ApiResponse<GetUserDTO>> GetUserByClaim()
+        public async Task<ApiResponse<GetUserWithRole>> GetUserByClaim()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
-                return new ApiResponse<GetUserDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetUserWithRole>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(userIdClaim.Value);
             var result = await _userService.GetUserByClaim(userId);

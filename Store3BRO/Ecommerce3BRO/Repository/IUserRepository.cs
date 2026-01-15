@@ -18,7 +18,7 @@ namespace Ecommerce3BRO.Repository
         Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UserDTO user);
         Task<GetUserDTO?> DeleteUserByIdAsync(Guid id);
         Task<GetUserDTO?> GetUserByIdAsync(Guid id);
-        Task<ApiResponse<GetUserDTO>> GetUserByClaim(Guid id); 
+        Task<ApiResponse< GetUserWithRole>> GetUserByClaim(Guid id); 
         Task<IEnumerable<GetUserDTO>> GetUserByPageAsync(int currentPage, int pageSize);
         Task<ApiResponse<string>> ChangePasswordAsync(Guid id,ChangePasswordDTO user);
        

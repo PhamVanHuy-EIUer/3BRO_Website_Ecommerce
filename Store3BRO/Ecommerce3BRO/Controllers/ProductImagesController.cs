@@ -15,7 +15,7 @@ namespace Ecommerce3BRO.Controllers
             _productImageRepository = productImageRepository;
         }
 
-
+        // api add new image for product
         [HttpPost("AddNewImageForProduct/{productId}")]
         public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProduct([FromRoute] Guid productId, IFormFile newImage)
         {
@@ -29,7 +29,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productImageRepository.AddNewImageForProductAsync(productId, newImage);
         }
 
-
+        // api get all images by product id
         [HttpGet("all-imageProduct")]
         public async Task<ApiResponse<GetProductImageDTO>> GetAllImagesByProductId([FromQuery] Guid productId)
         {

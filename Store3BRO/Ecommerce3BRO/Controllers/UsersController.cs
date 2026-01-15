@@ -44,7 +44,7 @@ namespace Ecommerce3BRO.Controllers
         }
 
         // function to active user after enter activation code successfully
-        [HttpGet("active-user")]
+        [HttpPost("active-user")]
         public async Task<ApiResponse<UserDTO?>> ActiveUser([FromQuery] Guid id, [FromQuery] string activeCode)
         {
             var findActiveCode = await _context.ActivationCode.FirstOrDefaultAsync(a => a.Code == activeCode && a.IsUsed == false);
@@ -234,7 +234,7 @@ namespace Ecommerce3BRO.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
             {
-                return new ApiResponse<GetUserDTO>(null, null, "401", "Unauthorize", true, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetUserDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(userIdClaim.Value);
             var result = await _userService.GetUserByClaim(userId);

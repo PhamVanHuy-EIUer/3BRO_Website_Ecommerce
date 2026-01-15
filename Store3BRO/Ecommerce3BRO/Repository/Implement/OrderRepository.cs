@@ -23,7 +23,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<OrderDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<OrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var productIds = order.Items.Select(i => i.ProductId).ToList();
             var products = await _context.Product.Where(p => productIds.Contains(p.Id)).ToListAsync();

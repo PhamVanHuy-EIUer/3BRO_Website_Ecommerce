@@ -36,9 +36,9 @@ public partial class User
     public bool IsDeleted { get; set; }
 
     public DateTime? CreatedDate { get; set; }
-    public string Provider { get; set; }
+    public string? Provider { get; set; }
 
-    public string GoogleId { get; set; }
+    public string? GoogleId { get; set; }
 
 
     public  ICollection<ActivationCode> ActivationCodes { get; set; } 

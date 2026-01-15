@@ -279,7 +279,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var findCart = await _context.Cart.Include(c => c.CartItems).FirstOrDefaultAsync(c => c.Id == cartId);
             if (findCart == null)
@@ -372,7 +372,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var findCartItem = await _context.CartItem.FindAsync(cartItemId);
             if (findCartItem == null)
@@ -463,7 +463,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
             if (findProduct == null)
@@ -552,7 +552,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var findCart = await _context.Cart.Include(c => c.CartItems).FirstOrDefaultAsync(c => c.Id == cartId);
             if (findCart == null)
@@ -612,7 +612,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorize", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var findCartItem = await _context.CartItem.FindAsync(cartItemId);
             if (findCartItem == null)

@@ -23,7 +23,7 @@ namespace Ecommerce3BRO.Controllers
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                return new ApiResponse<CartItemDTO>(null, null, "401", "Unauthorize", true, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<CartItemDTO>(null, null, "401", "Unauthorized", true, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.AddNewItemToCartAsync(productId, userId, quantity);
@@ -37,7 +37,7 @@ namespace Ecommerce3BRO.Controllers
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if (user == null)
             {
-                return new ApiResponse<CartItemDTO>(null, null, "401", "Unauthorize", true, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<CartItemDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.RemoveItemFromCartAsync(productId,userId);

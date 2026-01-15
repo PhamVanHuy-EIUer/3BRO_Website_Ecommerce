@@ -12,4 +12,5 @@ export const productService = {
         axiosClient.get(`/Products/category-pages?categoryId=${category}&currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
     getImageProduct: (id: string) => axiosClient.get(`/ProductImages/all-imageProduct?${id}`).then(res => res.data),
     topProduct: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/order-product?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
+    searchProduct: (keyword: string) => axiosClient.get(`/Products/search-product?keyword=${keyword}`).then(res => res.data),
 };

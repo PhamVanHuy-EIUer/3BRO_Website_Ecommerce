@@ -17,15 +17,13 @@ const NavBar = () => {
   const router = useRouter();
   const [showIcons, setShowIcons] = useState(false);
   const [show, setShow] = useState(false);
+  const [search, setSearch] = useState("");
   const pathname = usePathname();
-
-  useEffect(() => {
-    setShow(false);
-  }, [pathname]);
 
   const toggleMenu = () => {
     setShow(!show);
   };
+
   useEffect(() => {
     const handleClickOutsode = (event: MouseEvent) => {
       if (userRef.current && !userRef.current.contains(event.target as Node)) {
@@ -42,12 +40,21 @@ const NavBar = () => {
   const handleLogout = async () => {
     try {
       const res = await AuthService.logout();
-      if (res.data.code !== "200") return;
+      console.log(res);
 
-      router.push("/");
+      if (res.data.code !== "200") return;
+      setShowIcons(false);
+      router.push("/login");
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!search.trim()) return;
+
+    router.push(`/product/search?keyword=${encodeURIComponent(search.trim())}`);
   };
 
   useEffect(() => {
@@ -63,7 +70,7 @@ const NavBar = () => {
     };
 
     checkAuth();
-  }, [pathname]);
+  }, [router]);
   return (
     <div className="border-b-gray-300 border-b py-4">
       <div className="flex justify-between items-center content-center text-black w-[80vw] mx-auto my-2.5">
@@ -86,14 +93,15 @@ const NavBar = () => {
 
         <div className="flex justify-center items-center text-center gap-5">
           {/* Search */}
-          <div className="relative flex justify-center items-center">
+          <form onSubmit={handleSearch} className="relative flex items-center">
             <input
-              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               placeholder="Search product"
-              className="text-sm md:text-sm md:px-4 md:py-2  xl:w-[300] bg-gray-100 object-contain"
+              className="px-4 py-2 bg-gray-100"
             />
-            <IoMdSearch className="absolute text-xl top-2.5 right-3 hidden md:flex" />
-          </div>
+            <IoMdSearch className="absolute right-3 text-xl" />
+          </form>
           {showIcons === true && (
             <>
               {/* Favorite products */}

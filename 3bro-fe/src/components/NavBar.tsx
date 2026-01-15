@@ -4,10 +4,66 @@ import { IoMdSearch } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import { BsCart3 } from "react-icons/bs";
 import { quickMenu } from "@/data/data";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { Avatar } from "antd";
+import { AuthService } from "@/services/auth.service";
+import { useEffect, useRef, useState } from "react";
+import { userService } from "@/services/user.service";
+import { ApiResponse } from "@/models/ApiResponse";
+import { User } from "@/models/User";
 
 const NavBar = () => {
-  const pathName = usePathname();
+  const userRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
+  const [showIcons, setShowIcons] = useState(false);
+  const [show, setShow] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setShow(false);
+  }, [pathname]);
+
+  const toggleMenu = () => {
+    setShow(!show);
+  };
+  useEffect(() => {
+    const handleClickOutsode = (event: MouseEvent) => {
+      if (userRef.current && !userRef.current.contains(event.target as Node)) {
+        setShow(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutsode);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsode);
+    };
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await AuthService.logout();
+      if (res.data.code !== "200") return;
+
+      router.push("/");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await userService.getMe();
+        console.log(response.data);
+        const data: ApiResponse<User> = response.data;
+        setShowIcons(data.isSuccess); // true nếu login thành công
+      } catch (error) {
+        setShowIcons(false); // false nếu chưa login
+      }
+    };
+
+    checkAuth();
+  }, [pathname]);
   return (
     <div className="border-b-gray-300 border-b py-4">
       <div className="flex justify-between items-center content-center text-black w-[80vw] mx-auto my-2.5">
@@ -38,7 +94,7 @@ const NavBar = () => {
             />
             <IoMdSearch className="absolute text-xl top-2.5 right-3 hidden md:flex" />
           </div>
-          {pathName !== "/login" && (
+          {showIcons === true && (
             <>
               {/* Favorite products */}
               <Link href="/">
@@ -48,6 +104,30 @@ const NavBar = () => {
               <Link href="/cart">
                 <BsCart3 className="text-xl" />
               </Link>
+              <div className="relative" ref={userRef}>
+                <Avatar
+                  style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}
+                  className="cursor-pointer "
+                  onClick={toggleMenu}
+                >
+                  U
+                </Avatar>
+                {show && (
+                  <div className="absolute top-15  bg-gray-100 p-2 shadow-lg z-10">
+                    <ul className="list-none  m-0">
+                      <li className="py-2 px-4">
+                        <Link href="/account">Account</Link>
+                      </li>
+                      <li
+                        className="py-2 px-4 cursor-pointer"
+                        onClick={handleLogout}
+                      >
+                        Log out
+                      </li>
+                    </ul>
+                  </div>
+                )}
+              </div>
             </>
           )}
         </div>

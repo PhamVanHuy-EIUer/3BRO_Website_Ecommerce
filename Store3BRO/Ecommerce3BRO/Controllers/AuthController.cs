@@ -43,6 +43,7 @@ namespace Ecommerce3BRO.Controllers
             var result = await _userService.LoginAsync(login);
             if (result == null)
             {
+
                 return new ApiResponse<UserDTO?>(null, null, "404", "Email or Password is wrong", false, 0, 0, 0, 0, null, null, null);
             }
             var roleList = await _authService.GetRolesByUser(result.Email);
@@ -98,7 +99,8 @@ namespace Ecommerce3BRO.Controllers
                         GoogleId = googleId,
                         Provider = "Google",
                         CreatedDate = DateTime.UtcNow,
-                        IsActive = true
+                        IsActive = true,
+                        Password = BCrypt.Net.BCrypt.HashPassword(request.Password)  
                     };
 
                     await _context.User.AddAsync(user);

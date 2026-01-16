@@ -5,6 +5,7 @@ using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace Ecommerce3BRO.Controllers
 {
@@ -100,7 +101,7 @@ namespace Ecommerce3BRO.Controllers
                         Provider = "Google",
                         CreatedDate = DateTime.UtcNow,
                         IsActive = true,
-                        Password = BCrypt.Net.BCrypt.HashPassword(request.Password)  
+                        Password = BCrypt.Net.BCrypt.HashPassword(request.Password)
                     };
 
                     await _context.User.AddAsync(user);
@@ -114,18 +115,25 @@ namespace Ecommerce3BRO.Controllers
                         RoleId = role.Id,
                         CreatedDate = DateTime.UtcNow
                     });
+                    await _context.SaveChangesAsync();
+                    var newRoleList = await _authService.GetRolesByUser(user.Email);
+                    var newToken = _authService.GenerateAccessToken(user.Email, user.Id, newRoleList);
 
-                    await _context.SaveChangesAsync();
-                }
-                else
-                {
-                    // link account
-                    user.GoogleId = googleId;
-                    user.Provider = "Google";
-                    await _context.SaveChangesAsync();
+                    Response.Cookies.Append("access_token", newToken, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.Lax,
+                        Expires = DateTime.UtcNow.AddMinutes(15)
+                    });
+
+                    return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", false, 0, 0, 0, 0, newToken, null, null);
                 }
             }
-
+            // link account
+            user.GoogleId = googleId;
+            user.Provider = "Google";
+            await _context.SaveChangesAsync();
             var roleList = await _authService.GetRolesByUser(user.Email);
             var token = _authService.GenerateAccessToken(user.Email, user.Id, roleList);
 
@@ -136,10 +144,31 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
-
             return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", true, 0, 0, 0, 0, token, null, null);
         }
-
+        [HttpPost("addnewpass-gg")]
+        public async Task<ApiResponse<string>> AddNewPasswordForGoogleUser([FromBody] AddNewPasswordForGG newpassword)
+        {
+            if (!ModelState.IsValid)
+            {
+                return new ApiResponse<string>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
+            x => x.Key,
+            x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+        ));
+            }
+            var userClaim = User.FindFirst(ClaimTypes.Email);
+            if (userClaim == null)
+            {
+                return new ApiResponse<string>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var user = await _context.User.FirstOrDefaultAsync(u => u.Email == userClaim.Value);
+            if (user == null)
+            {
+                return new ApiResponse<string>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            await _googleAuthService.AddNewPasswordAsync(user.Email, newpassword);
+            return new ApiResponse<string>(null, null, "200", "Password added successfully", true, 0, 0, 0, 0, null, null, null);
+        }
     }
 }
 

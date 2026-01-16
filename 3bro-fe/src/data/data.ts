@@ -4,6 +4,7 @@ export const quickMenu = [
     { id: 3, name: "About", href: "/about" },
     { id: 4, name: "Contact", href: "/contact" },
     { id: 5, name: "Sign In", href: "/login" },
+    { id: 6, name: "Account", href: "/account" },
 ];
 
 export const support = [
@@ -32,12 +33,12 @@ export const banners = [
     { id: 4, src: "/Carousel/Carousel 1.png" },
 ];
 
-export const imageCategory = [
-    { id: 1, name: "Electrics", img: "/Categories/householdApp.avif", href: "/category/electrics" },
-    { id: 2, name: "Accessories", img: "/Categories/accesories.webp", href: "/category/accessories" },
-    { id: 3, name: "Fashions", img: "/Categories/clothing.webp", href: "/category/fashions" },
-    { id: 4, name: "Comestics", img: "/Categories/cosmetic.jfif", ref: "/category/comestics" },
-    { id: 5, name: "Phones", img: "/Categories/phone.jfif", href: "/category/phones" },
-    { id: 6, name: "Laptop", img: "/Categories/computer.jfif", href: "/category/laptops" },
-]
+// export const imageCategory = [
+//     { id: 1, name: "Electrics", img: "/Categories/householdApp.avif", href: "/category/electrics" },
+//     { id: 2, name: "Accessories", img: "/Categories/accesories.webp", href: "/category/accessories" },
+//     { id: 3, name: "Fashions", img: "/Categories/clothing.webp", href: "/category/fashions" },
+//     { id: 4, name: "Comestics", img: "/Categories/cosmetic.jfif", ref: "/category/comestics" },
+//     { id: 5, name: "Phones", img: "/Categories/phone.jfif", href: "/category/phones" },
+//     { id: 6, name: "Laptop", img: "/Categories/computer.jfif", href: "/category/laptops" },
+// ]
 

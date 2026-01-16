@@ -4,6 +4,7 @@ import "./globals.css";
 import Notification from "@/components/Notification";
 import NavBar from "@/components/NavBar";
 import Footer from "@/components/Footer";
+import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,10 +40,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistPoppins.variable} antialiased `}>
-        <Notification />
-        <NavBar />
-        {children}
-        <Footer />
+        <AuthProvider>
+          <Notification />
+          <NavBar />
+          {children}
+          <Footer />
+        </AuthProvider>
       </body>
     </html>
   );

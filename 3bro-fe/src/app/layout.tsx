@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto, Poppins } from "next/font/google";
 import "./globals.css";
-import Notification from "@/components/Notification";
-import NavBar from "@/components/NavBar";
-import Footer from "@/components/Footer";
-import { AuthProvider } from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,12 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistPoppins.variable} antialiased `}>
-        <AuthProvider>
-          <Notification />
-          <NavBar />
-          {children}
-          <Footer />
-        </AuthProvider>
+        {children}
       </body>
     </html>
   );

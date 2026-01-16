@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         port: "7041",
         pathname: "/images/**",
       },
+      {
+        protocol: "https",
+        hostname: "flagcdn.com",
+      },
     ],
   },
 

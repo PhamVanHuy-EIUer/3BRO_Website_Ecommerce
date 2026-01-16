@@ -6,5 +6,5 @@ export interface User {
     address?: string;
     isActive: boolean;
     createdDate?: string; // ISO string
-    roles?: string[];     // từ JWT hoặc API riêng
+    roleList?: string[];     // từ JWT hoặc API riêng
 }

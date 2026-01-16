@@ -8,16 +8,14 @@ import { usePathname, useRouter } from "next/navigation";
 import { Avatar } from "antd";
 import { AuthService } from "@/services/auth.service";
 import { useEffect, useRef, useState } from "react";
-import { userService } from "@/services/user.service";
-import { ApiResponse } from "@/models/ApiResponse";
-import { User } from "@/models/User";
+import { useAuth } from "@/context/AuthContext";
 
 const NavBar = () => {
   const userRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [showIcons, setShowIcons] = useState(false);
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
+  const { authorized, logout } = useAuth();
   const pathname = usePathname();
 
   const toggleMenu = () => {
@@ -39,11 +37,7 @@ const NavBar = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await AuthService.logout();
-      console.log(res);
-
-      if (res.data.code !== "200") return;
-      setShowIcons(false);
+      await logout();
       router.push("/login");
     } catch (error) {
       console.log(error);
@@ -57,20 +51,6 @@ const NavBar = () => {
     router.push(`/product/search?keyword=${encodeURIComponent(search.trim())}`);
   };
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await userService.getMe();
-        console.log(response.data);
-        const data: ApiResponse<User> = response.data;
-        setShowIcons(data.isSuccess); // true nếu login thành công
-      } catch (error) {
-        setShowIcons(false); // false nếu chưa login
-      }
-    };
-
-    checkAuth();
-  }, [router]);
   return (
     <div className="border-b-gray-300 border-b py-4">
       <div className="flex justify-between items-center content-center text-black w-[80vw] mx-auto my-2.5">
@@ -80,15 +60,19 @@ const NavBar = () => {
         </Link>
         {/* Menu */}
         <div className="text-sm md:text-xl ">
-          {quickMenu.map((item) => (
-            <Link
-              href={item.href}
-              key={item.id}
-              className="px-6 py-4 font-serif text-md"
-            >
-              {item.name}
-            </Link>
-          ))}
+          {quickMenu.map((item) => {
+            if (!authorized && item.name === "Account") return null;
+            if (authorized && item.name === "Sign In") return null;
+            return (
+              <Link
+                href={item.href}
+                key={item.id}
+                className="px-6 py-4 font-serif text-md"
+              >
+                {item.name}
+              </Link>
+            );
+          })}
         </div>
 
         <div className="flex justify-center items-center text-center gap-5">
@@ -102,7 +86,7 @@ const NavBar = () => {
             />
             <IoMdSearch className="absolute right-3 text-xl" />
           </form>
-          {showIcons === true && (
+          {authorized === true && (
             <>
               {/* Favorite products */}
               <Link href="/">

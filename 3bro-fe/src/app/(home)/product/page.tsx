@@ -7,7 +7,7 @@ import { Product } from "@/models/Product";
 import ProductCard from "@/components/products/ProductsCard";
 import RecommendProduct from "@/components/products/RecommendProduct";
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 12;
 
 const Products = () => {
   const [page, setPage] = useState(1);

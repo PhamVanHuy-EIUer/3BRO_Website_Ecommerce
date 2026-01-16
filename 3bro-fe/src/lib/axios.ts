@@ -17,7 +17,6 @@ axiosClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // token hết hạn → logout
-      window.location.href = "/login";
     }
     return Promise.reject(error);
   }

@@ -8,11 +8,12 @@ import { useRouter } from "next/navigation";
 import { LoginRequest } from "@/models/LoginRequest";
 import { AuthService } from "@/services/auth.service";
 import { notification } from "antd";
+import { useAuth } from "@/context/AuthContext";
 // import Cookies from "js-cookie";
 
 function LoginPage() {
   const router = useRouter();
-
+  const { login, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,24 +35,22 @@ function LoginPage() {
     try {
       setLoading(true);
       const loginRequest: LoginRequest = { email, password };
-      const res = await AuthService.login(loginRequest);
+      await login(loginRequest);
+      const isAdmin = user?.roleList?.includes("Admin") ?? false;
 
-      if (res.data.code !== "200") {
-        api.error({
-          title: "Error",
-          description: res.data.message,
-          duration: 2,
-        });
-        return;
+      if (isAdmin) {
+        router.replace("/admin");
+      } else {
+        router.replace("/");
       }
       api.success({
         title: "Success",
-        description: res.data.message,
+        description: "Login successfully",
         duration: 2,
       });
 
       // Redirect sau login'
-      router.push("/");
+      router.replace("/");
     } catch (err: any) {
       api.error({
         message: "Login error",

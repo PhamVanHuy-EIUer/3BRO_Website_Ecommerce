@@ -1,7 +1,7 @@
 "use client";
 
 import PageLoading from "@/components/Loading";
-import { banners, categories, imageCategory } from "@/data/data";
+import { banners, categories } from "@/data/data";
 import { Card, Carousel } from "antd";
 import { useRef } from "react";
 import Image from "next/image";

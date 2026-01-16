@@ -48,6 +48,7 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<UserDTO?>(null, null, "404", "Email or Password is wrong", false, 0, 0, 0, 0, null, null, null);
             }
             var roleList = await _authService.GetRolesByUser(result.Email);
+            var roles = string.Join(",", roleList);
             var token = _authService.GenerateAccessToken(result.Email, findUser.Id, roleList);
             Response.Cookies.Append("access_token", token, new CookieOptions
             {
@@ -55,6 +56,13 @@ namespace Ecommerce3BRO.Controllers
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
+            });
+            Response.Cookies.Append("role", roles, new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.Now.AddMinutes(15)
             });
             return new ApiResponse<UserDTO?>(null, null, "200", "Login successfully", true, 0, 0, 0, 0, token, null, null);
         }
@@ -70,6 +78,7 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
+
             return Ok(new ApiResponse<string?>(null, null, "200", "Logout successfully", true, 0, 0, 0, 0, null, null, null));
         }
         // api use for login with google

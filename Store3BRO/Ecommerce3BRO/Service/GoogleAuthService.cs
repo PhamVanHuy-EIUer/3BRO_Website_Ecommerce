@@ -27,16 +27,17 @@ namespace Ecommerce3BRO.Service
         }
         public async Task<ApiResponse<string>> AddNewPasswordAsync(string email,AddNewPasswordForGG newpassword)
         {
-            if (newpassword.NewPassword != newpassword.ConfirmNewPassword)
+            if (newpassword.ConfirmNewPassword != newpassword.NewPassword)
             {
-                return new ApiResponse<string>(null, null, "400", "Cofirm password is incorrect", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<string>(null, null, "400", "Password and Confirm password do not match", false, 0, 0, 0, 0, null, null, null);
             }
-           var findEmail = await _context.User.FirstOrDefaultAsync(p=>p.Email==email);
+            var findEmail = await _context.User.FirstOrDefaultAsync(p=>p.Email==email);
             if (findEmail == null)
             {
                 return new ApiResponse<string>(null, null, "404", "Email not found", false, 0, 0, 0, 0, null, null, null);
             }
-            findEmail.Password = newpassword.NewPassword;
+            
+            findEmail.Password = BCrypt.Net.BCrypt.HashPassword(newpassword.NewPassword);
             await _context.SaveChangesAsync();
             return new ApiResponse<string>(null, null, "200", "Add new password successfully", true, 0, 0, 0, 0, null, null, null);
         }

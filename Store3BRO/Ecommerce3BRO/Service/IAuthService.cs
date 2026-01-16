@@ -4,5 +4,7 @@
     {
         string? GenerateAccessToken(string email, Guid id, List<string> roles);
         Task<List<string>?> GetRolesByUser(string email);
+        string GenerateRefreshToken();
+        Task <ApiResponse<string>> RefreshAccessToken(string refreshToken);
     }
 }

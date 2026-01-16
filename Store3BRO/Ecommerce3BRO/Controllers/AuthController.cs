@@ -3,9 +3,11 @@ using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Ecommerce3BRO.Controllers
 {
@@ -64,23 +66,54 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
             });
+            var refreshToken = _authService.GenerateRefreshToken();
+            var options = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+            Response.Cookies.Append("refreshToken", refreshToken, options);
+            await _context.RefreshToken.AddAsync(new RefreshToken
+            {
+                UserId = findUser.Id,
+                Token = refreshToken,
+                ExpiredAt = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow
+            });
+            await _context.SaveChangesAsync();
             return new ApiResponse<UserDTO?>(null, null, "200", "Login successfully", true, 0, 0, 0, 0, token, null, null);
         }
 
         // api user for logout
         [HttpPost("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            Response.Cookies.Delete("access_token", new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddMinutes(15)
-            });
+            var refreshToken = Request.Cookies["refreshToken"];
 
-            return Ok(new ApiResponse<string?>(null, null, "200", "Logout successfully", true, 0, 0, 0, 0, null, null, null));
+            if (!string.IsNullOrEmpty(refreshToken))
+            {
+                var token = await _context.RefreshToken
+                    .FirstOrDefaultAsync(r => r.Token == refreshToken);
+
+                if (token != null && !token.IsRevoked)
+                {
+                    token.IsRevoked = true;
+                    token.RevokedAt = DateTime.UtcNow;
+                    await _context.SaveChangesAsync();
+                }
+            }
+
+            Response.Cookies.Delete("access_token");
+            Response.Cookies.Delete("refreshToken");
+
+            return Ok(new ApiResponse<string?>(
+                null, null, "200", "Logout successfully",
+                true, 0, 0, 0, 0, null, null, null));
         }
+
         // api use for login with google
         [HttpPost("login-google")]
         public async Task<ApiResponse<UserDTO?>> LoginWithGoogle(GoogleLoginRequest request)
@@ -109,8 +142,7 @@ namespace Ecommerce3BRO.Controllers
                         GoogleId = googleId,
                         Provider = "Google",
                         CreatedDate = DateTime.UtcNow,
-                        IsActive = true,
-                        Password = BCrypt.Net.BCrypt.HashPassword(request.Password)
+                        IsActive = true
                     };
 
                     await _context.User.AddAsync(user);
@@ -175,8 +207,15 @@ namespace Ecommerce3BRO.Controllers
             {
                 return new ApiResponse<string>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
             }
-            await _googleAuthService.AddNewPasswordAsync(user.Email, newpassword);
-            return new ApiResponse<string>(null, null, "200", "Password added successfully", true, 0, 0, 0, 0, null, null, null);
+            var result = await _googleAuthService.AddNewPasswordAsync(user.Email, newpassword);
+            return result;
+        }
+        [HttpPost("refresh")]
+        public async Task<ApiResponse<string>> RefreshAccessToken()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+            var result = await _authService.RefreshAccessToken(refreshToken);
+            return result;
         }
     }
 }

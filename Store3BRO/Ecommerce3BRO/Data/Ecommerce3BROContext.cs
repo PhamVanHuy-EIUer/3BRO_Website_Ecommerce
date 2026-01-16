@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿
 using Ecommerce3BRO.Model;
 using Microsoft.EntityFrameworkCore;
 
@@ -51,5 +50,6 @@ public partial class Ecommerce3BROContext : DbContext
     public DbSet<UserRole> UserRole { get; set; }
     public DbSet<Refund> Refund { get; set; }
     public DbSet<ProductImage> ProductImage { get; set; }
+    public DbSet <RefreshToken> RefreshToken { get; set; }
 
     }

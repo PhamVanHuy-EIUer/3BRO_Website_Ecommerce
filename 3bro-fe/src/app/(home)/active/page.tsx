@@ -34,6 +34,7 @@ function ActiveAccountPage() {
   const handleActivateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
     if (userId === null) return;
+    console.log(userId);
 
     if (!activationCode) {
       api.warning({
@@ -45,9 +46,10 @@ function ActiveAccountPage() {
 
     try {
       setLoading(true);
+      console.log(userId + activationCode);
+      const res = await userService.activeUser(userId, activationCode);
 
-      const res = await userService.activeUser(userId, activationCode.trim());
-
+      console.log(res.data);
       if (!res.data?.isSuccess) {
         notification.error({
           message: res.data?.message || "Activation failed",

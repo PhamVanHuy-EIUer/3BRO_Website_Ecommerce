@@ -5,7 +5,38 @@ import { ApiResponse } from "@/models/ApiResponse";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
 
-// get all products
+// get all product
+export const getAllProducts = async (): Promise<ApiResponse<Product>> => {
+    try {
+        const response = await fetch(`https://localhost:7041/api/Products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error(`Fetch failed: ${response.status}`);
+        }
+
+        const data: ApiResponse<Product> = await response.json();
+
+        return data;
+
+    } catch (err) {
+        console.error("Error get products:", err);
+
+        return {
+            code: "500",
+            message: "Error fetching products",
+            isSuccess: false,
+            list: [],
+        } as ApiResponse<Product>;
+    }
+};
+
+// get all products by page
 export const getProduct = async (currentPage: number, pageSize: number): Promise<ApiResponse<Product>> => {
     try {
         const response = await fetch(`https://localhost:7041/api/Products/by-page?currentPage=${currentPage}&pageSize=${pageSize}`, {
@@ -140,3 +171,4 @@ export const getImageProduct = async (id: string): Promise<ProductImage[] | []> 
         return [];
     }
 }
+

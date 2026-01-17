@@ -57,3 +57,31 @@ export async function getMe(): Promise<ApiResponse<User>> {
         } as ApiResponse<User>;
     }
 }
+
+export async function getAllUsers(): Promise<ApiResponse<User>> {
+    try {
+        const response = await fetch("https://localhost:7041/api/Users/get-alluser", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            credentials: "include",
+        });
+
+        if (!response.ok) {
+            throw new Error(`Fetch failed: ${response.status}`);
+        }
+
+        const data: ApiResponse<User> = await response.json();
+        return data;
+    } catch (e) {
+        console.error(e);
+        return {
+            code: "500",
+            message: "Error fetching users",
+            isSuccess: false,
+            list: [],
+        } as ApiResponse<User>;
+    }
+}
+

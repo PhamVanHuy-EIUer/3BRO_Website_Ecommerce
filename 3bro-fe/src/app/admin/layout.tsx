@@ -7,13 +7,19 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className=" overflow-hidden flex ">
-      <div className="flex-1 bg-[#f5f5f5] p-5">
+    <div className="h-screen overflow-hidden flex">
+      {/* Sidebar */}
+      <aside className="w-64 flex-shrink-0">
         <SideBar />
-      </div>
-      <div className="flex-4 p-5">
+      </aside>
+
+      {/* Main area */}
+      <div className=" h-screen flex flex-col flex-1 overflow-hidden">
         <NavBar />
-        {children}
+        {/* Scroll container */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="p-5">{children}</div>
+        </div>
       </div>
     </div>
   );

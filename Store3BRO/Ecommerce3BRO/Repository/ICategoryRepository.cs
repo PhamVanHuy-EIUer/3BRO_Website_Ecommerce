@@ -10,5 +10,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetCategoryDTO>> AddNewCategory(CategoryDTO category,IFormFile image);
         Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, CategoryDTO category,IFormFile? newImage);
         Task<ApiResponse<GetCategoryDTO>> DeleteCategory(Guid id);
+        Task<ApiResponse<NumberProductsInCategoryDTO>> GetNumberProductsInCategoryAsync();
     }
 }

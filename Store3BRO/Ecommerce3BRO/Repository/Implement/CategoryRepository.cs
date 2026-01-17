@@ -2,6 +2,7 @@
 using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce3BRO.Repository.Implement
 {
@@ -107,6 +108,17 @@ namespace Ecommerce3BRO.Repository.Implement
                 ImageUrl = category.ImageUrl
             }).ToList();
             return new ApiResponse<GetCategoryDTO>(categories, null, "200", "Get all categories successfully", true, 0, 0, 0, 0, null, null, null);
+        }
+
+        public async Task<ApiResponse<NumberProductsInCategoryDTO>> GetNumberProductsInCategoryAsync()
+        {
+            var categories = await _context.Category.Where(c => c.IsActive).Select(category => new NumberProductsInCategoryDTO()
+            {
+                CategoryId = category.Id,
+                CategoryName= category.CategoryName,
+                TotalProducts= category.Products.Count(),
+            }).ToListAsync();
+            return new ApiResponse<NumberProductsInCategoryDTO>(categories, null, "200", "Get all products in category successfully", true, 0, 0, 0 ,0 , null, null, null);
         }
 
         public async Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, CategoryDTO category,IFormFile? newImage)

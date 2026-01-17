@@ -9,6 +9,7 @@ import { getAllUsers } from "../api/user/UserApi";
 import { Product } from "@/models/Product";
 import { getAllProducts } from "../api/product/ProductApi";
 import SalesOverviewChart from "@/components/admin/dashboard/SalesOverviewChart";
+import CategoryChart from "@/components/admin/dashboard/CategoryChart";
 
 const Dashboard = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -56,6 +57,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <TopProductChart />
           <SalesOverviewChart />
+          <CategoryChart />
         </div>
       </div>
     </div>

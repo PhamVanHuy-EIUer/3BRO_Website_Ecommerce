@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import { motion } from "framer-motion";
 
 const data = [
   { name: "iPhone 15", revenue: 120000000 },
@@ -26,7 +27,11 @@ const formatVND = (value: number) =>
 
 const TopProductChart = () => {
   return (
-    <div className="h-[450px] bg-[#f5f5f5] p-5 rounded-xl flex-1">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="h-[450px] bg-[#f5f5f5] p-5 rounded-xl flex-1"
+    >
       <h2 className="text-xl font-light mb-5">Top Selling Porducts</h2>
 
       <ResponsiveContainer width="100%" height="100%">
@@ -45,7 +50,7 @@ const TopProductChart = () => {
           />
         </BarChart>
       </ResponsiveContainer>
-    </div>
+    </motion.div>
   );
 };
 

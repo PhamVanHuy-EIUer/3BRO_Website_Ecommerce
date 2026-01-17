@@ -18,10 +18,15 @@ const mockSalesData = [
   { name: "May", revenue: 22000 },
   { name: "Jun", revenue: 26000 },
 ];
+import { motion } from "framer-motion";
 
 const SalesOverviewChart = () => {
   return (
-    <div className="bg-[#f5f5f5] shadow-lg rounded-xl p-4 border border-[#efefef]">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-[#f5f5f5] shadow-lg rounded-xl p-4 border border-[#efefef]"
+    >
       <h2 className="text-lg font-medium mb-4">Sales Overview</h2>
 
       <div className="h-72">
@@ -34,14 +39,15 @@ const SalesOverviewChart = () => {
             <Line
               type="monotone"
               dataKey="revenue"
-              stroke="#6366f1"
+              stroke="#9c27b0"
               strokeWidth={3}
-              dot={{ r: 4 }}
+              dot={{ r: 4, fill: "#ffffff", strokeWidth: 2 }}
+              activeDot={{ r: 6, strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

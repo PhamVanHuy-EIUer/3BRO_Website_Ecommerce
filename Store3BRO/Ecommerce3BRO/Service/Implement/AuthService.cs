@@ -112,13 +112,22 @@ namespace Ecommerce3BRO.Service.Implement
             var roles = await GetRolesByUser(user.Email);
             var newAccessToken = GenerateAccessToken(user.Email, user.Id, roles);
             _httpContextAccessor.HttpContext?
-       .Response.Cookies.Append("access_token", newAccessToken, new CookieOptions
-       {
-           HttpOnly = true,
-           Secure = true,
-           SameSite = SameSiteMode.None,
-           Expires = DateTime.UtcNow.AddMinutes(15)
-       });
+               .Response.Cookies.Append("access_token", newAccessToken, new CookieOptions
+               {
+                   HttpOnly = true,
+                   Secure = true,
+                   SameSite = SameSiteMode.None,
+                   Expires = DateTime.UtcNow.AddMinutes(15)
+               });
+            var roleString = string.Join(",", roles);
+            _httpContextAccessor.HttpContext?
+                .Response.Cookies.Append("role", roleString, new CookieOptions
+                {
+                    HttpOnly = false,
+                    Secure = true,
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddMinutes(15)
+                });
             return new ApiResponse<string>(null, newAccessToken, "200", "Access token refreshed successfully", true, 0, 0, 0, 0, null, null, null);
         }
     }

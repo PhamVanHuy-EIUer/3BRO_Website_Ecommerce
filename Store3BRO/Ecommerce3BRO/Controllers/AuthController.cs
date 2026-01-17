@@ -83,7 +83,7 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
-            Response.Cookies.Append("refreshToken", refreshToken, options);
+            Response.Cookies.Append("refresh_token", refreshToken, options);
             await _context.RefreshToken.AddAsync(new RefreshToken
             {
                 UserId = findUser.Id,
@@ -100,7 +100,7 @@ namespace Ecommerce3BRO.Controllers
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            var refreshToken = Request.Cookies["refresh_token"];
 
             if (!string.IsNullOrEmpty(refreshToken))
             {
@@ -116,7 +116,7 @@ namespace Ecommerce3BRO.Controllers
             }
 
             Response.Cookies.Delete("access_token");
-            Response.Cookies.Delete("refreshToken");
+            Response.Cookies.Delete("refresh_token");
 
             return Ok(new ApiResponse<string?>(
                 null, null, "200", "Logout successfully",
@@ -219,10 +219,11 @@ namespace Ecommerce3BRO.Controllers
             var result = await _googleAuthService.AddNewPasswordAsync(user.Email, newpassword);
             return result;
         }
+
         [HttpPost("refresh")]
         public async Task<IActionResult> RefreshAccessToken()
         {
-            var refreshToken = Request.Cookies["refreshToken"];
+            var refreshToken = Request.Cookies["refresh_token"];
             if (string.IsNullOrEmpty(refreshToken))
             {
                 return Unauthorized(new ApiResponse<string>(
@@ -231,7 +232,7 @@ namespace Ecommerce3BRO.Controllers
                 ));
             }
             var result = await _authService.RefreshAccessToken(refreshToken);
-            return Ok(result);
+            return StatusCode(int.Parse(result.Code), result);
         }
     }
 }

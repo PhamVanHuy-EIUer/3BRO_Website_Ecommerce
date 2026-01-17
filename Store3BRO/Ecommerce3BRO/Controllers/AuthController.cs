@@ -66,6 +66,15 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
             });
+            var oldTokens = await _context.RefreshToken
+    .Where(x => x.UserId == findUser.Id && !x.IsRevoked)
+    .ToListAsync();
+
+            foreach (var t in oldTokens)
+            {
+                t.IsRevoked = true;
+                t.RevokedAt = DateTime.UtcNow;
+            }
             var refreshToken = _authService.GenerateRefreshToken();
             var options = new CookieOptions
             {
@@ -211,11 +220,18 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpPost("refresh")]
-        public async Task<ApiResponse<string>> RefreshAccessToken()
+        public async Task<IActionResult> RefreshAccessToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshToken))
+            {
+                return Unauthorized(new ApiResponse<string>(
+                    null, null, "401", "Refresh token not found", false,
+                    0, 0, 0, 0, null, null, null
+                ));
+            }
             var result = await _authService.RefreshAccessToken(refreshToken);
-            return result;
+            return Ok(result);
         }
     }
 }

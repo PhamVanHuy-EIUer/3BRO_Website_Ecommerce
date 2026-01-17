@@ -1,4 +1,5 @@
-import Header from "@/components/admin/Header";
+import NavBar from "@/components/admin/NavBar";
+import SideBar from "@/components/admin/SideBar";
 
 export default function AdminLayout({
   children,
@@ -6,12 +7,13 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex bg-[#f5f7fa] h-screen overflow-hidden">
-      <div className="flex flex-col flex-1 overflow-auto">
-        <div className="max-w-7xl mx-auto w-full">
-          <Header />
-          <main>{children}</main>
-        </div>
+    <div className=" overflow-hidden flex ">
+      <div className="flex-1 bg-[#f5f5f5] p-5">
+        <SideBar />
+      </div>
+      <div className="flex-4 p-5">
+        <NavBar />
+        {children}
       </div>
     </div>
   );

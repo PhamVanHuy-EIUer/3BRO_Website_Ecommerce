@@ -1,4 +1,6 @@
 import ProductsTable from "@/components/admin/products/ProductsTable";
+import UploadImage from "@/components/admin/products/UploadImge";
+import ItemCards from "@/components/ItemsCard";
 
 const ProductsPage = () => {
   return (
@@ -11,6 +13,7 @@ const ProductsPage = () => {
             transition: "opacity 1s ease, transform 1s ease",
           }}
         >
+          <ItemCards />
           <ProductsTable />
         </div>
       </main>

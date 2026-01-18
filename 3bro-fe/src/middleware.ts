@@ -43,5 +43,5 @@ export function middleware(req: NextRequest) {
 
 // Matcher cho các route cần middleware
 export const config = {
-    matcher: ["/admin/:path*", "/home/:path*"], // bảo vệ /admin và /home
+    matcher: ["/admin", "/admin/:path*", "/user", "/user/:path*"],
 };

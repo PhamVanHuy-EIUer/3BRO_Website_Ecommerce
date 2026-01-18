@@ -68,6 +68,12 @@ axiosClient.interceptors.response.use(
     try {
       await axiosClient.post("/Auth/refresh");
       processQueue();
+
+      // ✅ THÊM: Emit event khi token được refresh thành công
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new CustomEvent("token-refreshed"));
+      }
+
       return axiosClient(originalRequest);
     } catch (refreshError) {
       processQueue(refreshError);

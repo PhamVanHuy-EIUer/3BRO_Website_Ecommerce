@@ -1,5 +1,11 @@
 "use client";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { userService } from "@/services/user.service";
 import { AuthService } from "@/services/auth.service";
 import { LoginRequest } from "@/models/LoginRequest";
@@ -23,31 +29,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
 
   const isAdmin = user?.roleList?.includes("Admin") ?? false;
-  const refreshAuth = async () => {
+
+  const refreshAuth = useCallback(async () => {
     try {
       const res = await userService.getMe();
       if (res.data.code === "200" && res.data.object) {
         setAuthorized(true);
         setUser(res.data.object);
-        console.log("come here");
+        console.log("Auth refreshed, user:", res.data.object);
       } else {
         setAuthorized(false);
         setUser(null);
       }
-    } catch {
+    } catch (error) {
+      console.log("Refresh auth failed:", error);
       setAuthorized(false);
       setUser(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
   const login = async (data: LoginRequest) => {
     const res = await AuthService.login(data);
     if (res.data.code !== "200") {
       throw new Error(res.data.message);
     }
 
-    await refreshAuth(); // ⭐ LẤY USER + ROLE
+    await refreshAuth();
   };
 
   const logout = async () => {
@@ -56,9 +65,40 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
+  // ✅ Fetch user khi mount
   useEffect(() => {
     refreshAuth();
-  }, []);
+  }, [refreshAuth]);
+
+  // ✅ THÊM: Định kỳ refresh auth mỗi 5 phút để đảm bảo sync với token
+  useEffect(() => {
+    if (!authorized) return;
+
+    const interval = setInterval(
+      () => {
+        console.log("Periodic auth refresh...");
+        refreshAuth();
+      },
+      15 * 60 * 1000,
+    ); // 5 phút
+
+    return () => clearInterval(interval);
+  }, [authorized, refreshAuth]);
+
+  // ✅ THÊM: Listen cho token refresh event từ axios interceptor
+  useEffect(() => {
+    const handleTokenRefresh = () => {
+      console.log("Token refreshed, updating user...");
+      refreshAuth();
+    };
+
+    // Custom event từ axios interceptor
+    window.addEventListener("token-refreshed", handleTokenRefresh);
+
+    return () => {
+      window.removeEventListener("token-refreshed", handleTokenRefresh);
+    };
+  }, [refreshAuth]);
 
   return (
     <AuthContext.Provider

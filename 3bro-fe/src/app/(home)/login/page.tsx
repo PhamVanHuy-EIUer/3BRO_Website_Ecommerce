@@ -30,6 +30,7 @@ function LoginPage() {
         description: "Please enter email and password",
         duration: 2,
       });
+      return;
     }
 
     try {
@@ -53,7 +54,7 @@ function LoginPage() {
       router.replace("/");
     } catch (err: any) {
       api.error({
-        message: "Login error",
+        title: "Login error",
         description:
           err.response?.data?.message || "Email or password is incorrect",
       });

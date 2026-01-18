@@ -124,7 +124,32 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(null, null, "200", "Delete product successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> GetAllProductAsync()
+        public async Task<ApiResponse<GetProductByAdminDTO>> GetAllProductByPageAsync(int currentPage, int pageSize)
+        {
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            var products = await _context.Product
+                .Include(p => p.Category)
+                .OrderByDescending(p => p.CreatedDate)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(p => new GetProductByAdminDTO
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryName = p.Category.CategoryName,
+                    ImageUrl = p.ImageUrl,
+                    Status = p.Status,
+                })
+                .ToListAsync();
+            return new ApiResponse<GetProductByAdminDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
+        }
+
+        public async Task<ApiResponse<GetProductDTO>> GetAvailableProductsAsync()
         {
             var products = await _context.Product.Where(p => p.Status == 1).Include(p => p.Category).
                 Select(p => new GetProductDTO

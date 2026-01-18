@@ -6,9 +6,9 @@ import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
 
 // get all product
-export const getAllProducts = async (): Promise<ApiResponse<Product>> => {
+export const getAvailableProducts = async (): Promise<ApiResponse<Product>> => {
     try {
-        const response = await fetch(`https://localhost:7041/api/Products`, {
+        const response = await fetch(`https://localhost:7041/api/Products/get-available-products`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -2,6 +2,7 @@
 using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -21,10 +22,10 @@ namespace Ecommerce3BRO.Controllers
         }
 
         //Api get all products
-        [HttpGet]
-        public async Task<ApiResponse<GetProductDTO>> GetAllProducts()
+        [HttpGet("get-available-products")]
+        public async Task<ApiResponse<GetProductDTO>> GetAvailableProducts()
         {
-            return await _productService.GetAllProductAsync();
+            return await _productService.GetAvailableProductsAsync();
         }
         //Api add new product
         [HttpPost]
@@ -82,7 +83,12 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.SearchProductsAsync(keyword);
         }
-
+        [Authorize(Roles ="Admin")]
+        [HttpGet("all-products-by-page")]
+        public async Task<ApiResponse<GetProductByAdminDTO>> GetAllProductsAdminByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _productService.GetAllProductByPageAsync(currentPage, pageSize);
+        }
         //api get products by page
         [HttpGet("by-page")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)

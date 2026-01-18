@@ -1,5 +1,5 @@
 "use client";
-import Card from "@/components/admin/dashboard/Card";
+import Card from "@/components/admin/Card";
 import { DollarSign, ShoppingBag, ShoppingCart, Users } from "lucide-react";
 import { motion } from "framer-motion";
 import TopProductChart from "@/components/admin/dashboard/TopProductChart";
@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { User } from "@/models/User";
 import { getAllUsers } from "../api/user/UserApi";
 import { Product } from "@/models/Product";
-import { getAllProducts } from "../api/product/ProductApi";
+import { getAvailableProducts } from "../api/product/ProductApi";
 import SalesOverviewChart from "@/components/admin/dashboard/SalesOverviewChart";
 import CategoryChart from "@/components/admin/dashboard/CategoryChart";
 
@@ -24,7 +24,7 @@ const Dashboard = () => {
   };
 
   const fetchProducts = async () => {
-    const response = await getAllProducts();
+    const response = await getAvailableProducts();
     if (response.isSuccess) {
       const data: Product[] = response.list;
       setProducts(data);

@@ -9,7 +9,7 @@ export default function AdminLayout({
   return (
     <div className="h-screen overflow-hidden flex">
       {/* Sidebar */}
-      <aside className="w-64 flex-shrink-0">
+      <aside className="w-20 md:w-64 flex-shrink-0 z-20">
         <SideBar />
       </aside>
 

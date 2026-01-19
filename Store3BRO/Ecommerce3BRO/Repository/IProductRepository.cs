@@ -5,7 +5,8 @@ namespace Ecommerce3BRO.Repository
 {
     public interface IProductRepository
     {
-        Task<ApiResponse<GetProductDTO>> GetAllProductAsync();
+        
+        Task<ApiResponse<GetProductDTO>> GetAvailableProductsAsync();
         Task<ApiResponse<GetProductDTO>> GetProductByIdAsync(Guid id);
         Task<ApiResponse<GetProductDTO>> AddNewProductAsync(ProductDTO product,IFormFile image);
         Task<ApiResponse<GetProductDTO>> UpdateProductAsync(Guid id, ProductDTO product,IFormFile newImage);
@@ -13,6 +14,8 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId);
         Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword);
         Task<ApiResponse<GetProductDTO>> GetProductByPages(int currentPage, int pageSize);
+
+        Task<ApiResponse<GetProductByAdminDTO>> GetAllProductByPageAsync(int currentPage, int pageSize);
         Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages(int currentPage, int pageSize);
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId,int currentPage, int pageSize);
         Task <ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountById(Guid productId,int quantity,Guid userId,string discountCode);

@@ -23,6 +23,12 @@ namespace Ecommerce3BRO.Controllers
             return _categoryService.GetAllCategoryAsync();
         }
 
+        [HttpGet("number-products")]
+        public async Task<ApiResponse<NumberProductsInCategoryDTO>> GetProductsInCategory()
+        {
+            return await _categoryService.GetNumberProductsInCategoryAsync();
+        }
+
         //Api add new category
         [HttpPost]
         public async Task<ApiResponse<GetCategoryDTO>> AddNewCategory([FromForm] CategoryDTO category,IFormFile image)

@@ -1,5 +1,5 @@
 export type Category = {
-    id: number;
+    id: string;
     categoryName: string;
     description?: string;
     isActive: boolean;

@@ -1,7 +1,24 @@
-import React from "react";
+import ProductsTable from "@/components/admin/products/ProductsTable";
+import UploadImage from "@/components/admin/products/UploadImge";
+import ItemCards from "@/components/ItemsCard";
 
 const ProductsPage = () => {
-  return <div>ProductsPage</div>;
+  return (
+    <div className="flex-1 relative z-10">
+      <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
+        <div
+          style={{
+            opacity: 1,
+            transform: "translateY(0)",
+            transition: "opacity 1s ease, transform 1s ease",
+          }}
+        >
+          <ItemCards />
+          <ProductsTable />
+        </div>
+      </main>
+    </div>
+  );
 };
 
 export default ProductsPage;

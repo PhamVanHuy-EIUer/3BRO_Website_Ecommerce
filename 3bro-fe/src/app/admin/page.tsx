@@ -1,26 +1,23 @@
-import Card from "@/components/admin/card/Card";
-import Chart from "@/components/admin/chart/Chart";
-import RightBar from "@/components/admin/rightbar/RightBar";
-import Transactions from "@/components/admin/transactions/Transactions";
-import React from "react";
+"use client";
 
-const page = () => {
+import TopProductChart from "@/components/admin/dashboard/TopProductChart";
+import SalesOverviewChart from "@/components/admin/dashboard/SalesOverviewChart";
+import CategoryChart from "@/components/admin/dashboard/CategoryChart";
+import ItemCards from "@/components/ItemsCard";
+
+const Dashboard = () => {
   return (
-    <div className="flex gap-5 mt-5 ">
-      <div className="flex-3 flex flex-col gap-5">
-        <div className="flex gap-5 justify-between">
-          <Card />
-          <Card />
-          <Card />
+    <div className="flex-1 relative z-10">
+      <div className="max-w-7xl mx-auto py-4 px-4 lg:px-8">
+        <ItemCards />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <TopProductChart />
+          <SalesOverviewChart />
+          <CategoryChart />
         </div>
-        <Transactions />
-        <Chart />
-      </div>
-      <div>
-        <RightBar />
       </div>
     </div>
   );
 };
 
-export default page;
+export default Dashboard;

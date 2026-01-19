@@ -13,4 +13,12 @@ export const productService = {
     getImageProduct: (id: string) => axiosClient.get(`/ProductImages/all-imageProduct?${id}`).then(res => res.data),
     topProduct: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/order-product?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
     searchProduct: (keyword: string) => axiosClient.get(`/Products/search-product?keyword=${keyword}`).then(res => res.data),
+    getAllProductsAdmin: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/all-products-by-page?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
+    deleteProduct: (id: string) => axiosClient.delete(`/Products/${id}`).then(res => res.data),
+    updateProduct: (id: string, formData: FormData) =>
+        axiosClient.put(`/Products/${id}`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }).then(res => res.data),
 };

@@ -1,118 +1,109 @@
 "use client";
-import { Avatar } from "antd";
-import Link from "next/link";
-import {
-  MdDashboard,
-  MdSupervisedUserCircle,
-  MdShoppingBag,
-  MdAttachMoney,
-  MdWork,
-  MdAnalytics,
-  MdPeople,
-  MdOutlineSettings,
-  MdHelpCenter,
-  MdLogout,
-} from "react-icons/md";
-import { UserOutlined } from "@ant-design/icons";
+
 import { usePathname } from "next/navigation";
+import {
+  Activity,
+  Bell,
+  DollarSign,
+  House,
+  Info,
+  Mail,
+  Menu,
+  Settings,
+  ShoppingBag,
+  ShoppingCart,
+  Users,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { Avatar } from "antd";
+import { UserOutlined } from "@ant-design/icons";
+
+const ICONS = {
+  House,
+  DollarSign,
+  Settings,
+  ShoppingBag,
+  ShoppingCart,
+  Mail,
+  Users,
+  Bell,
+  Info,
+};
 const menuItems = [
-  {
-    id: 1,
-    title: "Pages",
-    list: [
-      {
-        title: "Dashboard",
-        path: "/admin",
-        icon: <MdDashboard />,
-      },
-      {
-        title: "Users",
-        path: "/admin/users",
-        icon: <MdSupervisedUserCircle />,
-      },
-      {
-        title: "Products",
-        path: "/admin/products",
-        icon: <MdShoppingBag />,
-      },
-      {
-        title: "Transactions",
-        path: "/admin/transactions",
-        icon: <MdAttachMoney />,
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: "Analytics",
-    list: [
-      {
-        title: "Revenue",
-        path: "/admin/revenue",
-        icon: <MdWork />,
-      },
-      {
-        title: "Reports",
-        path: "/admin/reports",
-        icon: <MdAnalytics />,
-      },
-      {
-        title: "Teams",
-        path: "/admin/teams",
-        icon: <MdPeople />,
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: "User",
-    list: [
-      {
-        title: "Settings",
-        path: "/admin/settings",
-        icon: <MdOutlineSettings />,
-      },
-      {
-        title: "Help",
-        path: "/admin/help",
-        icon: <MdHelpCenter />,
-      },
-    ],
-  },
+  { id: 1, name: "Dashboard", icon: House, href: "/admin" },
+  { id: 2, name: "Products", icon: ShoppingBag, href: "/admin/products" },
+  { id: 3, name: "Users", icon: ShoppingCart, href: "/admin/users" },
+  { id: 4, name: "Sales", icon: Users, href: "/admin/sales" },
+  { id: 5, name: "Orders", icon: Settings, href: "/admin/orders" },
+  { id: 6, name: "Settings", icon: Info, href: "/admin/settings" },
+  { id: 7, name: "Messages", icon: Mail, href: "admin/messages" },
+  { id: 8, name: "Notifications", icon: Bell, href: "/admin/notifications" },
 ];
 const SideBar = () => {
+  const [isOpen, setIsOpen] = useState(true);
   const pathName = usePathname();
 
+  const isActive = (href: string) => {
+    if (href === "/admin") {
+      return pathName === "/admin";
+    }
+    return pathName === href || pathName.startsWith(href + "/");
+  };
+
   return (
-    <div className="sticky top-10">
-      <div className="flex items-center gap-5">
-        <Avatar size="large" icon={<UserOutlined />} />
-        <div className="flex flex-col">
-          <span className="font-medium">Test</span>
-          <span className="text-xs text-gray-700">Administrator</span>
-        </div>
-      </div>
-      <ul>
-        {menuItems.map((cat) => (
-          <li key={cat.id}>
-            <span className="font-bold text-sm my-3">{cat.title}</span>
-            {cat.list.map((item) => (
-              <Link
-                key={item.title}
-                href={item.path}
-                className={`px-5 py-3 flex items-center gap-2 my-1 rounded-xl hover:bg-gray-300 ${
-                  pathName == item.path && "bg-gray-300"
-                }`}
-              >
-                {item.icon} {item.title}
+    <div
+      className={`h-full bg-[#f5f5f5] relative z-10 transition-all duration-300 ease-in-out flexshrink-0 ${
+        isOpen ? "w-64" : "w-24"
+      }`}
+    >
+      <div className="  backdrop-blur-md p-4 flex flex-col border-r border-[#efefef]">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="p-2 rounded-full hover:bg-[#aeaeae] transition-colors max-w-fit cursor-pointer"
+        >
+          <Menu size={24} />
+        </button>
+
+        <nav className="mt-8 grow">
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(item.href);
+
+            return (
+              <Link href={item.href} key={item.id}>
+                <div
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors
+                  ${
+                    active
+                      ? "bg-[#aeaeae] text-black"
+                      : "text-gray-700 hover:bg-gray-200"
+                  }
+                `}
+                >
+                  <Icon size={20} />
+                  {isOpen && (
+                    <span className="ml-4 whitespace-nowrap">{item.name}</span>
+                  )}
+                </div>
               </Link>
-            ))}
-          </li>
-        ))}
-      </ul>
-      <button className="w-full px-5 py-3 flex items-center gap-2 my-1 rounded-xl hover:bg-gray-300">
+            );
+          })}
+        </nav>
+      </div>
+
+      <div className="flex items-center gap-5 px-5">
+        <Avatar size="large" icon={<UserOutlined />} />
+        {isOpen && (
+          <div className="flex flex-col">
+            <span className="font-medium">Test</span>
+            <span className="text-xs text-gray-700">Administrator</span>
+          </div>
+        )}
+      </div>
+      {/* <button className="w-full px-5 py-3 flex items-center gap-2 my-1 rounded-xl hover:bg-gray-300">
         <MdLogout /> Logout
-      </button>
+      </button> */}
     </div>
   );
 };

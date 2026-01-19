@@ -1,6 +1,7 @@
 if (process.env.NODE_ENV === "development") {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 }
+
 import { ApiResponse } from "@/models/ApiResponse";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";

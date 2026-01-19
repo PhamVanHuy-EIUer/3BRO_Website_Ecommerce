@@ -36,8 +36,6 @@ export function middleware(req: NextRequest) {
             }
         }
     }
-
-    // Nếu không phải route bảo vệ hoặc đủ quyền → cho qua
     return NextResponse.next();
 }
 

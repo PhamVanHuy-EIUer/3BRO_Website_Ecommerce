@@ -4,6 +4,7 @@ import { ProductImage } from "@/models/ProductImage";
 import { useState } from "react";
 import { Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
 import { Image } from "antd";
+import { formatVND } from "@/utils/currency";
 
 export default function ProductGallery({
   product,
@@ -117,7 +118,7 @@ export default function ProductGallery({
 
               {/* Price */}
               <p className="text-3xl font-semibold text-gray-900 mb-4">
-                ${product.price.toFixed(2)}
+                {formatVND(product.price)}
               </p>
 
               {/* Description */}

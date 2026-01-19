@@ -125,12 +125,135 @@ namespace Ecommerce3BRO.Controllers
 
         // api use for login with google
         [HttpPost("login-google")]
-        public async Task<ApiResponse<UserDTO?>> LoginWithGoogle(GoogleLoginRequest request)
+        //public async Task<ApiResponse<UserDTO?>> LoginWithGoogle(GoogleLoginRequest request)
+        //{
+        //    var payload = await _googleAuthService.VerifyTokenAsync(request.IdToken);
+
+        //    if (!payload.EmailVerified)
+        //        return new ApiResponse<UserDTO?>(null, null, "400", "Email not verified", false, 0, 0, 0, 0, null, null, null);
+
+        //    var email = payload.Email;
+        //    var googleId = payload.Subject;
+
+        //    var user = await _context.User
+        //        .FirstOrDefaultAsync(u => u.GoogleId == googleId);
+
+        //    if (user == null)
+        //    {
+        //        // check email tồn tại chưa
+        //        user = await _context.User.FirstOrDefaultAsync(u => u.Email == email);
+
+        //        if (user == null)
+        //        {
+        //            user = new User
+        //            {
+        //                Email = email,
+        //                GoogleId = googleId,
+        //                Provider = "Google",
+        //                CreatedDate = DateTime.UtcNow,
+        //                IsActive = true
+        //            };
+
+        //            await _context.User.AddAsync(user);
+        //            await _context.SaveChangesAsync();
+
+        //            var role = await _context.Role.FirstAsync(r => r.RoleName == "User");
+
+        //            await _context.UserRole.AddAsync(new UserRole
+        //            {
+        //                UserId = user.Id,
+        //                RoleId = role.Id,
+        //                CreatedDate = DateTime.UtcNow
+        //            });
+        //            await _context.SaveChangesAsync();
+        //            var newRoleList = await _authService.GetRolesByUser(user.Email);
+        //            var newToken = _authService.GenerateAccessToken(user.Email, user.Id, newRoleList);
+
+        //            Response.Cookies.Append("access_token", newToken, new CookieOptions
+        //            {
+        //                HttpOnly = true,
+        //                Secure = true,
+        //                SameSite = SameSiteMode.None,
+        //                Expires = DateTime.UtcNow.AddMinutes(15)
+        //            });
+        //            var oldToken = await _context.RefreshToken.Where(x => x.UserId == user.Id && !x.IsRevoked).ToListAsync();
+
+        //            foreach (var t in oldToken)
+        //            {
+        //                t.IsRevoked = true;
+        //                t.RevokedAt = DateTime.UtcNow;
+        //            }
+        //            var newRefreshToken = _authService.GenerateRefreshToken();
+        //            var option = new CookieOptions
+        //            {
+        //                HttpOnly = true,
+        //                Secure = true,
+        //                SameSite = SameSiteMode.None,
+        //                Expires = DateTime.UtcNow.AddDays(7)
+        //            };
+        //            Response.Cookies.Append("refreshToken", newRefreshToken, option);
+        //            await _context.RefreshToken.AddAsync(new RefreshToken
+        //            {
+        //                UserId = user.Id,
+        //                Token = newRefreshToken,
+        //                ExpiredAt = DateTime.UtcNow.AddDays(7),
+        //                IsRevoked = false,
+        //                CreatedAt = DateTime.UtcNow
+        //            });
+        //            await _context.SaveChangesAsync();
+
+        //            return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", false, 0, 0, 0, 0, newToken, null, null);
+        //        }
+        //    }
+        //    // link account
+        //    user.GoogleId = googleId;
+        //    user.Provider = "Google";
+        //    await _context.SaveChangesAsync();
+        //    var roleList = await _authService.GetRolesByUser(user.Email);
+        //    var token = _authService.GenerateAccessToken(user.Email, user.Id, roleList);
+
+        //    Response.Cookies.Append("access_token", token, new CookieOptions
+        //    {
+        //        HttpOnly = true,
+        //        Secure = true,
+        //        SameSite = SameSiteMode.None,
+        //        Expires = DateTime.UtcNow.AddMinutes(15)
+        //    });
+        //    var oldTokens = await _context.RefreshToken.Where(x => x.UserId == user.Id && !x.IsRevoked).ToListAsync();
+
+        //    foreach (var t in oldTokens)
+        //    {
+        //        t.IsRevoked = true;
+        //        t.RevokedAt = DateTime.UtcNow;
+        //    }
+        //    var refreshToken = _authService.GenerateRefreshToken();
+        //    var options = new CookieOptions
+        //    {
+        //        HttpOnly = true,
+        //        Secure = true,
+        //        SameSite = SameSiteMode.None,
+        //        Expires = DateTime.UtcNow.AddDays(7)
+        //    };
+        //    Response.Cookies.Append("refreshToken", refreshToken, options);
+        //    await _context.RefreshToken.AddAsync(new RefreshToken
+        //    {
+        //        UserId = user.Id,
+        //        Token = refreshToken,
+        //        ExpiredAt = DateTime.UtcNow.AddDays(7),
+        //        IsRevoked = false,
+        //        CreatedAt = DateTime.UtcNow
+        //    });
+        //    await _context.SaveChangesAsync();
+        //    return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", true, 0, 0, 0, 0, token, null, null);
+        //}
+        public async Task<IActionResult> LoginWithGoogle(GoogleLoginRequest request)
         {
             var payload = await _googleAuthService.VerifyTokenAsync(request.IdToken);
 
             if (!payload.EmailVerified)
-                return new ApiResponse<UserDTO?>(null, null, "400", "Email not verified", false, 0, 0, 0, 0, null, null, null);
+                return Unauthorized(new ApiResponse<UserDTO?>(
+                    null, null, "401", "Email not verified",
+                    false, 0, 0, 0, 0, null, null, null));
 
             var email = payload.Email;
             var googleId = payload.Subject;
@@ -166,6 +289,7 @@ namespace Ecommerce3BRO.Controllers
                         CreatedDate = DateTime.UtcNow
                     });
                     await _context.SaveChangesAsync();
+
                     var newRoleList = await _authService.GetRolesByUser(user.Email);
                     var newToken = _authService.GenerateAccessToken(user.Email, user.Id, newRoleList);
 
@@ -173,17 +297,53 @@ namespace Ecommerce3BRO.Controllers
                     {
                         HttpOnly = true,
                         Secure = true,
-                        SameSite = SameSiteMode.Lax,
+                        SameSite = SameSiteMode.None,
                         Expires = DateTime.UtcNow.AddMinutes(15)
                     });
 
-                    return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", false, 0, 0, 0, 0, newToken, null, null);
+                    var oldToken = await _context.RefreshToken
+                        .Where(x => x.UserId == user.Id && !x.IsRevoked)
+                        .ToListAsync();
+
+                    foreach (var t in oldToken)
+                    {
+                        t.IsRevoked = true;
+                        t.RevokedAt = DateTime.UtcNow;
+                    }
+
+                    var newRefreshToken = _authService.GenerateRefreshToken();
+                    var option = new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Secure = true,
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.UtcNow.AddDays(7)
+                    };
+
+                    Response.Cookies.Append("refreshToken", newRefreshToken, option);
+
+                    await _context.RefreshToken.AddAsync(new RefreshToken
+                    {
+                        UserId = user.Id,
+                        Token = newRefreshToken,
+                        ExpiredAt = DateTime.UtcNow.AddDays(7),
+                        IsRevoked = false,
+                        CreatedAt = DateTime.UtcNow
+                    });
+
+                    await _context.SaveChangesAsync();
+
+                    return NotFound(new ApiResponse<UserDTO?>(
+                        null, null, "404", "Login with Google successfully without password",
+                        true, 0, 0, 0, 0, newToken, null, null));
                 }
             }
-            // link account
-            user.GoogleId = googleId;
+
+            // các case còn lại (user đã tồn tại hoặc link account)
+            user.GoogleId ??= googleId;
             user.Provider = "Google";
             await _context.SaveChangesAsync();
+
             var roleList = await _authService.GetRolesByUser(user.Email);
             var token = _authService.GenerateAccessToken(user.Email, user.Id, roleList);
 
@@ -191,11 +351,47 @@ namespace Ecommerce3BRO.Controllers
             {
                 HttpOnly = true,
                 Secure = true,
-                SameSite = SameSiteMode.Lax,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
-            return new ApiResponse<UserDTO?>(null, null, "200", "Login with Google successfully", true, 0, 0, 0, 0, token, null, null);
+
+            var oldTokens = await _context.RefreshToken
+                .Where(x => x.UserId == user.Id && !x.IsRevoked)
+                .ToListAsync();
+
+            foreach (var t in oldTokens)
+            {
+                t.IsRevoked = true;
+                t.RevokedAt = DateTime.UtcNow;
+            }
+
+            var refreshToken = _authService.GenerateRefreshToken();
+            var options = new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(7)
+            };
+
+            Response.Cookies.Append("refreshToken", refreshToken, options);
+
+            await _context.RefreshToken.AddAsync(new RefreshToken
+            {
+                UserId = user.Id,
+                Token = refreshToken,
+                ExpiredAt = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false,
+                CreatedAt = DateTime.UtcNow
+            });
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new ApiResponse<UserDTO?>(
+                null, null, "200", "Login with Google successfully",
+                true, 0, 0, 0, 0, token, null, null));
         }
+
         [HttpPost("addnewpass-gg")]
         public async Task<ApiResponse<string>> AddNewPasswordForGoogleUser([FromBody] AddNewPasswordForGG newpassword)
         {

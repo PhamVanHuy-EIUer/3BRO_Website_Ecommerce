@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Components.Web;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Ecommerce3BRO.Model;
 
 [Table("Review")]
-public partial class Review
+public  class Review
 {
     [Key]
     public Guid Id { get; set; }
@@ -20,9 +21,9 @@ public partial class Review
     public string Comment { get; set; }
 
     public DateTime? CreatedDate { get; set; }
+    public bool IsDeleted { get; set; }
 
     [ForeignKey("ProductId")]
-   
     public  Product? Product { get; set; }
 
     [ForeignKey("UserId")]

@@ -14,7 +14,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryIdAsync(Guid categoryId);
         Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword);
         Task<ApiResponse<GetProductDTO>> GetProductByPages(int currentPage, int pageSize);
-
         Task<ApiResponse<GetProductByAdminDTO>> GetAllProductByPageAsync(int currentPage, int pageSize);
         Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages(int currentPage, int pageSize);
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId,int currentPage, int pageSize);
@@ -24,6 +23,8 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountById(Guid productId, int quantity,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId(Guid cartId,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartItemId(Guid cartItemId,Guid userId);
+        Task<ApiResponse<GetProductDTO>> GetProductByPriceRange(decimal minPrice,decimal maxPrice);
+        Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice();
        
     }
 }

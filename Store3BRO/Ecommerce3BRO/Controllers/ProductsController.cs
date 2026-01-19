@@ -83,7 +83,7 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.SearchProductsAsync(keyword);
         }
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         [HttpGet("all-products-by-page")]
         public async Task<ApiResponse<GetProductByAdminDTO>> GetAllProductsAdminByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
@@ -159,7 +159,7 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithDiscountById(productId, quantity, userId,discountCode);
+            return await _productService.GetProductWithDiscountById(productId, quantity, userId, discountCode);
         }
         [HttpGet("product-discount-cartitem")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountByCartItemId([FromQuery] Guid cartItemId, [FromQuery] string discountCode)
@@ -170,7 +170,7 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithDiscountByCartItemId(cartItemId, userId,discountCode);
+            return await _productService.GetProductWithDiscountByCartItemId(cartItemId, userId, discountCode);
         }
         [HttpGet("product-discount-cart")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId([FromQuery] string discountCode)
@@ -186,7 +186,17 @@ namespace Ecommerce3BRO.Controllers
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
             }
-            return await _productService.GetProductWithDiscountByCartId(cartId.Id, userId,discountCode);
+            return await _productService.GetProductWithDiscountByCartId(cartId.Id, userId, discountCode);
+        }
+        [HttpGet("price-range")]
+        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice)
+        {
+            return await _productService.GetProductByPriceRange(minPrice, maxPrice);
+        }
+        [HttpGet("ascending-cost")]
+        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
+        {
+            return await _productService.GetProductByAscendingPrice();
         }
     }
 }

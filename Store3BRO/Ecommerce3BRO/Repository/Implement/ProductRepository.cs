@@ -193,7 +193,23 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetOrderProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-
+        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
+        {
+           var products = await _context.Product.Where(p => p.Status == 1)
+                .Include(p => p.Category)
+                .OrderBy(p => p.Price).ThenBy(p=>p.ProductName)
+                .Select(p => new GetProductDTO
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryName = p.Category.CategoryName,
+                    ImageUrl = p.ImageUrl
+                }).ToListAsync();
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true, 0, 0, 0, 0, null, null, null);
+        }
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId, int currentPage, int pageSize)
         {
@@ -221,8 +237,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Stock = p.Stock,
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl
-                })
-                .ToListAsync();
+                }).ToListAsync();
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by category successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
@@ -245,8 +260,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Stock = p.Stock,
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl
-                })
-                .ToListAsync();
+                }).ToListAsync();
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by category successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
@@ -297,6 +311,24 @@ namespace Ecommerce3BRO.Repository.Implement
                 })
                 .ToListAsync();
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
+        }
+
+        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange(decimal minPrice, decimal maxPrice)
+        {
+            var products =await _context.Product
+                .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1)
+                .Include(p => p.Category)
+                .Select(p => new GetProductDTO
+                {
+                    Id = p.Id,
+                    ProductName = p.ProductName,
+                    Description = p.Description,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    CategoryName = p.Category.CategoryName,
+                    ImageUrl = p.ImageUrl
+                }).ToListAsync();
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by price range successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId(Guid cartId, Guid userId)
@@ -358,7 +390,6 @@ namespace Ecommerce3BRO.Repository.Implement
 
                 if (d.DiscountAmount.HasValue)
                     discountValue = Math.Max(discountValue, d.DiscountAmount.Value);
-
                 discountValue = Math.Min(discountValue, totalPrice);
 
                 if (discountValue > maxDiscount)

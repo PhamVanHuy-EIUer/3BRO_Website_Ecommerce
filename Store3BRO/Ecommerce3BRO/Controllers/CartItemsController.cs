@@ -43,7 +43,6 @@ namespace Ecommerce3BRO.Controllers
             return await _cartItemService.RemoveItemFromCartAsync(productId,userId);
 
         }
-
         //Api show item quantity in cart
         [HttpGet("quantity")]
         public async Task<ApiResponse<CartProductDTO>> GetItemQuantityInCart()

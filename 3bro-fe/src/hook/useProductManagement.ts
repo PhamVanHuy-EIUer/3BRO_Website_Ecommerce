@@ -16,7 +16,7 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
     const [api, contextHolder] = notification.useNotification();
-    // const [search, setSearch] = useState(searchValue);
+    const [addModal, setAddModal] = useState(false);
     const [searchedProducts, setSearchedProducts] = useState<Product[]>([]);
 
     // Form & Image state
@@ -113,6 +113,21 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         setUpdateModal(true);
     };
 
+    const handleAddClick = () => {
+        setFormData({
+            productName: "",
+            description: "",
+            price: 0,
+            stock: 0,
+            imageUrl: "",
+            categoryId: "",
+        })
+        setPreviewImage("");
+        setFileList([]);
+        setImageFile(null);
+        setAddModal(true);
+    }
+
     const handleImageChange: UploadProps["onChange"] = ({ fileList: newFileList }) => {
         setFileList(newFileList);
 
@@ -183,7 +198,7 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
 
             setUpdateModal(false);
             resetModal();
-            // await fetchProducts();
+            await fetchProducts();
         } catch (error: any) {
             api.error({
                 title: error.message || "Failed to update product",
@@ -217,6 +232,8 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         setImageFile(null);
         if (selectedProduct) {
             setPreviewImage(getImageUrl(selectedProduct.imageUrl));
+        } else {
+            setPreviewImage("");
         }
     };
 
@@ -249,6 +266,8 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         setPage,
         deleteModal,
         setDeleteModal,
+        addModal,
+        setAddModal,
         updateModal,
         setUpdateModal,
         selectedProduct,
@@ -261,6 +280,7 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         setFormData,
         getImageUrl,
         handleUpdateClick,
+        handleAddClick,
         handleImageChange,
         handleImageRemove,
         beforeUpload,

@@ -20,7 +20,7 @@ namespace Ecommerce3BRO.DTO
 
         [StringLength(255)]
         public string? ImageUrl { get; set; }
-        public int? Status { get; set; }
+        public string Status { get; set; }
 
     }
 }

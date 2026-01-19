@@ -79,9 +79,9 @@ namespace Ecommerce3BRO.Controllers
 
         //api search products
         [HttpGet("search-product")]
-        public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword)
+        public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword,[FromQuery] int currentPage,[FromQuery] int pageSize)
         {
-            return await _productService.SearchProductsAsync(keyword);
+            return await _productService.SearchProductByPageAsync(keyword, currentPage, pageSize);
         }
         [Authorize(Roles = "Admin")]
         [HttpGet("all-products-by-page")]

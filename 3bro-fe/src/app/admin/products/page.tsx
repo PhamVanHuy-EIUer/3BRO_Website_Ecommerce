@@ -1,5 +1,4 @@
 import ProductsTable from "@/components/admin/products/ProductsTable";
-import UploadImage from "@/components/admin/products/UploadImge";
 import ItemCards from "@/components/ItemsCard";
 
 const ProductsPage = () => {

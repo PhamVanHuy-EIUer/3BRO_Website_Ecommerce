@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
         hostname: "flagcdn.com",
       },
     ],
+    dangerouslyAllowSVG: true,
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 
 

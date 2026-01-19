@@ -763,16 +763,22 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<ShowCheckoutDTO>(null, checkoutWithDiscount, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword)
+        public async Task<ApiResponse<GetProductDTO>> SearchProductByPageAsync(string keyword, int currentPage, int pageSize)
         {
-            //if(keyword == null)
-            //{
-            //    return new ApiResponse<GetProductDTO>(null, null, "400", "Keyword is required", fale, 0, 0, 0, 0, null, null, null);
-            //}
+            if (keyword == null)
+            {
+                return new ApiResponse<GetProductDTO>(null, null, "400", "Keyword is required", false, 0, 0, 0, 0, null, null, null);
+            }
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             keyword = keyword.Trim().ToLower();
-            var findBooks = await _context.Product
+            var findProducts = await _context.Product
                 .Where(p => (p.ProductName.ToLower().Contains(keyword) || p.Category.CategoryName.ToLower().Contains(keyword)) && p.Status == 1)
                 .Include(p => p.Category)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
                 .Select(p => new GetProductDTO
                 {
                     Id = p.Id,
@@ -783,8 +789,31 @@ namespace Ecommerce3BRO.Repository.Implement
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl
                 }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(findBooks, null, "200", "Search products successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetProductDTO>(findProducts, null, "200", "Search products by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
+
+        //public async Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword)
+        //{
+        //    //if(keyword == null)
+        //    //{
+        //    //    return new ApiResponse<GetProductDTO>(null, null, "400", "Keyword is required", fale, 0, 0, 0, 0, null, null, null);
+        //    //}
+        //    keyword = keyword.Trim().ToLower();
+        //    var findBooks = await _context.Product
+        //        .Where(p => (p.ProductName.ToLower().Contains(keyword) || p.Category.CategoryName.ToLower().Contains(keyword)) && p.Status == 1)
+        //        .Include(p => p.Category)
+        //        .Select(p => new GetProductDTO
+        //        {
+        //            Id = p.Id,
+        //            ProductName = p.ProductName,
+        //            Description = p.Description,
+        //            Price = p.Price,
+        //            Stock = p.Stock,
+        //            CategoryName = p.Category.CategoryName,
+        //            ImageUrl = p.ImageUrl
+        //        }).ToListAsync();
+        //    return new ApiResponse<GetProductDTO>(findBooks, null, "200", "Search products successfully", true, 0, 0, 0, 0, null, null, null);
+        //}
 
         public async Task<ApiResponse<GetProductDTO>> UpdateProductAsync(Guid id, ProductDTO product, IFormFile? newImage)
         {

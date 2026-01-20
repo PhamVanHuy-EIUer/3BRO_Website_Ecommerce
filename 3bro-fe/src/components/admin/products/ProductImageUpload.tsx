@@ -26,15 +26,17 @@ export const ProductImageUpload = ({
       </label>
       <div className="flex flex-col items-center gap-4">
         {/* Preview */}
-        <Image
-          src={previewImage}
-          alt={productName}
-          width={200}
-          height={200}
-          style={{ borderRadius: "12px", objectFit: "cover" }}
-          preview={true}
-          fallback="/blank.jpg"
-        />
+        {previewImage && (
+          <Image
+            src={previewImage}
+            alt={productName}
+            width={200}
+            height={200}
+            style={{ borderRadius: "12px", objectFit: "cover" }}
+            preview={true}
+            fallback="/blank.jpg"
+          />
+        )}
 
         {/* Upload Button */}
         <Upload

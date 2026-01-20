@@ -71,5 +71,12 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _orderRepository.UpdateOrderStatus(orderId, status);
         }
+
+        //Api get order detail by id
+        [HttpGet("order-detail/{orderId}")]
+        public async Task<ApiResponse<ViewOrderDetailDTO>> GetOrderDetailById([FromRoute] Guid orderId)
+        {
+            return await _orderRepository.GetOrderDetailByIdAsync(orderId);
+        }
     }
 }

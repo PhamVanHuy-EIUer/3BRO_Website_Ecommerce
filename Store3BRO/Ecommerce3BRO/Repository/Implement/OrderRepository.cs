@@ -191,6 +191,28 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetOrderByAdminDTO>(orders, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task<ApiResponse<ViewOrderDetailDTO>> GetOrderDetailByIdAsync(Guid orderId)
+        {
+            var findOrder = await _context.Order.Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+                .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
+                .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+            if (findOrder == null)
+            {
+                return new ApiResponse<ViewOrderDetailDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            var detailOrders = findOrder.OrderDetails.Select(od => new ViewOrderDetailDTO()
+            {
+                ImageUrl = od.Product.ImageUrl,
+                OrderItemId = od.Id,
+                ProductName = od.Product.ProductName,
+                Price = od.UnitPrice,
+                Quantity = od.Quantity,
+                TotalPrice = od.UnitPrice * od.Quantity,
+                IsReturn = od.IsReturn
+            }).ToList();
+            return new ApiResponse<ViewOrderDetailDTO>(detailOrders, null, "200", "Order details retrieved successfully", true, 0, 0, 0, 0, null, null, null);
+        }
 
         public async Task<ApiResponse<Order>> RemoveOrderAsync(Guid orderId)
         {

@@ -7,7 +7,7 @@ export interface Product {
     imageUrl: string;
     categoryId?: string;
     categoryName: string;
-    status?: number;
+    status?: string;
     createdDate?: string;
     updatedDate?: string;
 }

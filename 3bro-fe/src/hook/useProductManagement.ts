@@ -32,6 +32,17 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         categoryId: "",
     });
 
+
+    const setEmptyForm = () => {
+        setFormData({
+            productName: "",
+            description: "",
+            price: 0,
+            stock: 0,
+            imageUrl: "",
+            categoryId: "",
+        });
+    }
     const getImageUrl = (imageUrl?: string) => {
         if (!imageUrl) return "/blank.jpg";
         return imageUrl.startsWith("http")
@@ -207,6 +218,48 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         }
     };
 
+    const handleConfirmAdd = async () => {
+        if (!formData.productName || !formData.price || !formData.categoryId) {
+            api.warning({
+                title: "Please fill in all required fields",
+                duration: 2,
+            })
+            return;
+        }
+
+        try {
+            const formDataToSend = new FormData();
+            formDataToSend.append("ProductName", formData.productName);
+            formDataToSend.append("Description", formData.description || "");
+            formDataToSend.append("Price", formData.price.toString());
+            formDataToSend.append("Stock", formData.stock.toString());
+            formDataToSend.append("CategoryId", formData.categoryId);
+
+            if (imageFile) {
+                formDataToSend.append("image", imageFile);
+            }
+
+            const res = await productService.addProduct(formDataToSend);
+
+            if (!res.isSuccess) throw new Error(res.message);
+
+            api.success({
+                title: res.message || "Product added successfully",
+                duration: 2,
+            });
+
+            setUpdateModal(false);
+            resetModal();
+            setEmptyForm();
+            await fetchProducts();
+        } catch (error: any) {
+            api.error({
+                title: error.message || "Failed to add product",
+                duration: 3,
+            });
+        }
+    }
+
     const handleConfirmDelete = async () => {
         if (!selectedProduct) return;
 
@@ -281,6 +334,7 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         getImageUrl,
         handleUpdateClick,
         handleAddClick,
+        handleConfirmAdd,
         handleImageChange,
         handleImageRemove,
         beforeUpload,

@@ -54,7 +54,7 @@ export const AddProductModal = ({
         className="flex items-center p-4 w-full"
       >
         <motion.div
-          className="bg-white rounded-xl shadow-2xl p-5 w-full mx-4  overflow-y-auto"
+          className="shadow-2xl p-5 w-full mx-4 overflow-y-auto"
           initial={{ scale: 0.9, y: 20 }}
           animate={{ scale: 1, y: 0 }}
           exit={{ scale: 0.9, y: 20 }}
@@ -103,7 +103,7 @@ export const AddProductModal = ({
               onClick={onConfirm}
               className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
             >
-              Update Product
+              Add Product
             </button>
           </div>
         </motion.div>

@@ -7,10 +7,13 @@ import { User } from "@/models/User";
 import { Product } from "@/models/Product";
 import { getAvailableProducts } from "@/app/api/product/ProductApi";
 import { getAllUsers } from "@/app/api/user/UserApi";
+import useOrders from "@/hook/useOrders";
+import { formatVND } from "@/utils/currency";
 
 const ItemCards = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const { orders } = useOrders();
 
   const fetchUsers = async () => {
     const response = await getAllUsers();
@@ -42,8 +45,18 @@ const ItemCards = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
         >
-          <Card name="Total Users" icon={DollarSign} value="$10.273" />
-          <Card name="Total Orders" icon={ShoppingCart} value="10.273" />
+          <Card
+            name="Total Revenue"
+            icon={DollarSign}
+            value={formatVND(
+              orders.reduce((total, order) => total + order.totalPrice, 0),
+            )}
+          />
+          <Card
+            name="Total Orders"
+            icon={ShoppingCart}
+            value={`${orders.length}`}
+          />
           <Card name="Total Clients" icon={Users} value={`${users.length}`} />
           <Card
             name="Total Products"

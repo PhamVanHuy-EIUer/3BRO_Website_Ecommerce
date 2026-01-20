@@ -11,6 +11,7 @@ import { UpdateProductModal } from "./UpdateProductModal";
 import { DeleteProductModal } from "./DeleteProductModal";
 import { formatVND } from "@/utils/currency";
 import { AddProductModal } from "./AddProductModal";
+import { data } from "framer-motion/client";
 
 const ProductsTable = () => {
   const PAGE_SIZE = 8;
@@ -41,6 +42,7 @@ const ProductsTable = () => {
     handleAddClick,
     handleImageChange,
     beforeUpload,
+    handleConfirmAdd,
     handleConfirmUpdate,
     handleConfirmDelete,
     resetModal,
@@ -99,9 +101,9 @@ const ProductsTable = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: number) => (
-        <Tag color={status === 1 ? "green" : "red"}>
-          {status === 1 ? "Active" : "Inactive"}
+      render: (status: string) => (
+        <Tag color={status === "Active" ? "green" : "red"}>
+          {status === "Active" ? "Active" : "Inactive"}
         </Tag>
       ),
     },
@@ -146,8 +148,8 @@ const ProductsTable = () => {
               resetModal();
               setAddModal(false);
             }}
-            onConfirm={handleConfirmUpdate}
-            onFormChange={setFormData}
+            onConfirm={handleConfirmAdd}
+            onFormChange={(data) => setFormData({ ...formData, ...data })}
             onImageChange={handleImageChange}
             onBeforeUpload={beforeUpload}
             onImageRemove={handleImageRemove}

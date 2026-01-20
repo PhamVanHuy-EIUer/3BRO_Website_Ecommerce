@@ -63,6 +63,10 @@ namespace Ecommerce3BRO.Repository.Implement
                 };
                 await _context.OrderDetail.AddAsync(orderDetail);
                 findProduct.Stock -= item.Quantity;
+                if (findProduct.Stock == 0)
+                {
+                    findProduct.Status = 2;
+                }
                 totalAmount += orderDetail.Quantity * orderDetail.UnitPrice;
             }
             newOrder.TotalAmount = totalAmount + newOrder.ShippingFee;
@@ -214,6 +218,18 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             await _context.SaveChangesAsync();
             return new ApiResponse<Order>(null, findOrder, "200", "Order cancelled successfully", true, 0, 0, 0, 0, "Cancelled", null, null);
+        }
+
+        public async Task<ApiResponse<OrderDTO>> UpdateOrderStatus(Guid orderId, int status)
+        {
+            var findOrder = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderId);
+            if (findOrder == null)
+            {
+                return new ApiResponse<OrderDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            findOrder.Status = status;
+            await _context.SaveChangesAsync();
+            return new ApiResponse<OrderDTO>(null, null, "200", "Order status updated successfully", true, 0, 0, 0, 0, ((OrderStatus)status).ToString(), null, null);
         }
     }
 }

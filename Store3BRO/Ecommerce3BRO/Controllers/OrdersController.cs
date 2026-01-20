@@ -52,7 +52,6 @@ namespace Ecommerce3BRO.Controllers
 
         //Api remove order 
         [HttpDelete("remove-order/{orderId}")]
-
         public async Task<ApiResponse<Order>> RemoveOrder([FromRoute] Guid orderId)
         {
             return await _orderRepository.RemoveOrderAsync(orderId);
@@ -64,6 +63,13 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _orderRepository.GetOrderByStatus(status);
 
+        }
+
+        //api admin use to update order status
+        [HttpPut("update-status/{orderId}")]
+        public async Task<ApiResponse<OrderDTO>> UpdateOrderStatus([FromRoute] Guid orderId, [FromQuery] int status)
+        {
+            return await _orderRepository.UpdateOrderStatus(orderId, status);
         }
     }
 }

@@ -79,7 +79,7 @@ namespace Ecommerce3BRO.Controllers
 
         //api search products
         [HttpGet("search-product")]
-        public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword,[FromQuery] int currentPage,[FromQuery] int pageSize)
+        public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword, [FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.SearchProductByPageAsync(keyword, currentPage, pageSize);
         }
@@ -110,6 +110,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductByCategoryByPageAsync(categoryId, currentPage, pageSize);
         }
 
+        //api get products with auto discount when user checkout on 1 product in web
         [HttpGet("product-autodisccount-directly")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByIdAsync([FromQuery] Guid productId, [FromQuery] int quantity)
         {
@@ -122,6 +123,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductWithAutoDiscountById(productId, quantity, userId);
         }
 
+        //api get products with auto discount when user checkout on 1 product in cart
         [HttpGet("product-autodiscount-cartitem")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByCartItemId([FromQuery] Guid cartItemId)
         {
@@ -134,6 +136,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductWithAutoDiscountByCartItemId(cartItemId, userId);
         }
 
+        //api get products with auto discount when user checkout on all product in cart
         [HttpGet("product-autodiscount-cart")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId()
         {
@@ -150,6 +153,8 @@ namespace Ecommerce3BRO.Controllers
             }
             return await _productService.GetProductWithAutoDiscountByCartId(cartId.Id, userId);
         }
+
+        //api get products with discount code when user checkout on 1 product in web
         [HttpGet("product-disccount-directly")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountById([FromQuery] Guid productId, [FromQuery] int quantity, [FromQuery] string discountCode)
         {
@@ -161,6 +166,8 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(findUser.Value);
             return await _productService.GetProductWithDiscountById(productId, quantity, userId, discountCode);
         }
+
+        //api get products with discount code when user checkout on 1 product in cart
         [HttpGet("product-discount-cartitem")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountByCartItemId([FromQuery] Guid cartItemId, [FromQuery] string discountCode)
         {
@@ -172,6 +179,8 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(findUser.Value);
             return await _productService.GetProductWithDiscountByCartItemId(cartItemId, userId, discountCode);
         }
+
+        //api get products with discount code when user checkout on all product in cart
         [HttpGet("product-discount-cart")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId([FromQuery] string discountCode)
         {
@@ -188,6 +197,8 @@ namespace Ecommerce3BRO.Controllers
             }
             return await _productService.GetProductWithDiscountByCartId(cartId.Id, userId, discountCode);
         }
+
+        //api get products by price range
         [HttpGet("price-range")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice)
         {
@@ -197,6 +208,13 @@ namespace Ecommerce3BRO.Controllers
         public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
         {
             return await _productService.GetProductByAscendingPrice();
+        }
+
+        //api update product status
+        [HttpPut("status{productId}")]
+        public async Task<ApiResponse<GetProductDTO>> UpdateProductStatus([FromRoute] Guid productId, [FromQuery] int status)
+        {
+            return await _productService.UpdateProductStatus(productId, status);
         }
     }
 }

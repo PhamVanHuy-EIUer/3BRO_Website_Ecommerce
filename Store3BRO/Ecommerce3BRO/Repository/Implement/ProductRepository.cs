@@ -781,12 +781,20 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Product.Count();
-            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
             keyword = keyword.Trim().ToLower();
-            var findProducts = await _context.Product
-                .Where(p => (p.ProductName.ToLower().Contains(keyword) || p.Category.CategoryName.ToLower().Contains(keyword)) && p.Status != 0)
-                .Include(p => p.Category)
+
+            var query = _context.Product
+                .Where(p =>
+                    p.Status != 0 &&
+                    (p.ProductName.ToLower().Contains(keyword)
+                     || p.Category.CategoryName.ToLower().Contains(keyword)))
+                .Include(p => p.Category);
+
+            var totalItems = await query.CountAsync();
+
+            var products = await query
+                .OrderBy(p => p.Id) 
                 .Skip((currentPage - 1) * pageSize)
                 .Take(pageSize)
                 .Select(p => new GetProductDTO
@@ -799,8 +807,13 @@ namespace Ecommerce3BRO.Repository.Implement
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl,
                     Status = p.Status
-                }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(findProducts, null, "200", "Search products by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
+                })
+                .ToListAsync();
+
+            // 4️⃣ Tính tổng page
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Search products by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
         //public async Task<ApiResponse<GetProductDTO>> SearchProductsAsync(string keyword)

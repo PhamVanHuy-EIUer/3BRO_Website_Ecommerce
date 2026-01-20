@@ -154,7 +154,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetProductDTO>> GetAvailableProductsAsync()
         {
-            var products = await _context.Product.Where(p => p.Status !=0).Include(p => p.Category).
+            var products = await _context.Product.Where(p => p.Status ==1).Include(p => p.Category).
                 Select(p => new GetProductDTO
                 {
                     Id = p.Id,
@@ -225,7 +225,7 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Product.Where(p => p.Status !=0 && p.CategoryId == categoryId).Count();
+            var totalItems = _context.Product.Where(p => p.Status ==1 && p.CategoryId == categoryId).Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product
                 .Where(p => p.CategoryId == categoryId && p.Status == 1)
@@ -255,7 +255,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 return new ApiResponse<GetProductDTO>(null, null, "404", "Category not found", false, 0, 0, 0, 0, null, null, null);
             }
             var products = await _context.Product
-                .Where(p => p.CategoryId == categoryId && p.Status != 0)
+                .Where(p => p.CategoryId == categoryId && p.Status == 1)
                 .Include(p => p.Category)
                 .Select(p => new GetProductDTO
                 {

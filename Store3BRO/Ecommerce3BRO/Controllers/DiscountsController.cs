@@ -34,7 +34,7 @@ namespace Ecommerce3BRO.Controllers
                 {
                     Code = discount.Code,
                     Description = discount.Description,
-                    DiscountPercent = discount.discountValue,
+                    DiscountPercent =(int)discount.discountValue,
                     MinOrderAmount = discount.MinOrderAmount,
                     StartDate = discount.StartDate,
                     ExpiredDate = discount.ExpiredDate,
@@ -76,7 +76,7 @@ namespace Ecommerce3BRO.Controllers
                 {
                     Code = discount.Code,
                     Description = discount.Description,
-                    DiscountPercent = discount.discountValue,
+                    DiscountPercent = (int)discount.discountValue,
                     MinOrderAmount = discount.MinOrderAmount,
                     StartDate = discount.StartDate,
                     ExpiredDate = discount.ExpiredDate,

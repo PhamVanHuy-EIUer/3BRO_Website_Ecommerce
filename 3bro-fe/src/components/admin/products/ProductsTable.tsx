@@ -101,9 +101,9 @@ const ProductsTable = () => {
       title: "Status",
       dataIndex: "status",
       key: "status",
-      render: (status: string) => (
-        <Tag color={status === "Active" ? "green" : "red"}>
-          {status === "Active" ? "Active" : "Inactive"}
+      render: (status: number) => (
+        <Tag color={status === 1 ? "green" : "red"}>
+          {status === 1 ? "Active" : "Inactive"}
         </Tag>
       ),
     },

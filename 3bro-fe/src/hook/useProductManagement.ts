@@ -5,6 +5,7 @@ import { productService } from "@/services/product.service";
 import { categoryService } from "@/services/category.service";
 import { Product } from "@/models/Product";
 import { Category } from "@/models/Category";
+import { ApiResponse } from "@/models/ApiResponse";
 
 export const useProductManagement = (pageSize: number, searchValue: string) => {
     const [products, setProducts] = useState<Product[]>([]);
@@ -84,22 +85,9 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
         }
     };
 
-    const handleSearchproduct = async () => {
-        try {
-            if (searchValue === "") return;
-            const response = await productService.searchProduct(searchValue, page, pageSize);
-            if (response.isSuccess) {
-                setSearchedProducts(response.list);
-                setTotal(response.totalElement ?? 0);
-            }
-        } catch (error) {
-            api.error({
-                title: "Error",
-                description: "Failed to load products",
-                duration: 2,
-            });
-        }
-    }
+
+
+
     const handleUpdateClick = async (product: Product) => {
         // await fetchCategories();
 
@@ -298,16 +286,48 @@ export const useProductManagement = (pageSize: number, searchValue: string) => {
     };
 
     useEffect(() => {
-        fetchProducts();
-    }, [page]);
+        const fetchData = async () => {
+            try {
+                if (searchValue.trim()) {
+                    const res = await productService.searchProduct(
+                        searchValue,
+                        page,
+                        pageSize
+                    );
+
+                    if (res.isSuccess) {
+                        setSearchedProducts(res.list);
+                        setTotal(res.totalElement ?? 0);
+                    }
+                } else {
+                    const res = await productService.getAllProductsAdmin(
+                        page,
+                        pageSize
+                    );
+
+                    if (res.isSuccess) {
+                        setProducts(res.list);
+                        setTotal(res.totalElement ?? 0);
+                        setSearchedProducts([]);
+                    }
+                }
+            } catch {
+                api.error({
+                    title: "Error",
+                    description: "Failed to load products",
+                    duration: 2,
+                });
+            }
+        };
+
+        fetchData();
+    }, [page, pageSize, searchValue]);
 
     useEffect(() => {
         fetchCategories();
     }, []);
 
-    useEffect(() => {
-        handleSearchproduct();
-    }, [searchValue])
+
 
     return {
         products,

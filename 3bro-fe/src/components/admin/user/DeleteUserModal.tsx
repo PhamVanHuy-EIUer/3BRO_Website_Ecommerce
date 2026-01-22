@@ -59,15 +59,6 @@ export const DeleteUserModal = ({
               undone.
             </p>
             <div className="bg-gray-50 rounded-lg p-4 flex items-center gap-4">
-              {/* <Image
-                src={getImageUrl(User.imageUrl)}
-                alt={User.UserName}
-                width={60}
-                height={60}
-                style={{ borderRadius: "8px", objectFit: "cover" }}
-                preview={false}
-                fallback="/blank.jpg"
-              /> */}
               <Avatar style={{ backgroundColor: "#fde3cf", color: "#f56a00" }}>
                 U
               </Avatar>

@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 // Các route cần bảo vệ và role tương ứng
 const protectedRoutes = [
     { path: "/admin", roles: ["Admin"] },
-    { path: "/home", roles: ["User", "Admin"] },
+    // { path: "/user", roles: ["User", "Admin"] },
 ];
 
 export function middleware(req: NextRequest) {

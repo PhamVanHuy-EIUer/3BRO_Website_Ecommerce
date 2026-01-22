@@ -1,223 +1,209 @@
 "use client";
-import React, { useState } from "react";
+import { ApiResponse } from "@/models/ApiResponse";
+import { Cart } from "@/models/Cart";
+import { cartService } from "@/services/cart.service";
+import {
+  Button,
+  Flex,
+  Image,
+  Modal,
+  notification,
+  TableColumnsType,
+} from "antd";
+import { Table } from "antd";
+import React, { useEffect, useState } from "react";
+import { TableRowSelection } from "antd/es/table/interface";
+import { formatVND } from "@/utils/currency";
+import { b } from "framer-motion/client";
 
-const CloseIcon: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={className}
-  >
-    <path
-      d="M6 18L18 6M6 6L18 18"
-      stroke="#DB4444"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
+const CartContent = () => {
+  const [api, contextHolder] = notification.useNotification();
+  const [carts, setCarts] = useState<Cart[]>([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [modal2Open, setModal2Open] = useState(false);
+  const [seletedItem, setSelectedItem] = useState<Cart | null>(null);
 
-const ChevronUp: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M18 15L12 9L6 15" />
-  </svg>
-);
+  const start = () => {
+    setLoading(true);
+    setTimeout(() => {
+      setSelectedRowKeys([]);
+      setLoading(false);
+    }, 1000);
+  };
 
-const ChevronDown: React.FC<{ className?: string }> = ({ className }) => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className={className}
-  >
-    <path d="M6 9L12 15L18 9" />
-  </svg>
-);
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
 
-// ==========================================
-// MAIN COMPONENT
-// ==========================================
+  const rowSelection: TableRowSelection<Cart> = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
 
-const CartContent: React.FC = () => {
-  // Mock Data State
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: "Stylish Jacket", price: 150, quantity: 1 },
-    { id: 2, name: "Comfort Sneakers", price: 80, quantity: 2 },
-  ]);
+  const hasSelected = selectedRowKeys.length > 0;
 
-  // Handle Quantity Change
-  const handleQuantityChange = (id: number, change: number) => {
-    setCartItems((items) =>
-      items.map((item) =>
-        item.id === id
-          ? { ...item, quantity: Math.max(1, item.quantity + change) }
-          : item,
+  const getImageUrl = (imageUrl?: string) => {
+    if (!imageUrl) return "/blank.jpg";
+    return imageUrl.startsWith("http")
+      ? imageUrl
+      : `https://localhost:7041${imageUrl}`;
+  };
+  const handlefetchCart = async () => {
+    try {
+      const response: ApiResponse<Cart> = await cartService.getCart();
+
+      setCarts(response.list);
+    } catch (error) {
+      console.error("Error fetching cart:", error);
+    }
+  };
+
+  const handleDeleteProductFromCart = async (cartItem: Cart) => {
+    try {
+      const response: ApiResponse<any> =
+        await cartService.deleteProductFromCart(cartItem.productId);
+      if (response.code === "200" && response.isSuccess) {
+        api.success({
+          title: "Delete product from cart successfully",
+          placement: "topRight",
+          duration: 2,
+        });
+        await handlefetchCart();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handlefetchCart();
+  }, []);
+  const columns: TableColumnsType<Cart> = [
+    {
+      title: "Name",
+      dataIndex: "productName",
+      key: "productName",
+      render: (text: string, record: Cart) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Image
+            src={getImageUrl(record.imageUrl)}
+            alt={text}
+            width={50}
+            height={50}
+            style={{ borderRadius: "8px", objectFit: "cover" }}
+            fallback="/blank.jpg"
+          />
+          <div style={{ fontWeight: 500 }}>{text}</div>
+        </div>
       ),
-    );
-  };
-
-  // Handle Remove Item
-  const handleRemoveItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
-  };
-
-  // Calculate Totals
-  const subtotal = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0,
-  );
-  const total = subtotal; // Free shipping
+    },
+    {
+      title: "Category",
+      dataIndex: "categoryName",
+      key: "categoryName",
+      render: (text: string) => (
+        <div style={{ fontWeight: 500 }} className="capitalize">
+          {text}
+        </div>
+      ),
+    },
+    {
+      title: "Quantity",
+      dataIndex: "quantity",
+      key: "quantity",
+    },
+    {
+      title: "Price",
+      dataIndex: "totalPrice",
+      key: "totalPrice",
+      render: (text: number) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <div style={{ fontWeight: 500 }}>{formatVND(text)}</div>
+        </div>
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (record: Cart) => (
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+          <Button
+            type="primary"
+            danger
+            onClick={() => {
+              setModal2Open(true);
+              setSelectedItem(record);
+            }}
+          >
+            Remove
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   return (
-    <div className="font-inter bg-white py-10">
-      <div className="container mx-auto px-4 lg:px-[135px]">
-        {/* Breadcrumb */}
-        <div className="text-sm mb-10 flex items-center">
-          <span className="text-[#4B5563]">Home</span>
-          <span className="mx-2 text-[#4B5563]">/</span>
-          <span className="font-medium text-black">Cart</span>
-        </div>
-
-        <h1 className="text-3xl font-bold text-black mb-10">Cart</h1>
-
-        {/* Cart Table Section */}
-        <div className="mb-12 overflow-x-auto">
-          {/* Table Header */}
-          <div className="hidden md:grid grid-cols-12 gap-4 bg-[#F3F4F6] py-4 px-6 rounded mb-6 text-black font-medium min-w-[800px]">
-            <div className="col-span-5">Product</div>
-            <div className="col-span-2">Price</div>
-            <div className="col-span-2">Quantity</div>
-            <div className="col-span-2">Subtotal</div>
-            <div className="col-span-1">Action</div>
+    <>
+      {contextHolder}
+      <div className="flex justify-center flex-col py-20">
+        <Modal
+          centered
+          open={modal2Open}
+          title={<span></span>}
+          okText="Delete"
+          cancelText="Cancel"
+          // okType="danger"
+          okButtonProps={{
+            size: "large",
+            style: {
+              backgroundColor: "#ff5c5c",
+              border: "none",
+              borderRadius: "4px",
+            },
+          }}
+          cancelButtonProps={{ size: "large", style: { borderRadius: "4px" } }}
+          onOk={() => {
+            if (!seletedItem) return;
+            handleDeleteProductFromCart(seletedItem);
+            setSelectedItem(null);
+            setModal2Open(false);
+          }}
+          onCancel={() => setModal2Open(false)}
+        >
+          <div className="font-semibold text-xl py-10">
+            Are you sure you want to remove this product?
           </div>
-
-          {/* Cart Items List */}
-          <div className="space-y-6 min-w-[800px]">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="grid grid-cols-12 gap-4 items-center bg-white border border-[#E5E7EB] p-4 rounded shadow-sm relative"
+        </Modal>
+        <div className="font-inter bg-white py-10 w-[80vw] m-auto">
+          <Flex gap="middle" vertical>
+            {/* <Flex align="center" gap="middle">
+              <Button
+                type="primary"
+                onClick={start}
+                disabled={!hasSelected}
+                loading={loading}
               >
-                {/* Product Info */}
-                <div className="col-span-5 flex items-center space-x-4">
-                  {/* Image placeholder */}
-                  <div className="w-[60px] h-[60px] bg-[#F3F4F6] rounded flex-shrink-0"></div>
-                  <span className="font-medium text-black">{item.name}</span>
-                </div>
-
-                {/* Price */}
-                <div className="col-span-2">
-                  <span className="text-black">${item.price}</span>
-                </div>
-
-                {/* Quantity Control */}
-                <div className="col-span-2 flex items-center">
-                  <div className="flex items-center border border-[#E5E7EB] bg-[#F3F4F6] rounded px-3 py-2 w-[80px] justify-between">
-                    <span className="font-medium">{item.quantity}</span>
-                    <div className="flex flex-col space-y-1">
-                      <button
-                        onClick={() => handleQuantityChange(item.id, 1)}
-                        className="hover:text-gray-600"
-                      >
-                        <ChevronUp />
-                      </button>
-                      <button
-                        onClick={() => handleQuantityChange(item.id, -1)}
-                        className="hover:text-gray-600"
-                      >
-                        <ChevronDown />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Subtotal */}
-                <div className="col-span-2 font-medium text-black">
-                  <span>${item.price * item.quantity}</span>
-                </div>
-
-                {/* Remove Action */}
-                <div className="col-span-1 flex justify-end">
-                  <button
-                    onClick={() => handleRemoveItem(item.id)}
-                    className="text-[#DB4444] hover:text-red-700 transition"
-                  >
-                    <CloseIcon />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Cart Actions Buttons */}
-          <div className="flex flex-col sm:flex-row justify-between mt-8 gap-4 min-w-[800px]">
-            <button className="px-8 py-3 border-2 border-[#DB4444] text-[#DB4444] font-medium rounded hover:bg-red-50 text-center transition bg-white">
-              Continue Shopping
-            </button>
-            <button className="px-8 py-3 border-2 border-[#DB4444] text-[#DB4444] font-medium rounded hover:bg-red-50 transition bg-white">
-              Update Cart
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom Section: Coupon & Totals */}
-        <div className="flex flex-col lg:flex-row justify-between gap-10 items-start">
-          {/* Coupon Section */}
-          <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
-            <input
-              type="text"
-              placeholder="Coupon Code"
-              className="border border-[#E5E7EB] rounded px-4 py-3 outline-none flex-grow lg:w-[300px] text-black placeholder-[#9CA3AF]"
+                Reload
+              </Button> */}
+            {/* {hasSelected ? `Selected ${selectedRowKeys.length} items` : null} */}
+            {/* </Flex> */}
+            <Table<Cart>
+              rowSelection={rowSelection}
+              columns={columns}
+              dataSource={carts}
+              pagination={false}
+              rowKey="cartItemID"
             />
-            <button className="bg-[#DB4444] text-white font-medium px-8 py-3 rounded hover:bg-red-600 transition whitespace-nowrap">
-              Apply Coupon
-            </button>
-          </div>
-
-          {/* Cart Total Box */}
-          <div className="border border-[#E5E7EB] rounded p-6 w-full lg:w-[470px]">
-            <h2 className="text-xl font-bold text-black mb-6">Cart Total</h2>
-            <div className="space-y-4 text-black">
-              <div className="flex justify-between py-3 border-b border-[#E5E7EB]">
-                <span>Subtotal</span>
-                <span>${subtotal}</span>
-              </div>
-              <div className="flex justify-between py-3 border-b border-[#E5E7EB]">
-                <span>Shipping</span>
-                <span>Free</span>
-              </div>
-              <div className="flex justify-between py-3">
-                <span className="font-medium">Total</span>
-                <span className="font-bold text-[#DB4444] text-lg">
-                  ${total}
-                </span>
-              </div>
-            </div>
-            <button className="block w-full bg-[#DB4444] text-white text-center font-medium px-8 py-3 rounded hover:bg-red-600 transition mt-6">
-              Proceed to Checkout
-            </button>
-          </div>
+          </Flex>
+        </div>
+        <div className="py-10 border w-[80vw] m-auto flex">
+          <div></div>
+          <div></div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -13,7 +13,6 @@ const SearchProduct = () => {
   const searchParams = useSearchParams();
   const keyword = searchParams.get("keyword") || "";
   const [page, setPage] = useState(1);
-
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -26,7 +25,7 @@ const SearchProduct = () => {
       setLoading(true);
       const res = await productService.searchProduct(keyword, page, PAGE_SIZE);
       setProducts(res.list ?? []);
-      setTotal(res.list?.length ?? 0);
+      setTotal(res.totalElement ?? 0);
     } catch (e) {
       console.error(e);
     } finally {
@@ -46,7 +45,7 @@ const SearchProduct = () => {
   useEffect(() => {
     loadProducts();
     loadTopProducts();
-  }, [keyword]);
+  }, [keyword, page]);
 
   return (
     <div className="max-w-7xl mx-auto py-8">

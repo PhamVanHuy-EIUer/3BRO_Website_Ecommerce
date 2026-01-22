@@ -3,8 +3,8 @@ import { productService } from "@/services/product.service";
 import { useEffect, useState } from "react";
 
 
-export const useSearchProduct = (searchValue: string) => {
-    const PAGE_SIZE = 3;
+export const useSearchProduct = (searchValue: string, PAGE_SIZE: number) => {
+    // const PAGE_SIZE = 3;
     const [products, setProducts] = useState<Product[]>([]);
     const page = 1;
     const [total, setTotal] = useState(0);

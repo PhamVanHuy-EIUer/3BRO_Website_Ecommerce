@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("Periodic auth refresh...");
         refreshAuth();
       },
-      15 * 60 * 1000,
+      16 * 60 * 1000,
     ); // 5 phút
 
     return () => clearInterval(interval);

@@ -15,6 +15,7 @@ import React, { useEffect, useState } from "react";
 import { TableRowSelection } from "antd/es/table/interface";
 import { formatVND } from "@/utils/currency";
 import { b } from "framer-motion/client";
+import { ViewPrice } from "@/models/ViewPrice";
 
 const CartContent = () => {
   const [api, contextHolder] = notification.useNotification();
@@ -23,6 +24,7 @@ const CartContent = () => {
   const [loading, setLoading] = useState(false);
   const [modal2Open, setModal2Open] = useState(false);
   const [seletedItem, setSelectedItem] = useState<Cart | null>(null);
+  const [totalPrice, setTotalPrice] = useState<number>(0);
 
   const start = () => {
     setLoading(true);
@@ -30,6 +32,29 @@ const CartContent = () => {
       setSelectedRowKeys([]);
       setLoading(false);
     }, 1000);
+  };
+
+  const buildViewPricePayload = (): ViewPrice[] => {
+    return carts
+      .filter((cart) => selectedRowKeys.includes(cart.cartItemID))
+      .map((cart) => ({
+        productId: cart.productId,
+        quantity: cart.quantity,
+      }));
+  };
+
+  const fetchPreviewPrice = async () => {
+    try {
+      const response: ApiResponse<number> = await cartService.previewPrice(
+        buildViewPricePayload(),
+      );
+      console.log(response);
+      if (response.code === "200" && response.isSuccess) {
+        setTotalPrice(response.object ?? 0);
+      }
+    } catch (error) {
+      console.error("Error fetching preview price:", error);
+    }
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -80,6 +105,10 @@ const CartContent = () => {
   useEffect(() => {
     handlefetchCart();
   }, []);
+
+  useEffect(() => {
+    fetchPreviewPrice();
+  }, [selectedRowKeys]);
   const columns: TableColumnsType<Cart> = [
     {
       title: "Name",
@@ -200,7 +229,7 @@ const CartContent = () => {
         </div>
         <div className="py-10 border w-[80vw] m-auto flex">
           <div></div>
-          <div></div>
+          <div>{totalPrice}</div>
         </div>
       </div>
     </>

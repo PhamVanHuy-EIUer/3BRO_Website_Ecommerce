@@ -55,5 +55,17 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.ShowItemsInCartAsync(userId);
         }
+
+        [HttpPost("preview-price")]
+        public async Task<ApiResponse<decimal>> getSeletedProductPrice([FromBody] List<CheckOutItemDTO> items)
+        {
+            var user = User.FindFirst(ClaimTypes.NameIdentifier);
+            if(user == null)
+            {
+                return new ApiResponse<decimal>(null, 0, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(user.Value);
+            return await _cartItemService.PreviewTotalPriceAsync(items);
+        }
     }
 }

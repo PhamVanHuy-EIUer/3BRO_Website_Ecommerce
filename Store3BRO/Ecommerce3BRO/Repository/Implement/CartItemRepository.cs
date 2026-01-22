@@ -61,6 +61,25 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<CartItemDTO>(null, null, "200", "Add item to cart successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task<ApiResponse<decimal>> PreviewTotalPriceAsync(List<CheckOutItemDTO> items)
+        {
+            decimal total = 0;
+
+            foreach (var item in items)
+            {
+                var product = await _context.Product.FirstOrDefaultAsync(u => u.Id == item.ProductId);
+
+                if(product == null)
+                {
+                    continue;
+                }
+
+                total += (product.Price * item.Quantity);
+
+            }
+
+            return new ApiResponse<decimal>(null, total, "200", "Get total price successfully", true, 0, 0, 0, 0, null, null, null);
+        }
 
         public async Task<ApiResponse<CartItemDTO>> RemoveItemFromCartAsync(Guid productId, Guid userId)
         {

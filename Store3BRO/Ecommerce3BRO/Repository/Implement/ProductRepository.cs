@@ -29,7 +29,7 @@ namespace Ecommerce3BRO.Repository.Implement
             //{
             //    return new ApiResponse<GetProductDTO>(null, null, "400", "Please upload image", false, 0, 0, 0, 0, null, null, null);
             //}
-            var findProduct = await _context.Product.FirstOrDefaultAsync(p => p.ProductName == dto.ProductName && p.Status == 1);
+            var findProduct = await _context.Product.FirstOrDefaultAsync(p => p.ProductName == dto.ProductName && p.Status != 0);
             if (findProduct != null)
             {
                 return new ApiResponse<GetProductDTO>(null, null, "400", "Product name already exists", false, 0, 0, 0, 0, null, null, null);
@@ -95,11 +95,6 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        
-
-
-
-
         public async Task<ApiResponse<GetProductDTO>> DeleteProductAsync(Guid id)
         {
             var find = await _context.Product.FindAsync(id);
@@ -154,7 +149,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetProductDTO>> GetAvailableProductsAsync()
         {
-            var products = await _context.Product.Where(p => p.Status ==1).Include(p => p.Category).
+            var products = await _context.Product.Where(p => p.Status == 1).Include(p => p.Category).
                 Select(p => new GetProductDTO
                 {
                     Id = p.Id,
@@ -164,7 +159,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Stock = p.Stock,
                     CategoryName = p.Category.CategoryName,
                     ImageUrl = p.ImageUrl,
-                    Status =  p.Status
+                    Status = p.Status
                 }).ToListAsync();
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get all products successfully", true, 0, 0, 0, 0, null, null, null);
         }
@@ -199,20 +194,20 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
         {
-           var products = await _context.Product.Where(p => p.Status == 1)
-                .Include(p => p.Category)
-                .OrderBy(p => p.Price).ThenBy(p=>p.ProductName)
-                .Select(p => new GetProductDTO
-                {
-                    Id = p.Id,
-                    ProductName = p.ProductName,
-                    Description = p.Description,
-                    Price = p.Price,
-                    Stock = p.Stock,
-                    CategoryName = p.Category.CategoryName,
-                    ImageUrl = p.ImageUrl,
-                    Status = p.Status
-                }).ToListAsync();
+            var products = await _context.Product.Where(p => p.Status == 1)
+                 .Include(p => p.Category)
+                 .OrderBy(p => p.Price).ThenBy(p => p.ProductName)
+                 .Select(p => new GetProductDTO
+                 {
+                     Id = p.Id,
+                     ProductName = p.ProductName,
+                     Description = p.Description,
+                     Price = p.Price,
+                     Stock = p.Stock,
+                     CategoryName = p.Category.CategoryName,
+                     ImageUrl = p.ImageUrl,
+                     Status = p.Status
+                 }).ToListAsync();
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
@@ -225,7 +220,7 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Product.Where(p => p.Status ==1 && p.CategoryId == categoryId).Count();
+            var totalItems = _context.Product.Where(p => p.Status == 1 && p.CategoryId == categoryId).Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product
                 .Where(p => p.CategoryId == categoryId && p.Status == 1)
@@ -324,7 +319,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange(decimal minPrice, decimal maxPrice)
         {
-            var products =await _context.Product
+            var products = await _context.Product
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status != 0)
                 .Include(p => p.Category)
                 .Select(p => new GetProductDTO
@@ -669,7 +664,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 UserFullName = findUser.FullName,
                 UserPhoneNumber = findUser.Phone
             };
-             return new ApiResponse<ShowCheckoutDTO>(null, showCheckoutWithDiscount, "200", "Get products with discount successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<ShowCheckoutDTO>(null, showCheckoutWithDiscount, "200", "Get products with discount successfully", true, 0, 0, 0, 0, null, null, null);
 
         }
 
@@ -898,7 +893,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<GetProductDTO>> UpdateProductStatus(Guid productId,int status)
+        public async Task<ApiResponse<GetProductDTO>> UpdateProductStatus(Guid productId, int status)
         {
             var findProduct = await _context.Product.FindAsync(productId);
             if (findProduct == null)

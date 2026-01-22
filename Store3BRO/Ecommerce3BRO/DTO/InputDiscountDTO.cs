@@ -11,7 +11,7 @@ namespace Ecommerce3BRO.DTO
         [StringLength(255)]
         public string? Description { get; set; }
 
-        public int discountValue { get; set; }
+        public decimal discountValue { get; set; }
         public bool isPercent { get; set; }
 
         [Column(TypeName = "decimal(10, 2)")]

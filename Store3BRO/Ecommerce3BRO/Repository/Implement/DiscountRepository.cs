@@ -1,5 +1,6 @@
 ﻿using Ecommerce3BRO.Data;
 using Ecommerce3BRO.DTO;
+using Ecommerce3BRO.Helper;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.EntityFrameworkCore;
@@ -16,8 +17,8 @@ namespace Ecommerce3BRO.Repository.Implement
      
         public async Task<ApiResponse<GetDiscountDTO>> AddNewDiscountAsync(DiscountDTO discountDTO)
         {
-            discountDTO.StartDate = DateTime.SpecifyKind(discountDTO.StartDate, DateTimeKind.Utc);
-            discountDTO.ExpiredDate = DateTime.SpecifyKind(discountDTO.ExpiredDate, DateTimeKind.Utc);
+            discountDTO.StartDate = DateTimeHelper.NormalizeUtc(discountDTO.StartDate);
+            discountDTO.ExpiredDate = DateTimeHelper.NormalizeUtc(discountDTO.ExpiredDate);
             if ((discountDTO.DiscountAmount != null && discountDTO.DiscountPercent != null) || (discountDTO.DiscountAmount == null && discountDTO.DiscountPercent == null))
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "400", "Must set exactly one discount type (amount or percent)", false, 0, 0, 0, 0, null, null, null);
@@ -182,8 +183,8 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscountAsync(Guid id, DiscountDTO discountDTO)
         {
-            discountDTO.StartDate = DateTime.SpecifyKind(discountDTO.StartDate, DateTimeKind.Utc);
-            discountDTO.ExpiredDate = DateTime.SpecifyKind(discountDTO.ExpiredDate, DateTimeKind.Utc);
+            discountDTO.StartDate = DateTimeHelper.NormalizeUtc(discountDTO.StartDate);
+            discountDTO.ExpiredDate = DateTimeHelper.NormalizeUtc(discountDTO.ExpiredDate);
             if ((discountDTO.DiscountAmount != null && discountDTO.DiscountPercent != null) || (discountDTO.DiscountAmount == null && discountDTO.DiscountPercent == null))
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "400", "Must set exactly one discount type (amount or percent)", false, 0, 0, 0, 0, null, null, null);

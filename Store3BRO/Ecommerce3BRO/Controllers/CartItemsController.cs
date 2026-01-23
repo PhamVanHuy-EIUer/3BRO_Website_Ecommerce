@@ -59,13 +59,21 @@ namespace Ecommerce3BRO.Controllers
         [HttpPost("preview-price")]
         public async Task<ApiResponse<decimal>> getSeletedProductPrice([FromBody] List<CheckOutItemDTO> items)
         {
+            
+            return await _cartItemService.PreviewTotalPriceAsync(items);
+        }
+
+        [HttpDelete("delete-list-product")]
+        public async Task<ApiResponse<string>> deleteListItems([FromBody] List<DeleteProductInCartDTO> listItems)
+        {
             var user = User.FindFirst(ClaimTypes.NameIdentifier);
             if(user == null)
             {
-                return new ApiResponse<decimal>(null, 0, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<string>(null, null, "401", "Unauthorize", true, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(user.Value);
-            return await _cartItemService.PreviewTotalPriceAsync(items);
+            return await _cartItemService.DeleteListProductsInCartAsync(listItems, userId);
         }
+        
     }
 }

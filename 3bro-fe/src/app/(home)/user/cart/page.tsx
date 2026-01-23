@@ -13,11 +13,13 @@ import {
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { TableRowSelection } from "antd/es/table/interface";
-import { formatVND } from "@/utils/currency";
+import { formatCurrency } from "@/utils/currency";
 import { b, filter, style } from "framer-motion/client";
 import { ViewPrice } from "@/models/ViewPrice";
 import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
+import { useCart } from "@/hook/User/useCart";
+import Voucher from "@/components/user/cart/Voucher";
 
 const CartContent = () => {
   const router = useRouter();
@@ -28,6 +30,7 @@ const CartContent = () => {
   const [modal2Open, setModal2Open] = useState(false);
   const [seletedItem, setSelectedItem] = useState<Cart | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const { isOpenVoucher, setIsOpenVoucher } = useCart();
 
   const start = () => {
     setLoading(true);
@@ -189,7 +192,7 @@ const CartContent = () => {
       key: "totalPrice",
       render: (text: number) => (
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ fontWeight: 500 }}>{formatVND(text)}</div>
+          <div style={{ fontWeight: 500 }}>{formatCurrency(text)}</div>
         </div>
       ),
     },
@@ -218,6 +221,7 @@ const CartContent = () => {
       {contextHolder}
 
       <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
+        {isOpenVoucher && <Voucher />}
         <Modal
           className="p-5"
           centered
@@ -247,7 +251,7 @@ const CartContent = () => {
             Are you sure you want to remove this product?
           </div>
         </Modal>
-        {carts.length === 0 ? (
+        {carts === null || carts.length === 0 ? (
           <div className="w-[80vw] mx-auto h-[50vh] my-auto flex items-center justify-center flex-col">
             <Image src="/Cart/emptycart.png" width={80} height={80} />
             <div className="font-semibold text-xl py-10">
@@ -255,7 +259,7 @@ const CartContent = () => {
             </div>
             <div className="flex items-center">
               <Button
-                className="!rounded-md !px-3 !py-5 !bg-[#ff513d] !border-none hover:!text-white"
+                className="!rounded-md !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
                 onClick={() => router.push("/product")}
               >
                 SEE PRODUCTS
@@ -267,17 +271,6 @@ const CartContent = () => {
             <div className="font-inter py-10 w-[80vw] mx-auto border border-gray-300 bg-white mb-10 rounded-md">
               <div className="p-2">
                 <Flex gap="middle" vertical>
-                  {/* <Flex align="center" gap="middle">
-              <Button
-                type="primary"
-                onClick={start}
-                disabled={!hasSelected}
-                loading={loading}
-              >
-                Reload
-              </Button> */}
-                  {/* {hasSelected ? `Selected ${selectedRowKeys.length} items` : null} */}
-                  {/* </Flex> */}
                   <Table<Cart>
                     rowSelection={rowSelection}
                     columns={columns}
@@ -288,18 +281,37 @@ const CartContent = () => {
                 </Flex>
               </div>
             </div>
-            <div className="py-10 border border-gray-300 w-[80vw] m-auto flex justify-between items-center gap-3 mx-auto bg-white rounded-md">
-              <div className="flex flex-row gap-20 ml-2">
-                <button
-                  className=" px-4 py-2 text-shadow-red-400 font-sans font-semibold cursor-pointer hover:text-gray-700"
-                  onClick={handleChooseAll}
-                >
-                  Choose all ({carts.length})
-                </button>
-                <Button
-                  type="text"
-                  onClick={hasSelected ? handleDeleteProductInCart : undefined}
-                  className={`!px-4 !py-6 !border-none !font-semibold !font-sans !text-md
+            <div className="border border-gray-300 w-[80vw] m-auto flex justify-between items-center mx-auto bg-white rounded-md flex-col">
+              {hasSelected && (
+                <div className="flex justify-center px-5 py-5 border-b border-gray-300 w-full">
+                  <div className="flex-1"></div>
+                  <div className="flex-1 flex flex-row justify-end gap-20">
+                    <div className="text-black font-bold text-left pr-6">
+                      Discount voucher
+                    </div>
+                    <div
+                      className="!text-[#0885ce] hover:!text-[#6cb6ff] cursor-pointer font-semibold"
+                      onClick={() => setIsOpenVoucher(true)}
+                    >
+                      Choose voucher
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex w-full justify-between items-center py-5">
+                <div className="flex flex-row gap-20 ml-2">
+                  <button
+                    className=" px-4 py-2 text-shadow-red-400 font-sans font-semibold cursor-pointer hover:text-gray-700"
+                    onClick={handleChooseAll}
+                  >
+                    Choose all ({carts.length})
+                  </button>
+                  <Button
+                    type="text"
+                    onClick={
+                      hasSelected ? handleDeleteProductInCart : undefined
+                    }
+                    className={`!px-4 !py-6 !border-none !font-semibold !font-sans !text-md
               !bg-transparent
               hover:!bg-transparent
               active:!bg-transparent
@@ -308,17 +320,29 @@ const CartContent = () => {
                   ? "!text-black hover:!text-gray-700 cursor-pointer"
                   : "!text-gray-400 !cursor-not-allowed"
               }`}
-                >
-                  Delete
-                </Button>
-              </div>
-
-              <div className="mr-4 flex flex-row gap-15">
-                <div className="flex flex-row justify-center items-center">
-                  Total Price: <span>{formatVND(totalPrice)}</span>
+                  >
+                    Delete
+                  </Button>
                 </div>
-                <div>
-                  <Button type="primary">Checkout</Button>
+
+                <div className="mr-4 flex flex-row gap-15">
+                  <div className="flex flex-row justify-center items-center">
+                    <div className=" uppercase text-red-500 font-bold">
+                      Total Price:{"   "}
+                    </div>
+                    <div className="mx-2 font-semibold text-black block">
+                      {formatCurrency(totalPrice)}
+                    </div>
+                  </div>
+                  <div>
+                    <Button
+                      type="primary"
+                      style={{ borderRadius: 0, backgroundColor: "#ff6857" }}
+                      className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md  !border-none hover:!bg-[#ff6857] hover:!text-white"
+                    >
+                      BUY NOW
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

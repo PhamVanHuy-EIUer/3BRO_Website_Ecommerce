@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@tailwind utilities;
 
 /* Ẩn spinner input number - Chrome, Edge, Safari */
 input[type="number"]::-webkit-inner-spin-button,

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Product } from "@/models/Product";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
-import { formatVND } from "@/utils/currency";
+import { formatCurrency } from "@/utils/currency";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -86,7 +86,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         <div className="mt-auto">
           <div className="flex items-center gap-3">
             <span className="text-red-500 font-semibold text-lg">
-              {formatVND(product.price)}
+              {formatCurrency(product.price)}
             </span>
           </div>
 

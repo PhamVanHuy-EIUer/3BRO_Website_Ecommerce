@@ -1,3 +1,5 @@
+import { title } from "process";
+
 export const quickMenu = [
     { id: 1, name: "Home", href: "/" },
     { id: 2, name: "Product", href: "/product" },
@@ -33,6 +35,17 @@ export const banners = [
     { id: 4, src: "/Carousel/Carousel 1.png" },
 ];
 
+export const discount = [
+    { id: 1, img: "/Discount/Discount5.PNG", discount: 5 },
+    { id: 2, img: "/Discount/Discount10.PNG", discount: 10 },
+    { id: 3, img: "/Discount/Discount15.PNG", discount: 15 },
+    { id: 4, img: "/Discount/Discount20.PNG", discount: 20 },
+    { id: 5, img: "/Discount/Discount25.PNG", discount: 25 },
+    { id: 6, img: "/Discount/Discount30.PNG", discount: 30 },
+    { id: 7, img: "/Discount/Discount35.PNG", discount: 35 },
+    { id: 8, img: "/Discount/Discount40.PNG", discount: 40 },
+    { id: 9, img: "/Discount/Discount45.PNG", discount: 45 },
+]
 // export const imageCategory = [
 //     { id: 1, name: "Electrics", img: "/Categories/householdApp.avif", href: "/category/electrics" },
 //     { id: 2, name: "Accessories", img: "/Categories/accesories.webp", href: "/category/accessories" },

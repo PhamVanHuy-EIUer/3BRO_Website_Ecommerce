@@ -740,6 +740,7 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             decimal totalPrice = findProduct.Price * quantity + shippingFee;
             decimal discountPrice = 0;
+
             if (findDiscount != null)
             {
                 if (findDiscount.DiscountPercent.HasValue)
@@ -805,7 +806,6 @@ namespace Ecommerce3BRO.Repository.Implement
                 })
                 .ToListAsync();
 
-            // 4️⃣ Tính tổng page
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
 
             return new ApiResponse<GetProductDTO>(products, null, "200", "Search products by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
@@ -856,7 +856,6 @@ namespace Ecommerce3BRO.Repository.Implement
                     _env.WebRootPath,
                     "images",
                     "products"
-
                 );
                 if (!string.IsNullOrEmpty(findProduct.ImageUrl))
                 {

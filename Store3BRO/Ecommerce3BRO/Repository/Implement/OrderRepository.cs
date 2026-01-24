@@ -82,12 +82,11 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrderByAdminAsync()
         {
             var orders = await _context.Order
-     .Include(o => o.User)
-     .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
-     .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
-     .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
-     .ToListAsync();
-
+             .Include(o => o.User)
+             .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+             .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
+             .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
+             .ToListAsync();
             var result = orders.Select(o =>
             {
                 var refundPrice = o.OrderDetails

@@ -18,7 +18,7 @@ const NavBar = () => {
   const [search, setSearch] = useState("");
   const { authorized, logout } = useAuth();
   const pathname = usePathname();
-  const { products } = useSearchProduct(search, 3);
+  const { products, total } = useSearchProduct(search, 3);
 
   const getFirstImage = (imageUrl?: string) => {
     if (!imageUrl) return "/blank.jpg";
@@ -104,7 +104,7 @@ const NavBar = () => {
               className="px-4 py-2 bg-gray-100"
             />
             <IoMdSearch className="absolute right-3 text-xl" />
-            {products.length > 0 && (
+            {total > 0 && (
               <div className="absolute top-12 bg-gray-100 pb-2 shadow-lg z-20 w-70">
                 <ul className="list-none m-0 z-10 ">
                   {products.map((product) => (
@@ -138,18 +138,20 @@ const NavBar = () => {
                     </motion.li>
                   ))}
                 </ul>
-                <div
-                  className="py-1 px-2 cursor-pointer hover:bg-gray-100 underline hover:text-red-500 hover:underline-offset-2"
-                  onClick={() => {
-                    if (!search.trim()) return;
-                    setSearch("");
-                    router.push(
-                      `/product/search?keyword=${encodeURIComponent(search.trim())}`,
-                    );
-                  }}
-                >
-                  View all
-                </div>
+                {products.length > 3 && (
+                  <div
+                    className="py-1 px-2 cursor-pointer hover:bg-gray-100 underline hover:text-red-500 hover:underline-offset-2"
+                    onClick={() => {
+                      if (!search.trim()) return;
+                      setSearch("");
+                      router.push(
+                        `/product/search?keyword=${encodeURIComponent(search.trim())}`,
+                      );
+                    }}
+                  >
+                    View all
+                  </div>
+                )}
               </div>
             )}
           </form>

@@ -6,7 +6,7 @@ export const quickMenu = [
     { id: 3, name: "About", href: "/about" },
     { id: 4, name: "Contact", href: "/contact" },
     { id: 5, name: "Sign In", href: "/login" },
-    { id: 6, name: "Account", href: "/account" },
+    { id: 6, name: "Account", href: "/user" },
 ];
 
 export const support = [

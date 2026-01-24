@@ -9,6 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { Product } from "@/models/Product";
 
 const data = [
   { name: "iPhone 15", revenue: 120000000 },
@@ -18,6 +20,11 @@ const data = [
   { name: "iPad Pro", revenue: 50000000 },
 ];
 
+interface modalTopProducts {
+  name: string;
+  revenue: number;
+}
+
 const formatVND = (value: number) =>
   new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -26,13 +33,15 @@ const formatVND = (value: number) =>
   }).format(value);
 
 const TopProductChart = () => {
+  const [products, setProducts] = useState<Product[]>();
+  useEffect(() => {});
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="h-[450px] bg-[#f5f5f5] p-5 rounded-xl flex-1"
     >
-      <h2 className="text-xl font-light mb-5">Top Selling Porducts</h2>
+      <h2 className="text-lg font-medium mb-4">Top Selling Products</h2>
 
       <ResponsiveContainer width="100%" height="100%">
         <BarChart

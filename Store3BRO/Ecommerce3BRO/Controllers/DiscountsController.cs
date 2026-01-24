@@ -106,5 +106,11 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _discountRepository.DeleteDiscountAsync(id);
         }
+
+        [HttpPatch("update-status/{id}")]
+        public async Task<ApiResponse<string>> UpdateStatusDiscount(Guid id, [FromBody]UpdateStatusDiscountDTO status)
+        {
+            return await _discountRepository.updateStatusDiscountAsync(id, status);
+        }
     }
 }

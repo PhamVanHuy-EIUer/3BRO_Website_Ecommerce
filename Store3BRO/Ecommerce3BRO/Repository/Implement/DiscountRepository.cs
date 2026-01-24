@@ -234,5 +234,26 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             return new ApiResponse<GetDiscountDTO>(null, updatedDiscount, "200", "Update discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
+
+        public async Task<ApiResponse<string>> updateStatusDiscountAsync(Guid discountId, UpdateStatusDiscountDTO status)
+        {
+            var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Id == discountId);
+            if (findDiscount == null)
+            {
+                return new ApiResponse<string>(null, null, "404", "Discount not found", false, 0, 0, 0, 0, null, null, null);
+            }
+
+            var timeNow = DateTime.Now;
+
+            if (findDiscount.EndDate <= timeNow)
+            {
+                return new ApiResponse<string>(null, null, "400", "Cannot change status because discount has expired", false, 0, 0, 0, 0, null, null, null);
+            }
+
+            findDiscount.IsActive = status.IsActive;
+            await _context.SaveChangesAsync();
+
+            return new ApiResponse<string>(null, "Update status discount successfully", "200", "Success", true, 0, 0, 0, 0, null, null, null);
+        }
     }
 }

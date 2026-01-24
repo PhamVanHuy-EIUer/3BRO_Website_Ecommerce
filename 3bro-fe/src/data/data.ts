@@ -46,12 +46,13 @@ export const discount = [
     { id: 8, img: "/Discount/Discount40.PNG", discount: 40 },
     { id: 9, img: "/Discount/Discount45.PNG", discount: 45 },
 ]
-// export const imageCategory = [
-//     { id: 1, name: "Electrics", img: "/Categories/householdApp.avif", href: "/category/electrics" },
-//     { id: 2, name: "Accessories", img: "/Categories/accesories.webp", href: "/category/accessories" },
-//     { id: 3, name: "Fashions", img: "/Categories/clothing.webp", href: "/category/fashions" },
-//     { id: 4, name: "Comestics", img: "/Categories/cosmetic.jfif", ref: "/category/comestics" },
-//     { id: 5, name: "Phones", img: "/Categories/phone.jfif", href: "/category/phones" },
-//     { id: 6, name: "Laptop", img: "/Categories/computer.jfif", href: "/category/laptops" },
-// ]
 
+
+export type OrderStatus = "All" | "Pending" | "Confirmed" | "Shipped" | "Completed" | "Cancelled";
+
+export const ORDER_TABS: OrderStatus[] = ["All", "Pending", "Confirmed", "Shipped", "Completed", "Cancelled"];
+
+export const COLORS = {
+    redColor: "text-[#DB4444]",
+    bgRed: "bg-[#DB4444]",
+};

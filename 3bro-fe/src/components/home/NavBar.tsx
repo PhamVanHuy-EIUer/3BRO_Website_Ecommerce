@@ -180,7 +180,7 @@ const NavBar = () => {
                   <div className="absolute top-15  bg-gray-100 p-2 shadow-lg z-10">
                     <ul className="list-none  m-0">
                       <li className="py-2 px-4">
-                        <Link href="user/account">Account</Link>
+                        <Link href="user">Account</Link>
                       </li>
                       <li
                         className="py-2 px-4 cursor-pointer"

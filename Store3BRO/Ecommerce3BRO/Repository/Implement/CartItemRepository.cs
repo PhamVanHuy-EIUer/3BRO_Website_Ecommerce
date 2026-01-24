@@ -4,6 +4,7 @@ using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 
 namespace Ecommerce3BRO.Repository.Implement
 {
@@ -59,6 +60,37 @@ namespace Ecommerce3BRO.Repository.Implement
             await _context.SaveChangesAsync();
 
             return new ApiResponse<CartItemDTO>(null, null, "200", "Add item to cart successfully", true, 0, 0, 0, 0, null, null, null);
+        }
+
+        public async Task<ApiResponse<string>> DeleteListProductsInCartAsync(List<DeleteProductInCartDTO> listProducts, Guid userId)
+        {
+
+            if(listProducts.Count == 0 || listProducts == null)
+            {
+                return new ApiResponse<string>(null, "Please login account", "401", "Unauthorized", false, 0, 0, 0, 0 , null, null, null);
+            }
+
+            var cart = await _context.Cart.FirstOrDefaultAsync(u => u.Id == userId);
+
+
+            foreach (var item in listProducts)
+            {
+                var findCart = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
+                if (findCart == null)
+                {
+                    return new ApiResponse<string>(null, null, "404", "Cart user not found", false, 0, 0, 0, 0, null, null, null);
+                }
+
+                var findCartItem = await _context.CartItem.FirstOrDefaultAsync(ci => ci.CartId == findCart.Id && ci.ProductId == item.Id);
+                if (findCartItem == null)
+                {
+                    continue;
+                }
+                _context.CartItem.Remove(findCartItem);
+                
+            }
+            await _context.SaveChangesAsync();
+            return new ApiResponse<string>(null, null, "200", "Remove item from cart successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<ApiResponse<decimal>> PreviewTotalPriceAsync(List<CheckOutItemDTO> items)

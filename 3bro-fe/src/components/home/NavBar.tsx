@@ -58,6 +58,7 @@ const NavBar = () => {
     e.preventDefault();
 
     if (!search.trim()) return;
+    setSearch("");
 
     router.push(`/product/search?keyword=${encodeURIComponent(search.trim())}`);
   };
@@ -98,6 +99,7 @@ const NavBar = () => {
               onChange={(e) => {
                 setSearch(e.target.value);
               }}
+              onClick={handleSearch}
               placeholder="Search product"
               className="px-4 py-2 bg-gray-100"
             />
@@ -140,7 +142,6 @@ const NavBar = () => {
                   className="py-1 px-2 cursor-pointer hover:bg-gray-100 underline hover:text-red-500 hover:underline-offset-2"
                   onClick={() => {
                     if (!search.trim()) return;
-
                     setSearch("");
                     router.push(
                       `/product/search?keyword=${encodeURIComponent(search.trim())}`,

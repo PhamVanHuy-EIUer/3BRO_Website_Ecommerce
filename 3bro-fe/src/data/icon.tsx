@@ -1,3 +1,4 @@
+import { MdOutlineDiscount } from "react-icons/md";
 export const GoogleIcon = () => (
   <svg
     width="20"
@@ -23,3 +24,5 @@ export const GoogleIcon = () => (
     />
   </svg>
 );
+
+export const DiscountIcon = () => <MdOutlineDiscount size={20} />;

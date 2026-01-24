@@ -8,7 +8,7 @@ import { Product } from "@/models/Product";
 import { getAvailableProducts } from "@/app/api/product/ProductApi";
 import { getAllUsers } from "@/app/api/user/UserApi";
 import useOrders from "@/hook/useOrders";
-import { formatVND } from "@/utils/currency";
+import { formatCurrency } from "@/utils/currency";
 
 const ItemCards = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -48,7 +48,7 @@ const ItemCards = () => {
           <Card
             name="Total Revenue"
             icon={DollarSign}
-            value={formatVND(
+            value={formatCurrency(
               orders.reduce((total, order) => total + order.totalPrice, 0),
             )}
           />

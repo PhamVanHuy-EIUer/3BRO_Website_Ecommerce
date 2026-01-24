@@ -4,7 +4,7 @@ import { ProductImage } from "@/models/ProductImage";
 import { ChangeEvent, use, useState } from "react";
 import { Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
 import { Image, notification } from "antd";
-import { formatVND } from "@/utils/currency";
+import { formatCurrency } from "@/utils/currency";
 import { ApiResponse } from "@/models/ApiResponse";
 import { cartService } from "@/services/cart.service";
 import { useAuth } from "@/context/AuthContext";
@@ -56,12 +56,14 @@ export default function ProductGallery({
         api.success({
           title: "Add to cart successfully",
           placement: "topRight",
+          duration: 2,
         });
       }
     } catch (error) {
       api.error({
         title: "Error fetch data",
         placement: "topRight",
+        duration: 2,
       });
     }
   };
@@ -158,7 +160,7 @@ export default function ProductGallery({
 
                 {/* Price */}
                 <p className="text-3xl font-semibold text-gray-900 mb-4">
-                  {formatVND(product.price)}
+                  {formatCurrency(product.price)}
                 </p>
 
                 {/* Description */}

@@ -9,7 +9,7 @@ import { Product } from "@/models/Product";
 import { useProductManagement } from "@/hook/useProductManagement";
 import { UpdateProductModal } from "./UpdateProductModal";
 import { DeleteProductModal } from "./DeleteProductModal";
-import { formatVND } from "@/utils/currency";
+import { formatCurrency } from "@/utils/currency";
 import { AddProductModal } from "./AddProductModal";
 import { data } from "framer-motion/client";
 
@@ -79,7 +79,7 @@ const ProductsTable = () => {
       dataIndex: "price",
       key: "price",
       render: (price: number) => (
-        <span style={{ fontWeight: 500 }}>{formatVND(price)}</span>
+        <span style={{ fontWeight: 500 }}>{formatCurrency(price)}</span>
       ),
     },
     {

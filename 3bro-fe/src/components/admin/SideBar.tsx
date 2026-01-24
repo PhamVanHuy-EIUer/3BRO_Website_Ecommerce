@@ -18,6 +18,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
+import { DiscountIcon } from "@/data/icon";
 
 const ICONS = {
   House,
@@ -36,7 +37,8 @@ const menuItems = [
   { id: 3, name: "Users", icon: ShoppingCart, href: "/admin/users" },
   { id: 4, name: "Sales", icon: Users, href: "/admin/sales" },
   { id: 5, name: "Orders", icon: Settings, href: "/admin/orders" },
-  { id: 6, name: "Settings", icon: Info, href: "/admin/settings" },
+  { id: 6, name: "Discount", icon: DiscountIcon, href: "/admin/discounts" },
+  { id: 9, name: "Settings", icon: Info, href: "/admin/settings" },
   { id: 7, name: "Messages", icon: Mail, href: "admin/messages" },
   { id: 8, name: "Notifications", icon: Bell, href: "/admin/notifications" },
 ];

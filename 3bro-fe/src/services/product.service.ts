@@ -27,4 +27,6 @@ export const productService = {
                 'Content-Type': 'multipart/form-data',
             },
         }).then(res => res.data),
+
+    // getDiscountForProduct: ()
 };

@@ -1,6 +1,7 @@
 "use client";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Cart } from "@/models/Cart";
+import { Discount } from "@/models/Discount";
 import { cartService } from "@/services/cart.service";
 import {
   Button,
@@ -9,16 +10,15 @@ import {
   Modal,
   notification,
   TableColumnsType,
+  Tag,
 } from "antd";
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { TableRowSelection } from "antd/es/table/interface";
 import { formatCurrency } from "@/utils/currency";
-import { b, filter, style } from "framer-motion/client";
 import { ViewPrice } from "@/models/ViewPrice";
 import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/hook/User/useCart";
 import Voucher from "@/components/user/cart/Voucher";
 
 const CartContent = () => {
@@ -30,22 +30,14 @@ const CartContent = () => {
   const [modal2Open, setModal2Open] = useState(false);
   const [seletedItem, setSelectedItem] = useState<Cart | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const { isOpenVoucher, setIsOpenVoucher } = useCart();
-
-  const start = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
+  const [isOpenVoucher, setIsOpenVoucher] = useState(false);
+  const [appliedVoucher, setAppliedVoucher] = useState<Discount | null>(null);
+  const [finalPrice, setFinalPrice] = useState<number>(0);
 
   const handleChooseAll = () => {
     if (selectedRowKeys.length === carts.length) {
-      // Đã chọn hết → bỏ chọn
       setSelectedRowKeys([]);
     } else {
-      // Chọn tất cả
       const allKeys = carts.map((cart) => cart.cartItemID);
       setSelectedRowKeys(allKeys);
     }
@@ -73,7 +65,6 @@ const CartContent = () => {
       const response: ApiResponse<number> = await cartService.previewPrice(
         buildViewPricePayload(),
       );
-      console.log(response);
       if (response.code === "200" && response.isSuccess) {
         setTotalPrice(response.object ?? 0);
       }
@@ -82,8 +73,35 @@ const CartContent = () => {
     }
   };
 
+  const calculateFinalPrice = () => {
+    if (!appliedVoucher) {
+      setFinalPrice(totalPrice);
+      return;
+    }
+
+    // Kiểm tra đơn tối thiểu
+    if (totalPrice < appliedVoucher.minOrderAmount) {
+      setFinalPrice(totalPrice);
+      return;
+    }
+
+    let discount = 0;
+
+    // Tính giảm theo phần trăm
+    if (appliedVoucher.discountPercent > 0) {
+      discount = (totalPrice * appliedVoucher.discountPercent) / 100;
+    }
+
+    // Tính giảm theo số tiền cố định
+    if (appliedVoucher.discountAmount > 0) {
+      discount = appliedVoucher.discountAmount;
+    }
+
+    const calculatedPrice = Math.max(0, totalPrice - discount);
+    setFinalPrice(calculatedPrice);
+  };
+
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -92,7 +110,7 @@ const CartContent = () => {
     onChange: onSelectChange,
   };
 
-  const hasSelected = selectedRowKeys.length > 0 ? true : false;
+  const hasSelected = selectedRowKeys.length > 0;
 
   const getImageUrl = (imageUrl?: string) => {
     if (!imageUrl) return "/blank.jpg";
@@ -100,10 +118,10 @@ const CartContent = () => {
       ? imageUrl
       : `https://localhost:7041${imageUrl}`;
   };
+
   const handlefetchCart = async () => {
     try {
       const response: ApiResponse<Cart> = await cartService.getCart();
-
       setCarts(response.list);
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -116,7 +134,7 @@ const CartContent = () => {
         await cartService.deleteProductFromCart(cartItem.productId);
       if (response.code === "200" && response.isSuccess) {
         api.success({
-          title: "Delete product from cart successfully",
+          message: "Xóa sản phẩm thành công",
           placement: "topRight",
           duration: 2,
         });
@@ -134,7 +152,7 @@ const CartContent = () => {
       );
       if (res.code === "200" && res.isSuccess) {
         api.success({
-          title: "Delete products from cart successfully",
+          message: "Xóa các sản phẩm thành công",
           placement: "topRight",
           duration: 2,
         });
@@ -145,13 +163,42 @@ const CartContent = () => {
     }
   };
 
+  const handleApplyVoucher = (discount: Discount) => {
+    // Kiểm tra đơn tối thiểu
+    if (totalPrice < discount.minOrderAmount) {
+      api.warning({
+        message: "Không đủ điều kiện",
+        description: `Đơn hàng tối thiểu phải từ ${formatCurrency(discount.minOrderAmount)}`,
+        placement: "topRight",
+        duration: 3,
+      });
+      return;
+    }
+
+    setAppliedVoucher(discount);
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+  };
+
   useEffect(() => {
     handlefetchCart();
   }, []);
 
   useEffect(() => {
-    fetchPreviewPrice();
+    if (hasSelected) {
+      fetchPreviewPrice();
+    } else {
+      setTotalPrice(0);
+      setAppliedVoucher(null);
+    }
   }, [selectedRowKeys]);
+
+  useEffect(() => {
+    calculateFinalPrice();
+  }, [totalPrice, appliedVoucher]);
+
   const columns: TableColumnsType<Cart> = [
     {
       title: "Name",
@@ -191,27 +238,23 @@ const CartContent = () => {
       dataIndex: "totalPrice",
       key: "totalPrice",
       render: (text: number) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ fontWeight: 500 }}>{formatCurrency(text)}</div>
-        </div>
+        <div style={{ fontWeight: 500 }}>{formatCurrency(text)}</div>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (record: Cart) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <Button
-            type="primary"
-            danger
-            onClick={() => {
-              setModal2Open(true);
-              setSelectedItem(record);
-            }}
-          >
-            Remove
-          </Button>
-        </div>
+        <Button
+          type="primary"
+          danger
+          onClick={() => {
+            setModal2Open(true);
+            setSelectedItem(record);
+          }}
+        >
+          Remove
+        </Button>
       ),
     },
   ];
@@ -220,8 +263,13 @@ const CartContent = () => {
     <>
       {contextHolder}
 
+      <Voucher
+        isOpen={isOpenVoucher}
+        onClose={() => setIsOpenVoucher(false)}
+        onApply={handleApplyVoucher}
+      />
+
       <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
-        {isOpenVoucher && <Voucher />}
         <Modal
           className="p-5"
           centered
@@ -229,7 +277,6 @@ const CartContent = () => {
           title={<span></span>}
           okText="Delete"
           cancelText="Cancel"
-          // okType="danger"
           okButtonProps={{
             size: "large",
             style: {
@@ -251,6 +298,7 @@ const CartContent = () => {
             Are you sure you want to remove this product?
           </div>
         </Modal>
+
         {carts === null || carts.length === 0 ? (
           <div className="w-[80vw] mx-auto h-[50vh] my-auto flex items-center justify-center flex-col">
             <Image src="/Cart/emptycart.png" width={80} height={80} />
@@ -281,27 +329,65 @@ const CartContent = () => {
                 </Flex>
               </div>
             </div>
+
             <div className="border border-gray-300 w-[80vw] m-auto flex justify-between items-center mx-auto bg-white rounded-md flex-col">
               {hasSelected && (
-                <div className="flex justify-center px-5 py-5 border-b border-gray-300 w-full">
-                  <div className="flex-1"></div>
-                  <div className="flex-1 flex flex-row justify-end gap-20">
-                    <div className="text-black font-bold text-left pr-6">
-                      Discount voucher
-                    </div>
-                    <div
-                      className="!text-[#0885ce] hover:!text-[#6cb6ff] cursor-pointer font-semibold"
-                      onClick={() => setIsOpenVoucher(true)}
-                    >
-                      Choose voucher
+                <>
+                  {/* Voucher Section */}
+                  <div className="flex justify-center px-5 py-5 border-b border-gray-300 w-full">
+                    <div className="flex-1"></div>
+                    <div className="flex-1 flex flex-row justify-end gap-20 items-center">
+                      <div className="text-black font-bold text-left pr-6">
+                        Discount voucher
+                      </div>
+                      {appliedVoucher ? (
+                        <div className="flex items-center gap-3">
+                          <Tag color="red" className="!text-base !py-1 !px-3">
+                            {appliedVoucher.code}
+                          </Tag>
+                          <Button
+                            type="link"
+                            danger
+                            onClick={handleRemoveVoucher}
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      ) : (
+                        <div
+                          className="!text-[#0885ce] hover:!text-[#6cb6ff] cursor-pointer font-semibold"
+                          onClick={() => setIsOpenVoucher(true)}
+                        >
+                          Choose voucher
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
+
+                  {/* Price Summary */}
+                  {appliedVoucher && (
+                    <div className="flex justify-end px-5 py-3 border-b border-gray-300 w-full">
+                      <div className="flex flex-col gap-2 min-w-[300px]">
+                        <div className="flex justify-between text-sm">
+                          <span>Tổng tiền hàng:</span>
+                          <span>{formatCurrency(totalPrice)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm text-red-500">
+                          <span>Giảm giá:</span>
+                          <span>
+                            -{formatCurrency(totalPrice - finalPrice)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
               )}
+
               <div className="flex w-full justify-between items-center py-5">
                 <div className="flex flex-row gap-20 ml-2">
                   <button
-                    className=" px-4 py-2 text-shadow-red-400 font-sans font-semibold cursor-pointer hover:text-gray-700"
+                    className="px-4 py-2 font-sans font-semibold cursor-pointer hover:text-gray-700"
                     onClick={handleChooseAll}
                   >
                     Choose all ({carts.length})
@@ -312,14 +398,12 @@ const CartContent = () => {
                       hasSelected ? handleDeleteProductInCart : undefined
                     }
                     className={`!px-4 !py-6 !border-none !font-semibold !font-sans !text-md
-              !bg-transparent
-              hover:!bg-transparent
-              active:!bg-transparent
-              ${
-                hasSelected
-                  ? "!text-black hover:!text-gray-700 cursor-pointer"
-                  : "!text-gray-400 !cursor-not-allowed"
-              }`}
+                      !bg-transparent hover:!bg-transparent active:!bg-transparent
+                      ${
+                        hasSelected
+                          ? "!text-black hover:!text-gray-700 cursor-pointer"
+                          : "!text-gray-400 !cursor-not-allowed"
+                      }`}
                   >
                     Delete
                   </Button>
@@ -327,18 +411,22 @@ const CartContent = () => {
 
                 <div className="mr-4 flex flex-row gap-15">
                   <div className="flex flex-row justify-center items-center">
-                    <div className=" uppercase text-red-500 font-bold">
-                      Total Price:{"   "}
+                    <div className="uppercase text-red-500 font-bold">
+                      Total Price:{" "}
                     </div>
                     <div className="mx-2 font-semibold text-black block">
-                      {formatCurrency(totalPrice)}
+                      {formatCurrency(appliedVoucher ? finalPrice : totalPrice)}
                     </div>
                   </div>
                   <div>
                     <Button
                       type="primary"
-                      style={{ borderRadius: 0, backgroundColor: "#ff6857" }}
-                      className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md  !border-none hover:!bg-[#ff6857] hover:!text-white"
+                      disabled={!hasSelected}
+                      style={{
+                        borderRadius: 0,
+                        backgroundColor: hasSelected ? "#ff6857" : undefined,
+                      }}
+                      className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md !border-none hover:!bg-[#ff6857] hover:!text-white"
                     >
                       BUY NOW
                     </Button>

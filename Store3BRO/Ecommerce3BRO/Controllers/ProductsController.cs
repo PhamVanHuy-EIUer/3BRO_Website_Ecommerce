@@ -178,9 +178,9 @@ namespace Ecommerce3BRO.Controllers
             }
 
             return await _productService.GetProductWithDiscountByCartItemId(
-                request.CartItemIds,
-                userId,
-                request.DiscountCode
+                request,
+                userId
+                
             );
         }
         //api get products with discount code when user checkout on all product in cart

@@ -8,4 +8,5 @@ export const cartService = {
     deleteProductFromCart: (id: string) => axiosClient.delete(`/CartItems?productId=${id}`).then(res => res.data),
     previewPrice: (items: ViewPrice[]) => axiosClient.post(`/CartItems/preview-price`, items).then(res => res.data),
     deleteListProductFromCart: (ids: DeleteProductId[]) => axiosClient.delete(`/CartItems/delete-list-product`, { data: ids }).then(res => res.data),
+
 }

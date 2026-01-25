@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Input, Button, List, Radio, Space, Alert, message } from "antd";
+import {
+  Modal,
+  Input,
+  Button,
+  Radio,
+  Space,
+  Alert,
+  message,
+  Empty,
+  Spin,
+} from "antd";
 import { GiftOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Discount } from "@/models/Discount";
@@ -50,7 +60,7 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
     }
 
     onApply(selectedDiscount);
-    message.success(`Đã áp dụng voucher: ${selectedDiscount.code}`);
+
     handleCancel();
   };
 
@@ -67,17 +77,17 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
     }
 
     // Tìm voucher theo code
-    // const foundDiscount = discounts.find(
-    //   (d) => d.code.toLowerCase() === voucherCode.toLowerCase().trim()
-    // );
+    const foundDiscount = discounts.find(
+      (d) => d.code.toLowerCase() === voucherCode.toLowerCase().trim(),
+    );
 
-    // if (foundDiscount) {
-    //   setSelectedDiscountId(foundDiscount.id);
-    //   message.success(`Đã chọn voucher: ${foundDiscount.code}`);
-    //   setVoucherCode("");
-    // } else {
-    //   message.error("Mã voucher không hợp lệ hoặc đã hết hạn");
-    // }
+    if (foundDiscount) {
+      setSelectedDiscountId(foundDiscount.code);
+      message.success(`Đã chọn voucher: ${foundDiscount.code}`);
+      setVoucherCode("");
+    } else {
+      message.error("Mã voucher không hợp lệ hoặc đã hết hạn");
+    }
   };
 
   // Format tiền VND
@@ -157,111 +167,119 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
           Mã Giảm Giá Khả Dụng ({discounts.length})
         </h3>
 
-        <Radio.Group
-          value={selectedDiscountId}
-          onChange={(e) => setSelectedDiscountId(e.target.value)}
-          style={{ width: "100%" }}
-        >
-          <List
-            loading={loading}
-            dataSource={discounts}
-            locale={{ emptyText: "Không có voucher khả dụng" }}
-            renderItem={(item) => {
-              const isSelected = selectedDiscountId === item.id;
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <Spin size="large" />
+          </div>
+        ) : discounts.length === 0 ? (
+          <Empty
+            description="Không có voucher khả dụng"
+            style={{ padding: "40px 0" }}
+          />
+        ) : (
+          <Radio.Group
+            value={selectedDiscountId}
+            onChange={(e) => setSelectedDiscountId(e.target.value)}
+            style={{ width: "100%" }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {discounts.map((item) => {
+                const isSelected = selectedDiscountId === item.id;
 
-              return (
-                <List.Item
-                  style={{
-                    border: isSelected
-                      ? "2px solid #ee4d2d"
-                      : "1px solid #e5e5e5",
-                    borderRadius: 8,
-                    marginBottom: 12,
-                    padding: 16,
-                    backgroundColor: isSelected ? "#fff5f2" : "#fff",
-                    transition: "all 0.3s",
-                    cursor: "pointer",
-                  }}
-                  // onClick={() => setSelectedDiscountId(item.id)}
-                >
-                  <Radio value={item.id} style={{ width: "100%" }}>
-                    <div style={{ display: "flex", gap: 12, width: "100%" }}>
-                      {/* Icon voucher */}
-                      <div
-                        style={{
-                          width: 64,
-                          height: 64,
-                          minWidth: 64,
-                          backgroundColor: "#ee4d2d",
-                          borderRadius: 8,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#fff",
-                          fontWeight: "bold",
-                          fontSize: 12,
-                          textAlign: "center",
-                          padding: 4,
-                        }}
-                      >
-                        {getDiscountDisplay(item)}
-                      </div>
-
-                      {/* Nội dung voucher */}
-                      <div style={{ flex: 1 }}>
-                        {/* Title */}
-                        <div style={{ marginBottom: 8 }}>
-                          <span style={{ fontWeight: 500, fontSize: 14 }}>
-                            {item.code}
-                          </span>
-                        </div>
-
-                        {/* Description */}
+                return (
+                  <div
+                    key={item.id}
+                    style={{
+                      border: isSelected
+                        ? "2px solid #ee4d2d"
+                        : "1px solid #e5e5e5",
+                      borderRadius: 8,
+                      padding: 16,
+                      backgroundColor: isSelected ? "#fff5f2" : "#fff",
+                      transition: "all 0.3s",
+                      cursor: "pointer",
+                    }}
+                    onClick={() => setSelectedDiscountId(item.code)}
+                  >
+                    <Radio value={item.id} style={{ width: "100%" }}>
+                      <div style={{ display: "flex", gap: 12, width: "100%" }}>
+                        {/* Icon voucher */}
                         <div
                           style={{
-                            fontSize: 13,
-                            marginBottom: 8,
-                            color: "#333",
+                            width: 64,
+                            height: 64,
+                            minWidth: 64,
+                            backgroundColor: "#ee4d2d",
+                            borderRadius: 8,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            fontSize: 12,
+                            textAlign: "center",
+                            padding: 4,
                           }}
                         >
-                          {item.description}
+                          {getDiscountDisplay(item)}
                         </div>
 
-                        {/* Details */}
-                        <div style={{ fontSize: 12, color: "#888" }}>
-                          <div style={{ marginBottom: 4 }}>
-                            • Đơn tối thiểu:{" "}
-                            {formatCurrency(item.minOrderAmount)}
+                        {/* Nội dung voucher */}
+                        <div style={{ flex: 1 }}>
+                          {/* Title */}
+                          <div style={{ marginBottom: 8 }}>
+                            <span style={{ fontWeight: 500, fontSize: 14 }}>
+                              {item.code}
+                            </span>
                           </div>
-                          <div style={{ marginBottom: 4 }}>
-                            • Số lượng còn lại: {item.quantity}
-                          </div>
+
+                          {/* Description */}
                           <div
-                            style={{ display: "flex", alignItems: "center" }}
+                            style={{
+                              fontSize: 13,
+                              marginBottom: 8,
+                              color: "#333",
+                            }}
                           >
-                            <ClockCircleOutlined style={{ marginRight: 4 }} />
-                            HSD: {formatDate(item.startDate)} -{" "}
-                            {formatDate(item.endDate)}
+                            {item.description}
                           </div>
-                        </div>
 
-                        {/* Alert */}
-                        {item.minOrderAmount > 0 && (
-                          <Alert
-                            message={`Áp dụng cho đơn hàng từ ${formatCurrency(item.minOrderAmount)}`}
-                            type="info"
-                            showIcon
-                            style={{ marginTop: 8, fontSize: 12 }}
-                          />
-                        )}
+                          {/* Details */}
+                          <div style={{ fontSize: 12, color: "#888" }}>
+                            <div style={{ marginBottom: 4 }}>
+                              • Đơn tối thiểu:{" "}
+                              {formatCurrency(item.minOrderAmount)}
+                            </div>
+                            <div style={{ marginBottom: 4 }}>
+                              • Số lượng còn lại: {item.quantity}
+                            </div>
+                            <div
+                              style={{ display: "flex", alignItems: "center" }}
+                            >
+                              <ClockCircleOutlined style={{ marginRight: 4 }} />
+                              HSD: {formatDate(item.startDate)} -{" "}
+                              {formatDate(item.endDate)}
+                            </div>
+                          </div>
+
+                          {/* Alert */}
+                          {item.minOrderAmount > 0 && (
+                            <Alert
+                              message={`Áp dụng cho đơn hàng từ ${formatCurrency(item.minOrderAmount)}`}
+                              type="info"
+                              showIcon
+                              style={{ marginTop: 8, fontSize: 12 }}
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  </Radio>
-                </List.Item>
-              );
-            }}
-          />
-        </Radio.Group>
+                    </Radio>
+                  </div>
+                );
+              })}
+            </div>
+          </Radio.Group>
+        )}
       </div>
     </Modal>
   );

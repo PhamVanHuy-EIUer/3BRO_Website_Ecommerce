@@ -668,14 +668,16 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartItemId(List<Guid> listCartItemId, Guid userId, string discountCode)
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartItemId(CheckoutCartItemRequestDTO request, Guid userId)
         {
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
-            var findCartItems = await _context.CartItem.Where(ci => listCartItemId.Contains(ci.Id) && ci.Cart.UserId == userId).Include(ci => ci.Product).ThenInclude(p => p.Category).ToListAsync();
+            
+            var findCartItems = await _context.CartItem.Include(ci => ci.Cart).Include(ci => ci.Product).ThenInclude(p => p.Category).Where(ci => request.CartItemIds.Contains(ci.Id) && ci.Cart.UserId == userId).ToListAsync();
+            Console.WriteLine(findCartItems.Count);
             if (!findCartItems.Any())
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
@@ -700,13 +702,13 @@ namespace Ecommerce3BRO.Repository.Implement
 
             decimal discountPrice = 0;
 
-            var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == discountCode && d.IsActive);
+            var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == request.DiscountCode && d.IsActive);
 
             if(findDiscount == null)
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Discount not found", false, 0, 0, 0, 0, null, null, null);
             }
-if (findDiscount.DiscountPercent.HasValue)
+            if (findDiscount.DiscountPercent.HasValue)
                 {
                     discountPrice = totalPrice * findDiscount.DiscountPercent.Value/100m;
                 }
@@ -720,7 +722,7 @@ if (findDiscount.DiscountPercent.HasValue)
             var checkout = new ShowCheckoutDTO
             {
                 productList = productList,
-                Vouchers = await _discount.GetDiscountByUser(totalPrice),
+                //Vouchers = await _discount.GetDiscountByUser(totalPrice),
                 CurrentTotalPrice = totalPrice,
                 DiscountPrice = discountPrice,
                 ShippingFee = shippingFee,

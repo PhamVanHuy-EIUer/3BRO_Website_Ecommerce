@@ -702,11 +702,13 @@ namespace Ecommerce3BRO.Repository.Implement
 
             var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == discountCode && d.IsActive);
 
-            if(findDiscount != null)
+            if(findDiscount == null)
             {
-                if (findDiscount.DiscountPercent.HasValue)
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Discount not found", false, 0, 0, 0, 0, null, null, null);
+            }
+if (findDiscount.DiscountPercent.HasValue)
                 {
-                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value/100;
+                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value/100m;
                 }
 
                 if(findDiscount.DiscountAmount.HasValue)
@@ -715,16 +717,15 @@ namespace Ecommerce3BRO.Repository.Implement
                 }
 
                 discountPrice = Math.Min(discountPrice, totalPrice);
-            }
-
             var checkout = new ShowCheckoutDTO
             {
                 productList = productList,
                 Vouchers = await _discount.GetDiscountByUser(totalPrice),
+                CurrentTotalPrice = totalPrice,
                 DiscountPrice = discountPrice,
                 ShippingFee = shippingFee,
                 FinalTotalPrice = totalPrice - discountPrice + shippingFee,
-                DiscountCode = discountCode,
+                DiscountCode = findDiscount.Code,
                 UserAddress = findUser.Address,
                 UserFullName = findUser.FullName,
                 UserPhoneNumber = findUser.Phone,

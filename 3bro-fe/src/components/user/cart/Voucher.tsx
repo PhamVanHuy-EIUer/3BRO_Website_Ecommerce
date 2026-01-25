@@ -72,7 +72,7 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
 
   const handleApplyCode = async () => {
     if (!voucherCode.trim()) {
-      message.warning("Vui lòng nhập mã voucher");
+      message.warning("Please enter voucher code");
       return;
     }
 

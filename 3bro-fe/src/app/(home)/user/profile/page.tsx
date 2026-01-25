@@ -1,165 +1,371 @@
-import React from "react";
+"use client";
+import React, { useState, useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { userService } from "@/services/user.service";
+import { UpdateProfile } from "@/models/UpdateProfile";
+import { ResetPassword } from "@/models/ResetPassword";
+import { User } from "@/models/User";
 
-const MyAccountPage: React.FC = () => {
-  // Style chung cho các ô input
-  // bg-[#F5F5F5]: Màu nền xám nhạt giống trong thiết kế
-  const inputStyle =
-    "w-full bg-[#F5F5F5] rounded px-4 py-3 outline-none text-sm text-black placeholder-gray-500 focus:ring-1 focus:ring-[#DB4444] transition-all";
-  const labelStyle = "block text-black text-sm mb-2";
+const UserProfilePage = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
+
+  // Profile Form State
+  const [profileData, setProfileData] = useState<UpdateProfile>({
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+  });
+
+  // Password Form State
+  const [passwordData, setPasswordData] = useState<ResetPassword>({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  // Load user data on mount
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        fullName: user.fullName || "",
+        email: user.email || "",
+        phone: user.phone || "",
+        address: user.address || "",
+      });
+    }
+  }, [user]);
+
+  // Handle Profile Update
+  const handleProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      await userService.updateProfile(profileData);
+
+      // Refresh user data
+      const response = await userService.getMe();
+      if (response.data) {
+        setUser(response.data);
+      }
+
+      setMessage({ type: "success", text: "Profile updated successfully!" });
+    } catch (error: any) {
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || "Failed to update profile",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle Password Change
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    // Validate passwords match
+    if (passwordData.newPassword !== passwordData.confirmNewPassword) {
+      setMessage({ type: "error", text: "New passwords do not match" });
+      setLoading(false);
+      return;
+    }
+
+    // Validate password strength (optional)
+    if (passwordData.newPassword.length < 6) {
+      setMessage({
+        type: "error",
+        text: "Password must be at least 6 characters long",
+      });
+      setLoading(false);
+      return;
+    }
+
+    try {
+      await userService.changePassword(passwordData);
+      setMessage({ type: "success", text: "Password changed successfully!" });
+
+      // Clear password form
+      setPasswordData({
+        currentPassword: "",
+        newPassword: "",
+        confirmNewPassword: "",
+      });
+    } catch (error: any) {
+      setMessage({
+        type: "error",
+        text: error.response?.data?.message || "Failed to change password",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="font-inter bg-white min-h-screen py-10">
-      <div className="container mx-auto px-4 lg:px-[135px]">
-        {/* ================= TOP HEADER ================= */}
-        <div className="flex flex-col sm:flex-row items-center justify-between mb-16">
-          {/* Breadcrumb */}
-          <div className="text-sm mb-4 sm:mb-0">
-            <span className="text-gray-500 hover:text-black cursor-pointer">
-              Home
-            </span>
-            <span className="mx-2 text-gray-500">/</span>
-            <span className="text-black font-medium">My Account</span>
-          </div>
-          {/* Welcome Message */}
-          <div className="text-sm">
-            <span className="text-black">Welcome! </span>
-            <span className="text-[#DB4444]">Md Rimel</span>
-          </div>
+    <div className="font-inter bg-[#F9FAFB] min-h-screen py-10">
+      <div className="container mx-auto px-4 max-w-4xl">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">My Account</h1>
+          <p className="text-gray-600 mt-2">
+            Manage your profile and security settings
+          </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-8 lg:gap-20">
-          {/* ================= LEFT SIDEBAR (My Profile Preview) ================= */}
-          <div className="w-full lg:w-[250px] space-y-6">
-            <h2 className="text-base font-medium text-black mb-4">
-              My Profile
-            </h2>
-
-            {/* Các trường thông tin bên trái (Read-only view) */}
-            <div className="space-y-5">
-              <div>
-                <label className="text-sm font-medium text-black mb-1 block">
-                  First Name
-                </label>
-                <div className="bg-[#F5F5F5] rounded px-4 py-3 text-sm text-gray-600">
-                  Hao
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-black mb-1 block">
-                  Last Name
-                </label>
-                <div className="bg-[#F5F5F5] rounded px-4 py-3 text-sm text-gray-600">
-                  Nguyen Hoang
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-black mb-1 block">
-                  Email
-                </label>
-                <div className="bg-[#F5F5F5] rounded px-4 py-3 text-sm text-gray-600 overflow-hidden text-ellipsis">
-                  haonguyenhaong8@gmail.com
-                </div>
-              </div>
-              <div>
-                <label className="text-sm font-medium text-black mb-1 block">
-                  Address
-                </label>
-                <div className="bg-[#F5F5F5] rounded px-4 py-3 text-sm text-gray-600">
-                  TP.Ho Chi Minh
-                </div>
-              </div>
-            </div>
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+          <div className="flex border-b border-gray-200">
+            <button
+              onClick={() => {
+                setActiveTab("profile");
+                setMessage({ type: "", text: "" });
+              }}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                activeTab === "profile"
+                  ? "bg-[#DB4444] text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <svg
+                className="w-5 h-5 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              Profile Information
+            </button>
+            <button
+              onClick={() => {
+                setActiveTab("password");
+                setMessage({ type: "", text: "" });
+              }}
+              className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                activeTab === "password"
+                  ? "bg-[#DB4444] text-white"
+                  : "bg-white text-gray-700 hover:bg-gray-50"
+              }`}
+            >
+              <svg
+                className="w-5 h-5 inline-block mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              Change Password
+            </button>
           </div>
 
-          {/* ================= RIGHT SIDE: EDIT PROFILE FORM ================= */}
-          <div className="flex-1 bg-white shadow-[0px_1px_10px_rgba(0,0,0,0.05)] border border-gray-100 rounded px-6 py-8 md:px-12 md:py-10 lg:px-16 lg:py-14">
-            <h2 className="text-xl font-medium text-[#DB4444] mb-8">
-              Edit Your Profile
-            </h2>
-
-            <form className="space-y-6">
-              {/* Row 1: First Name & Last Name */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                <div>
-                  <label className={labelStyle}>First Name</label>
-                  <input
-                    type="text"
-                    placeholder="Hao"
-                    className={inputStyle}
-                    defaultValue="Hao"
-                  />
-                </div>
-                <div>
-                  <label className={labelStyle}>Last Name</label>
-                  <input
-                    type="text"
-                    placeholder="Nguyen Hoang"
-                    className={inputStyle}
-                    defaultValue="Nguyen Hoang"
-                  />
-                </div>
+          {/* Message Alert */}
+          {message.text && (
+            <div
+              className={`mx-6 mt-6 p-4 rounded-lg ${
+                message.type === "success"
+                  ? "bg-green-50 text-green-800 border border-green-200"
+                  : "bg-red-50 text-red-800 border border-red-200"
+              }`}
+            >
+              <div className="flex items-center">
+                {message.type === "success" ? (
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                )}
+                <span>{message.text}</span>
               </div>
+            </div>
+          )}
 
-              {/* Row 2: Email & Address */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {/* Content Area */}
+          <div className="p-6">
+            {activeTab === "profile" ? (
+              <form onSubmit={handleProfileSubmit} className="space-y-6">
                 <div>
-                  <label className={labelStyle}>Email</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    value={profileData.fullName}
+                    onChange={(e) =>
+                      setProfileData({
+                        ...profileData,
+                        fullName: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Email
+                  </label>
                   <input
                     type="email"
-                    placeholder="haonguyenhaong8@gmail.com"
-                    className={inputStyle}
-                    defaultValue="haonguyenhaong8@gmail.com"
+                    value={profileData.email}
+                    onChange={(e) =>
+                      setProfileData({ ...profileData, email: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
                   />
                 </div>
+
                 <div>
-                  <label className={labelStyle}>Address</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Phone
+                  </label>
                   <input
-                    type="text"
-                    placeholder="TP.Ho Chi Minh"
-                    className={inputStyle}
-                    defaultValue="TP.Ho Chi Minh"
+                    type="tel"
+                    value={profileData.phone}
+                    onChange={(e) =>
+                      setProfileData({ ...profileData, phone: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
                   />
                 </div>
-              </div>
 
-              {/* Password Changes Section */}
-              <div className="space-y-4 pt-4">
-                <label className="block text-black text-sm mb-1">
-                  Password Changes
-                </label>
-                <input
-                  type="password"
-                  placeholder="Current Password"
-                  className={inputStyle}
-                />
-                <input
-                  type="password"
-                  placeholder="New Password"
-                  className={inputStyle}
-                />
-                <input
-                  type="password"
-                  placeholder="Confirm New Password"
-                  className={inputStyle}
-                />
-              </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Address
+                  </label>
+                  <textarea
+                    value={profileData.address}
+                    onChange={(e) =>
+                      setProfileData({
+                        ...profileData,
+                        address: e.target.value,
+                      })
+                    }
+                    rows={3}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none resize-none"
+                    required
+                  />
+                </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-end gap-6 pt-4">
-                <button
-                  type="button"
-                  className="text-black text-sm font-medium hover:text-gray-700 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#DB4444] text-white px-8 py-3 rounded text-sm font-medium hover:bg-red-600 transition shadow-sm"
-                >
-                  Save Changes
-                </button>
-              </div>
-            </form>
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-[#DB4444] text-white px-8 py-3 rounded-lg hover:bg-[#C43E3E] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Updating..." : "Update Profile"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handlePasswordSubmit} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.currentPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        currentPassword: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.newPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        newPassword: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Password must be at least 6 characters long
+                  </p>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    value={passwordData.confirmNewPassword}
+                    onChange={(e) =>
+                      setPasswordData({
+                        ...passwordData,
+                        confirmNewPassword: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#DB4444] focus:border-transparent outline-none"
+                    required
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-[#DB4444] text-white px-8 py-3 rounded-lg hover:bg-[#C43E3E] transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {loading ? "Changing..." : "Change Password"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       </div>
@@ -167,4 +373,4 @@ const MyAccountPage: React.FC = () => {
   );
 };
 
-export default MyAccountPage;
+export default UserProfilePage;

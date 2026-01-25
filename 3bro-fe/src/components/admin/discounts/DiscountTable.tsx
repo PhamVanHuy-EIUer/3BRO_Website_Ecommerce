@@ -52,8 +52,6 @@ export default function DiscountManagement() {
     dateRange: null as any,
   });
 
-  // Fetch discounts on mount
-
   // Fetch all discounts
   const fetchDiscounts = async () => {
     try {

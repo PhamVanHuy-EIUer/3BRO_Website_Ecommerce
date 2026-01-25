@@ -1,6 +1,7 @@
 ﻿
 using Ecommerce3BRO.Data;
 using Ecommerce3BRO.DTO;
+using Ecommerce3BRO.Helper;
 using Ecommerce3BRO.Helper.Enums;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
@@ -13,10 +14,12 @@ namespace Ecommerce3BRO.Repository.Implement
     {
         private readonly Ecommerce3BROContext _context;
         private readonly IDiscountRepository _discount;
-        public OrderRepository(Ecommerce3BROContext context, IDiscountRepository discount)
+        private readonly ShopLocation _shop;
+        public OrderRepository(Ecommerce3BROContext context, IDiscountRepository discount,ShopLocation shop)
         {
             _context = context;
             _discount = discount;
+            _shop = shop;
         }
         public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItemsAsync(Guid userId, OrderDTO order)
         {
@@ -31,6 +34,8 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<OrderDTO>(null, null, "400", "Some products not found", false, 0, 0, 0, 0, null, null, null);
             }
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l=>l.UserId==findUser.Id&&l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             var newOrder = new Order
             {
                 Id = Guid.NewGuid(),
@@ -39,7 +44,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 PaymentMethod = order.PaymentMethod,
                 ShippingAddress = order.ShippingAddress,
                 Status = 0,
-                ShippingFee = 0,
+                ShippingFee = shippingFee,
                 CreatedDate = DateTime.UtcNow,
                 OrderDetails = new List<OrderDetail>()
             };
@@ -111,7 +116,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Status = ((OrderStatus)o.Status).ToString(),
                     RefundPrice = refundPrice,
                     DiscountPrice = discountPrice,
-                    NetRevenue = o.TotalAmount - refundPrice - discountPrice
+                    NetRevenue = o.TotalAmount - refundPrice - discountPrice-o.ShippingFee,
                 };
             }).ToList();
             return new ApiResponse<GetOrderByAdminDTO>(result, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
@@ -120,7 +125,7 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId)
         {
             var orders = await _context.Order
-                .Where(o => o.UserId == userId)
+                .Where(o => o.UserId == userId).OrderByDescending(o=>o.OrderDate)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                  .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
@@ -156,12 +161,12 @@ namespace Ecommerce3BRO.Repository.Implement
                             ImageUrl = od.Product.ImageUrl,
                             Price = od.UnitPrice,
                             Quantity = od.Quantity,
-                            TotalPrice = od.UnitPrice * od.Quantity
+                            TotalPrice = od.UnitPrice * od.Quantity,
                         }).ToList(),
-
+                    ShippingFee=o.ShippingFee,
                     SubTotal = subTotal,
                     DiscountAmount = discountAmount -(o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice),
-                    TotalAmount = subTotal- (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
+                    TotalAmount = subTotal- o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
                 };
             }).ToList();
 
@@ -208,7 +213,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 Price = od.UnitPrice,
                 Quantity = od.Quantity,
                 TotalPrice = od.UnitPrice * od.Quantity,
-                IsReturn = od.IsReturn
+                IsReturn = od.IsReturn,
+                ShippingFee = findOrder.ShippingFee
             }).ToList();
             return new ApiResponse<ViewOrderDetailDTO>(detailOrders, null, "200", "Order details retrieved successfully", true, 0, 0, 0, 0, null, null, null);
         }

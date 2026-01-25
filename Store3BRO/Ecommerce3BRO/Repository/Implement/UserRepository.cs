@@ -100,6 +100,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 return null;
             }
             findUser.IsDeleted = true;
+            findUser.IsActive = false;
             var orders = await _context.Order.Where(o => o.UserId == id).ToListAsync();
             foreach (var order in orders)
             {
@@ -407,6 +408,20 @@ namespace Ecommerce3BRO.Repository.Implement
                 IsActive = findUser.IsActive,
                 Phone = findUser.Phone
             };
+            var findUserLocation = await _context.UserLocation.Where(l => l.UserId == findUser.Id&&l.IsActive).ToListAsync();
+            foreach (UserLocation l in findUserLocation)
+            {
+                l.IsActive = false;
+            }
+            var newLocation = new UserLocation
+            {
+                UserId = findUser.Id,
+                Latitude = user.Latitude,
+                Longitude = user.Longitude,
+                CreatedDate = DateTime.UtcNow,
+                IsActive = true
+            };
+            await _context.UserLocation.AddAsync(newLocation);
             try
             {
                 await _context.SaveChangesAsync();

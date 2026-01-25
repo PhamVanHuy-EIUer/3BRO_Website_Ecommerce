@@ -1,10 +1,11 @@
 ﻿using Ecommerce3BRO.Data;
 using Ecommerce3BRO.DTO;
+using Ecommerce3BRO.Helper;
 using Ecommerce3BRO.Helper.Enums;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.EntityFrameworkCore;
-using System.Net.NetworkInformation;
+
 
 namespace Ecommerce3BRO.Repository.Implement
 {
@@ -14,13 +15,14 @@ namespace Ecommerce3BRO.Repository.Implement
         private readonly IWebHostEnvironment _env;
         private readonly IProductImageRepository _image;
         private readonly IDiscountRepository _discount;
-        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env, IHttpContextAccessor _http, IProductImageRepository image, IDiscountRepository discount)
+        private readonly ShopLocation _shop;
+        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env, IHttpContextAccessor _http, IProductImageRepository image, IDiscountRepository discount, ShopLocation shopLocation)
         {
             _context = context;
             _env = env;
-            _http = _http;
             _image = image;
             _discount = discount;
+            _shop = shopLocation;
         }
 
         public async Task<ApiResponse<GetProductDTO>> AddNewProductAsync(ProductDTO dto, IFormFile image)
@@ -62,7 +64,6 @@ namespace Ecommerce3BRO.Repository.Implement
 
                 using var stream = new FileStream(fullPath, FileMode.Create);
                 await image.CopyToAsync(stream);
-
                 imageUrl = $"/images/products/{fileName}";
             }
             var product = new Product
@@ -349,14 +350,15 @@ namespace Ecommerce3BRO.Repository.Implement
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
             }
             var findCartItems = await _context.CartItem.Where(ci => ci.CartId == cartId).ToListAsync();
-            decimal shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id&&l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             decimal totalPrice = 0;
             foreach (var item in findCartItems)
             {
                 var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == item.ProductId);
                 totalPrice += findProduct.Price * item.Quantity;
             }
-            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice).ToListAsync();
+            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice && d.IsActive).ToListAsync();
             if (!validDiscounts.Any())
             {
                 var productWithoutDiscount = await _context.CartItem.Where(ci => ci.CartId == cartId).Include(ci => ci.Product).Select(ci => new DiscountProductDTO
@@ -440,10 +442,11 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
             }
-            decimal shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == findCartItem.ProductId);
             decimal totalPrice = findProduct.Price * findCartItem.Quantity + shippingFee;
-            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice).ToListAsync();
+            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice&&d.IsActive).ToListAsync();
             if (!validDiscounts.Any())
             {
                 var ProductWithoutDiscount = new DiscountProductDTO
@@ -531,9 +534,10 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Product not found", false, 0, 0, 0, 0, null, null, null);
             }
-            decimal shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             decimal totalPrice = findProduct.Price * quantity + shippingFee;
-            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice).ToListAsync();
+            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice && d.IsActive).ToListAsync();
             if (!validDiscounts.Any())
             {
                 var productWithoutDiscount = new DiscountProductDTO
@@ -621,7 +625,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
             }
             var findCartItems = await _context.CartItem.Where(ci => ci.CartId == cartId).ToListAsync();
-            decimal shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             decimal totalPrice = 0;
             foreach (var item in findCartItems)
             {
@@ -683,7 +688,8 @@ namespace Ecommerce3BRO.Repository.Implement
             var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == discountCode);
 
             var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == findCartItem.ProductId);
-            decimal shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             decimal totalPrice = findProduct.Price * findCartItem.Quantity + shippingFee;
             decimal discountPrice = 0;
             if (findDiscount != null)
@@ -728,7 +734,8 @@ namespace Ecommerce3BRO.Repository.Implement
             var findUser = await _context.User.FindAsync(userId);
             var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == discountCode);
             var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
-            var shippingFee = 0;
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             var productWithDiscount = new DiscountProductDTO
             {
                 ProductId = findProduct.Id,

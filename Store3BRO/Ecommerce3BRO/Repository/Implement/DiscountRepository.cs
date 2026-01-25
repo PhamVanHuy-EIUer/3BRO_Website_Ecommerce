@@ -111,7 +111,11 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "404", "Discount not found", false, 0, 0, 0, 0, null, null, null);
             }
-            discount.IsActive = false;
+            var orderDiscounts = await _context.OrderDiscount.Where(od=>od.DiscountId==discount.Id).ToListAsync();
+            foreach (var orderDiscount in orderDiscounts) { 
+               _context.OrderDiscount.Remove(orderDiscount);
+            }
+             _context.Discount.Remove(discount);
             await _context.SaveChangesAsync();
             return new ApiResponse<GetDiscountDTO>(null, null, "200", "Delete discount successfully", true, 0, 0, 0, 0, null, null, null);
 

@@ -33,6 +33,7 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IReviewReposity, ReviewRepository>();
 builder.Services.AddScoped<GoogleAuthService>();
+builder.Services.AddScoped<ShopLocation>();
 
 builder.Services.AddDbContext<Ecommerce3BROContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddSwaggerGen(c =>

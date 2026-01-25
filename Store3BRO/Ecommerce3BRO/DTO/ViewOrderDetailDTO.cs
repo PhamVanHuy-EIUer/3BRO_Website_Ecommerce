@@ -12,6 +12,7 @@
         public int Quantity { get; set; }
         public bool IsReturn { get; set; }
 
+        public decimal ShippingFee { get; set; }
         public decimal TotalPrice { get; set; }
     }
 }

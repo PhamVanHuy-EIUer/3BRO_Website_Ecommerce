@@ -51,6 +51,6 @@ public partial class Ecommerce3BROContext : DbContext
     public DbSet<Refund> Refund { get; set; }
     public DbSet<ProductImage> ProductImage { get; set; }
     public DbSet <RefreshToken> RefreshToken { get; set; }
-
+    public DbSet <UserLocation> UserLocation { get; set; }
 
     }

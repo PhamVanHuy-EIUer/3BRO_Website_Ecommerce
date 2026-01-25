@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ecommerce3BRO.Repository.Implement
 {
-    public class ReviewRepository : IReviewReposity
+    public class ReviewRepository : IReviewRepository
     {
         private readonly Ecommerce3BROContext _context;
         public ReviewRepository(Ecommerce3BROContext context)

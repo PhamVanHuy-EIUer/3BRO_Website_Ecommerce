@@ -3,7 +3,7 @@ using Ecommerce3BRO.Service;
 
 namespace Ecommerce3BRO.Repository
 {
-    public interface IReviewReposity
+    public interface IReviewRepository
     {
         Task<ApiResponse<GetReviewDTO>> GetAllReview();
         Task<ApiResponse<GetReviewDetailDTO>> GetReviewByIdAsync(Guid reviewId);

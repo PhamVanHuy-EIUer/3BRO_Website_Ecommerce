@@ -27,4 +27,17 @@ export const productService = {
                 'Content-Type': 'multipart/form-data',
             },
         }).then(res => res.data),
+
+    // discountCartItems: (discountCode: string, cartItemsIds: string[]) => axiosClient.post(`/Products/product-discount-cartitem`, { discountCode, cartItemsIds }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    discountCartItems: (discountCode: string, cartItemIds: string[]) => {
+        return axiosClient
+            .post("/Products/product-discount-cartitem", {
+                discountCode,
+                cartItemIds
+            }, {
+                headers: { "Content-Type": "application/json" }
+            })
+            .then(res => res.data);
+    },
 };
+

@@ -4,6 +4,7 @@ using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
 using Ecommerce3BRO.Service.Implement;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
@@ -156,7 +157,7 @@ namespace Ecommerce3BRO.Controllers
             }
             return new ApiResponse<GetUserDTO>(null, result, "200", "Update user successfully", true, 0, 0, 0, 0, null, null, null);
         }
-
+        [Authorize(Roles = "Admin")]
         //delete user
         [HttpDelete("{id}")]
         public async Task<ApiResponse<GetUserDTO>> DeleteUserById([FromRoute] Guid id)

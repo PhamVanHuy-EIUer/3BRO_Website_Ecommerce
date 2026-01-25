@@ -168,18 +168,21 @@ namespace Ecommerce3BRO.Controllers
         }
 
         //api get products with discount code when user checkout on 1 product in cart
-        [HttpGet("product-discount-cartitem")]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountByCartItemId([FromQuery] Guid cartItemId, [FromQuery] string discountCode)
+        [HttpPost("product-discount-cartitem")]
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountByCartItemId([FromBody] CheckoutCartItemRequestDTO request)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null)
+            if (findUser == null || !Guid.TryParse(findUser.Value, out var userId))
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
-            var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithDiscountByCartItemId(cartItemId, userId, discountCode);
-        }
 
+            return await _productService.GetProductWithDiscountByCartItemId(
+                request,
+                userId
+                
+            );
+        }
         //api get products with discount code when user checkout on all product in cart
         [HttpGet("product-discount-cart")]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId([FromQuery] string discountCode)

@@ -6,4 +6,5 @@ export const discountService = {
     addDiscount: (data: DiscountDTO) => axiosClient.post("/Discounts", data, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
     updateDiscount: (id: string, data: DiscountDTO) => axiosClient.put(`/Discounts?id=${id}`, data, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
     deleteDiscount: (id: string) => axiosClient.delete(`/Discounts/${id}`).then(res => res.data),
+    updateStatus: (id: string, isActive: boolean) => axiosClient.patch(`/Discounts/update-status/${id}`, { isActive }).then(res => res.data),
 };

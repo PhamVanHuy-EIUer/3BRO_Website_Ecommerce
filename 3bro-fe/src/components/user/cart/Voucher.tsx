@@ -1,26 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Input, Button, List, Radio, Space, Alert, message } from "antd";
+import {
+  Modal,
+  Input,
+  Button,
+  Radio,
+  Space,
+  Alert,
+  message,
+  Empty,
+  Spin,
+} from "antd";
 import { GiftOutlined, ClockCircleOutlined } from "@ant-design/icons";
-import { useCart } from "@/hook/User/useCart";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Discount } from "@/models/Discount";
 import { discountService } from "@/services/discount.service";
 
-export default function Voucher() {
-  const [selectedDiscountId, setSelectedDiscountId] = useState<number | null>(
-    null,
-  );
+interface VoucherProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onApply: (discount: Discount) => void;
+}
+
+export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
+  const [selectedDiscountId, setSelectedDiscountId] = useState<string>("");
   const [discounts, setDiscounts] = useState<Discount[]>([]);
-  const { isOpenVoucher, setIsOpenVoucher } = useCart();
   const [voucherCode, setVoucherCode] = useState("");
   const [loading, setLoading] = useState(false);
 
   // Fetch discounts khi modal mở
   useEffect(() => {
-    if (isOpenVoucher) {
+    if (isOpen) {
       fetchDiscount();
     }
-  }, [isOpenVoucher]);
+  }, [isOpen]);
 
   const fetchDiscount = async () => {
     try {
@@ -28,7 +40,7 @@ export default function Voucher() {
       const res: ApiResponse<Discount> = await discountService.getDiscount();
       // Lọc các discount còn active và còn số lượng
       const activeDiscounts = res.list.filter(
-        (d) => d.isActive && d.quantity > 0,
+        (d) => d.isActive && d.quantity > 0 && !isExpired(d.endDate),
       );
       setDiscounts(activeDiscounts);
     } catch (err) {
@@ -42,20 +54,20 @@ export default function Voucher() {
   const handleApply = () => {
     const selectedDiscount = discounts.find((d) => d.id === selectedDiscountId);
 
-    if (!selectedDiscount) return;
+    if (!selectedDiscount) {
+      message.warning("Vui lòng chọn voucher");
+      return;
+    }
 
-    Modal.success({
-      title: "Áp dụng thành công!",
-      content: `Đã áp dụng voucher: ${selectedDiscount.code}`,
-    });
+    onApply(selectedDiscount);
 
-    setIsOpenVoucher(false);
+    handleCancel();
   };
 
   const handleCancel = () => {
-    setSelectedDiscountId(null);
+    setSelectedDiscountId("");
     setVoucherCode("");
-    setIsOpenVoucher(false);
+    onClose();
   };
 
   const handleApplyCode = async () => {
@@ -70,8 +82,9 @@ export default function Voucher() {
     );
 
     if (foundDiscount) {
-      setSelectedDiscountId(foundDiscount.id);
+      setSelectedDiscountId(foundDiscount.code);
       message.success(`Đã chọn voucher: ${foundDiscount.code}`);
+      setVoucherCode("");
     } else {
       message.error("Mã voucher không hợp lệ hoặc đã hết hạn");
     }
@@ -107,91 +120,88 @@ export default function Voucher() {
   };
 
   return (
-    <div className="w-full">
-      <Button
-        type="primary"
-        icon={<GiftOutlined />}
-        onClick={() => setIsOpenVoucher(true)}
-        size="large"
-      >
-        Chọn Shopee Voucher
-      </Button>
+    <Modal
+      title={
+        <div style={{ fontSize: 18, fontWeight: 600 }}>
+          Chọn Voucher Giảm Giá
+        </div>
+      }
+      open={isOpen}
+      onCancel={handleCancel}
+      width={700}
+      footer={[
+        <Button key="back" size="large" onClick={handleCancel}>
+          TRỞ LẠI
+        </Button>,
+        <Button
+          key="submit"
+          type="primary"
+          size="large"
+          disabled={!selectedDiscountId}
+          onClick={handleApply}
+          style={{
+            backgroundColor: selectedDiscountId ? "#ee4d2d" : undefined,
+          }}
+        >
+          ĐỒNG Ý
+        </Button>,
+      ]}
+    >
+      {/* Input nhập mã voucher */}
+      <Space.Compact style={{ width: "100%", marginBottom: 24 }}>
+        <Input
+          placeholder="Nhập mã voucher"
+          size="large"
+          value={voucherCode}
+          onChange={(e) => setVoucherCode(e.target.value)}
+          onPressEnter={handleApplyCode}
+        />
+        <Button size="large" type="primary" onClick={handleApplyCode}>
+          ÁP DỤNG
+        </Button>
+      </Space.Compact>
 
-      <Modal
-        title="Chọn Shopee Voucher"
-        open={isOpenVoucher}
-        onCancel={handleCancel}
-        width={700}
-        footer={[
-          <Button key="back" size="large" onClick={handleCancel}>
-            TRỞ LẠI
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            size="large"
-            disabled={!selectedDiscountId}
-            onClick={handleApply}
-            style={{
-              backgroundColor: selectedDiscountId ? "#ee4d2d" : undefined,
-            }}
-          >
-            ĐỒNG Ý
-          </Button>,
-        ]}
-      >
-        {/* Input nhập mã voucher */}
-        <Space.Compact style={{ width: "100%", marginBottom: 24 }}>
-          <Input
-            placeholder="Nhập mã voucher"
-            size="large"
-            value={voucherCode}
-            onChange={(e) => setVoucherCode(e.target.value)}
-            onPressEnter={handleApplyCode}
+      {/* Danh sách voucher */}
+      <div style={{ marginBottom: 16 }}>
+        <h3 style={{ fontSize: 14, fontWeight: 500, marginBottom: 16 }}>
+          Mã Giảm Giá Khả Dụng ({discounts.length})
+        </h3>
+
+        {loading ? (
+          <div style={{ textAlign: "center", padding: "40px 0" }}>
+            <Spin size="large" />
+          </div>
+        ) : discounts.length === 0 ? (
+          <Empty
+            description="Không có voucher khả dụng"
+            style={{ padding: "40px 0" }}
           />
-          <Button size="large" onClick={handleApplyCode}>
-            ÁP DỤNG
-          </Button>
-        </Space.Compact>
-
-        {/* Danh sách voucher */}
-        <div style={{ marginBottom: 16 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 500, marginBottom: 16 }}>
-            Mã Giảm Giá Khả Dụng ({discounts.length})
-          </h3>
-
+        ) : (
           <Radio.Group
             value={selectedDiscountId}
             onChange={(e) => setSelectedDiscountId(e.target.value)}
             style={{ width: "100%" }}
           >
-            <List
-              loading={loading}
-              dataSource={discounts}
-              locale={{ emptyText: "Không có voucher khả dụng" }}
-              renderItem={(item) => {
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {discounts.map((item) => {
                 const isSelected = selectedDiscountId === item.id;
-                const expired = isExpired(item.endDate);
 
                 return (
-                  <List.Item
+                  <div
+                    key={item.id}
                     style={{
                       border: isSelected
                         ? "2px solid #ee4d2d"
                         : "1px solid #e5e5e5",
                       borderRadius: 8,
-                      marginBottom: 12,
                       padding: 16,
                       backgroundColor: isSelected ? "#fff5f2" : "#fff",
                       transition: "all 0.3s",
-                      opacity: expired ? 0.5 : 1,
+                      cursor: "pointer",
                     }}
+                    onClick={() => setSelectedDiscountId(item.code)}
                   >
-                    <Radio
-                      value={item.id}
-                      style={{ width: "100%" }}
-                      disabled={expired}
-                    >
+                    <Radio value={item.id} style={{ width: "100%" }}>
                       <div style={{ display: "flex", gap: 12, width: "100%" }}>
                         {/* Icon voucher */}
                         <div
@@ -199,7 +209,7 @@ export default function Voucher() {
                             width: 64,
                             height: 64,
                             minWidth: 64,
-                            backgroundColor: expired ? "#ccc" : "#ee4d2d",
+                            backgroundColor: "#ee4d2d",
                             borderRadius: 8,
                             display: "flex",
                             alignItems: "center",
@@ -218,18 +228,9 @@ export default function Voucher() {
                         <div style={{ flex: 1 }}>
                           {/* Title */}
                           <div style={{ marginBottom: 8 }}>
-                            <Space>
-                              <span style={{ fontWeight: 500, fontSize: 14 }}>
-                                {item.code}
-                              </span>
-                              {expired && (
-                                <span
-                                  style={{ color: "#ff4d4f", fontSize: 12 }}
-                                >
-                                  (Hết hạn)
-                                </span>
-                              )}
-                            </Space>
+                            <span style={{ fontWeight: 500, fontSize: 14 }}>
+                              {item.code}
+                            </span>
                           </div>
 
                           {/* Description */}
@@ -273,13 +274,13 @@ export default function Voucher() {
                         </div>
                       </div>
                     </Radio>
-                  </List.Item>
+                  </div>
                 );
-              }}
-            />
+              })}
+            </div>
           </Radio.Group>
-        </div>
-      </Modal>
-    </div>
+        )}
+      </div>
+    </Modal>
   );
 }

@@ -99,7 +99,7 @@ export default function DiscountManagement() {
   // Handle create/update
   const handleSubmit = async () => {
     // Validation
-    if (!formData.code || !formData.description || !formData.dateRange) {
+    if (!formData.code || !formData.dateRange) {
       message.warning("Please enter all fill");
       return;
     }
@@ -138,7 +138,7 @@ export default function DiscountManagement() {
           console.log(payload);
           const res: ApiResponse<Discount> =
             await discountService.addDiscount(payload);
-          if (res.code !== "200") {
+          if (res.code !== "201") {
             message.error(res.message);
 
             return;
@@ -206,32 +206,38 @@ export default function DiscountManagement() {
     setIsModalOpen(true);
   };
 
-  // Handle toggle active
-  // const handleToggleActive = async (record: Discount, isActive: boolean) => {
-  //   try {
-  //     setLoading(true);
-  //     const payload: Discount = {
-  //       ...record,
-  //       isActive,
-  //     };
+  const handleStatusDiscount = async (
+    discountId: string,
+    isActive: boolean,
+  ) => {
+    // 1. Optimistic update
+    setDiscounts((prev) =>
+      prev.map((item) =>
+        item.id === discountId ? { ...item, isActive } : item,
+      ),
+    );
 
-  //     if (record.id) {
-  //       await discountService.updateDiscount(record.id, payload);
-  //       message.success(
-  //         `Đã ${isActive ? "kích hoạt" : "vô hiệu hóa"} discount`,
-  //       );
+    try {
+      const res: ApiResponse<any> = await discountService.updateStatus(
+        discountId,
+        isActive,
+      );
 
-  //       // Refresh list
-  //       await fetchDiscounts();
-  //     }
-  //   } catch (error: any) {
-  //     const errorMessage = error?.response?.data?.message || "Có lỗi xảy ra";
-  //     message.error(errorMessage);
-  //     console.error("Error toggling discount:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      if (res.code !== "200") {
+        throw new Error(res.object);
+      }
+
+      message.success(res.object);
+    } catch {
+      // 2. Rollback nếu fail
+      setDiscounts((prev) =>
+        prev.map((item) =>
+          item.id === discountId ? { ...item, isActive: !isActive } : item,
+        ),
+      );
+      message.error("Update status failed");
+    }
+  };
 
   // Filter discounts
   const filteredDiscounts = discounts.filter(
@@ -314,22 +320,26 @@ export default function DiscountManagement() {
       key: "status",
       width: 120,
       align: "center" as const,
-      render: (text: boolean, record: Discount) => {
+      render: (_: any, record: Discount) => {
         const isExpired = new Date(record.endDate) < new Date();
         return (
           <Space orientation="vertical" size={4}>
-            {text && !isExpired ? (
+            {record.isActive && !isExpired ? (
               <Tag color="green">Active</Tag>
+            ) : isExpired ? (
+              <Tag color="red">Expried</Tag>
             ) : (
               <Tag color="red">Inactive</Tag>
             )}
-            {/* <Switch
+            <Switch
               checked={record.isActive}
-              // onChange={(checked) => handleToggleActive(record, checked)}
-              checkedChildren="On"
-              unCheckedChildren="Off"
+              disabled={isExpired || loading}
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              onChange={(checked) => {
+                handleStatusDiscount(record.id!, checked);
+              }}
             />
-            {tex && <Tag color="red">Expired</Tag>} */}
           </Space>
         );
       },
@@ -368,7 +378,15 @@ export default function DiscountManagement() {
   }, []);
 
   return (
-    <div style={{ padding: 24, background: "#f0f2f5", minHeight: "100vh" }}>
+    <div
+      style={{
+        padding: 24,
+        background: "#f0f2f5",
+        minHeight: "100vh",
+        width: "100%",
+        borderRadius: 10,
+      }}
+    >
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
         <h1 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
@@ -497,7 +515,7 @@ export default function DiscountManagement() {
             <label
               style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
             >
-              Description <span style={{ color: "red" }}>*</span>
+              Description
             </label>
             <Input.TextArea
               placeholder="Discount details"

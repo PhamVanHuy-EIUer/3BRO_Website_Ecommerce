@@ -1,5 +1,5 @@
 import { ApiResponse } from "@/models/ApiResponse"
-import { Order } from "@/models/Order"
+import { Order } from "@/models/ViewOrderAdmin"
 import { orderService } from "@/services/order.service"
 import { useEffect, useState } from "react"
 

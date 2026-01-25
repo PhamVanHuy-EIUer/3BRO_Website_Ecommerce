@@ -65,12 +65,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
   };
 
-  // ✅ Fetch user khi mount
+  // Fetch user khi mount
   useEffect(() => {
     refreshAuth();
   }, [refreshAuth]);
 
-  // ✅ THÊM: Định kỳ refresh auth mỗi 5 phút để đảm bảo sync với token
+  // THÊM: Định kỳ refresh auth mỗi 5 phút để đảm bảo sync với token
   useEffect(() => {
     if (!authorized) return;
 
@@ -79,13 +79,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.log("Periodic auth refresh...");
         refreshAuth();
       },
-      16 * 60 * 1000,
+      15 * 60 * 1000,
     ); // 5 phút
 
     return () => clearInterval(interval);
   }, [authorized, refreshAuth]);
 
-  // ✅ THÊM: Listen cho token refresh event từ axios interceptor
+  // THÊM: Listen cho token refresh event từ axios interceptor
   useEffect(() => {
     const handleTokenRefresh = () => {
       console.log("Token refreshed, updating user...");

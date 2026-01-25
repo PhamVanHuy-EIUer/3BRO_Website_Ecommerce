@@ -19,7 +19,7 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId,int currentPage, int pageSize);
         Task <ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountById(Guid productId,int quantity,Guid userId,string discountCode);
         Task <ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartId(Guid cartId,Guid UserId, string discountCode);
-        Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartItemId(Guid cartItemId,Guid UserId, string discountCode);
+        Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartItemId(CheckoutCartItemRequestDTO request,Guid UserId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountById(Guid productId, int quantity,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId(Guid cartId,Guid userId);
         Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartItemId(Guid cartItemId,Guid userId);

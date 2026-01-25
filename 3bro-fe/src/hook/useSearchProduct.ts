@@ -27,6 +27,6 @@ export const useSearchProduct = (searchValue: string, PAGE_SIZE: number) => {
         loadProducts();
     }, [searchValue]);
 
-    return { products };
+    return { products, total };
 }
 

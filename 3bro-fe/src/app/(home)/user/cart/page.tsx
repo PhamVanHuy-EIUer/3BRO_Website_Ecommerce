@@ -1,6 +1,8 @@
 "use client";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Cart } from "@/models/Cart";
+import { Discount } from "@/models/Discount";
+import { GetDiscountDTO } from "@/models/GetDiscountDTO";
 import { cartService } from "@/services/cart.service";
 import {
   Button,
@@ -9,17 +11,18 @@ import {
   Modal,
   notification,
   TableColumnsType,
+  Tag,
+  Spin,
 } from "antd";
 import { Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { TableRowSelection } from "antd/es/table/interface";
 import { formatCurrency } from "@/utils/currency";
-import { b, filter, style } from "framer-motion/client";
 import { ViewPrice } from "@/models/ViewPrice";
 import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
-import { useCart } from "@/hook/User/useCart";
 import Voucher from "@/components/user/cart/Voucher";
+import { productService } from "@/services/product.service";
 
 const CartContent = () => {
   const router = useRouter();
@@ -27,25 +30,18 @@ const CartContent = () => {
   const [carts, setCarts] = useState<Cart[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const [loading, setLoading] = useState(false);
+  const [applyingVoucher, setApplyingVoucher] = useState(false);
   const [modal2Open, setModal2Open] = useState(false);
   const [seletedItem, setSelectedItem] = useState<Cart | null>(null);
   const [totalPrice, setTotalPrice] = useState<number>(0);
-  const { isOpenVoucher, setIsOpenVoucher } = useCart();
-
-  const start = () => {
-    setLoading(true);
-    setTimeout(() => {
-      setSelectedRowKeys([]);
-      setLoading(false);
-    }, 1000);
-  };
+  const [isOpenVoucher, setIsOpenVoucher] = useState(false);
+  const [appliedVoucher, setAppliedVoucher] = useState<Discount | null>(null);
+  const [discountData, setDiscountData] = useState<GetDiscountDTO | null>(null);
 
   const handleChooseAll = () => {
     if (selectedRowKeys.length === carts.length) {
-      // Đã chọn hết → bỏ chọn
       setSelectedRowKeys([]);
     } else {
-      // Chọn tất cả
       const allKeys = carts.map((cart) => cart.cartItemID);
       setSelectedRowKeys(allKeys);
     }
@@ -68,12 +64,17 @@ const CartContent = () => {
       }));
   };
 
+  const getSelectedCartItemIds = (): string[] => {
+    return carts
+      .filter((cart) => selectedRowKeys.includes(cart.cartItemID))
+      .map((cart) => cart.cartItemID);
+  };
+
   const fetchPreviewPrice = async () => {
     try {
       const response: ApiResponse<number> = await cartService.previewPrice(
         buildViewPricePayload(),
       );
-      console.log(response);
       if (response.code === "200" && response.isSuccess) {
         setTotalPrice(response.object ?? 0);
       }
@@ -83,7 +84,6 @@ const CartContent = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -92,7 +92,7 @@ const CartContent = () => {
     onChange: onSelectChange,
   };
 
-  const hasSelected = selectedRowKeys.length > 0 ? true : false;
+  const hasSelected = selectedRowKeys.length > 0;
 
   const getImageUrl = (imageUrl?: string) => {
     if (!imageUrl) return "/blank.jpg";
@@ -100,10 +100,10 @@ const CartContent = () => {
       ? imageUrl
       : `https://localhost:7041${imageUrl}`;
   };
+
   const handlefetchCart = async () => {
     try {
       const response: ApiResponse<Cart> = await cartService.getCart();
-
       setCarts(response.list);
     } catch (error) {
       console.error("Error fetching cart:", error);
@@ -116,7 +116,7 @@ const CartContent = () => {
         await cartService.deleteProductFromCart(cartItem.productId);
       if (response.code === "200" && response.isSuccess) {
         api.success({
-          title: "Delete product from cart successfully",
+          message: "Xóa sản phẩm thành công",
           placement: "topRight",
           duration: 2,
         });
@@ -134,7 +134,7 @@ const CartContent = () => {
       );
       if (res.code === "200" && res.isSuccess) {
         api.success({
-          title: "Delete products from cart successfully",
+          message: "Xóa các sản phẩm thành công",
           placement: "topRight",
           duration: 2,
         });
@@ -145,13 +145,79 @@ const CartContent = () => {
     }
   };
 
+  const handleApplyVoucher = async (discount: Discount) => {
+    console.log(discount.code);
+    // Kiểm tra đơn tối thiểu
+    if (totalPrice < discount.minOrderAmount) {
+      api.warning({
+        message: "Không đủ điều kiện",
+        description: `Đơn hàng tối thiểu phải từ ${formatCurrency(discount.minOrderAmount)}`,
+        placement: "topRight",
+        duration: 3,
+      });
+      return;
+    }
+
+    try {
+      setApplyingVoucher(true);
+      const cartItemIds = getSelectedCartItemIds();
+      console.log(cartItemIds);
+      const response: ApiResponse<GetDiscountDTO> =
+        await productService.discountCartItems(discount.code, cartItemIds);
+
+      if (response.code === "200" && response.isSuccess && response.object) {
+        setDiscountData(response.object);
+        setAppliedVoucher(discount);
+        setIsOpenVoucher(false);
+
+        api.success({
+          message: "Áp dụng voucher thành công",
+          description: `Đã áp dụng mã ${discount.code}`,
+          placement: "topRight",
+          duration: 3,
+        });
+      } else {
+        api.error({
+          message: "Lỗi áp dụng voucher",
+          description: response.message || "Không thể áp dụng voucher này",
+          placement: "topRight",
+          duration: 3,
+        });
+        console.log(response);
+      }
+    } catch (error: any) {
+      console.error("Error applying voucher:", error);
+      api.error({
+        message: "Lỗi áp dụng voucher",
+        description:
+          error?.response?.data?.message || "Có lỗi xảy ra khi áp dụng voucher",
+        placement: "topRight",
+        duration: 3,
+      });
+    } finally {
+      setApplyingVoucher(false);
+    }
+  };
+
+  const handleRemoveVoucher = () => {
+    setAppliedVoucher(null);
+    setDiscountData(null);
+  };
+
   useEffect(() => {
     handlefetchCart();
   }, []);
 
   useEffect(() => {
-    fetchPreviewPrice();
+    if (hasSelected) {
+      fetchPreviewPrice();
+    } else {
+      setTotalPrice(0);
+      setAppliedVoucher(null);
+      setDiscountData(null);
+    }
   }, [selectedRowKeys]);
+
   const columns: TableColumnsType<Cart> = [
     {
       title: "Name",
@@ -191,27 +257,23 @@ const CartContent = () => {
       dataIndex: "totalPrice",
       key: "totalPrice",
       render: (text: number) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <div style={{ fontWeight: 500 }}>{formatCurrency(text)}</div>
-        </div>
+        <div style={{ fontWeight: 500 }}>{formatCurrency(text)}</div>
       ),
     },
     {
       title: "Action",
       key: "action",
       render: (record: Cart) => (
-        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-          <Button
-            type="primary"
-            danger
-            onClick={() => {
-              setModal2Open(true);
-              setSelectedItem(record);
-            }}
-          >
-            Remove
-          </Button>
-        </div>
+        <Button
+          type="primary"
+          danger
+          onClick={() => {
+            setModal2Open(true);
+            setSelectedItem(record);
+          }}
+        >
+          Remove
+        </Button>
       ),
     },
   ];
@@ -220,135 +282,214 @@ const CartContent = () => {
     <>
       {contextHolder}
 
-      <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
-        {isOpenVoucher && <Voucher />}
-        <Modal
-          className="p-5"
-          centered
-          open={modal2Open}
-          title={<span></span>}
-          okText="Delete"
-          cancelText="Cancel"
-          // okType="danger"
-          okButtonProps={{
-            size: "large",
-            style: {
-              backgroundColor: "#ff5c5c",
-              border: "none",
-              borderRadius: "4px",
-            },
-          }}
-          cancelButtonProps={{ size: "large", style: { borderRadius: "4px" } }}
-          onOk={() => {
-            if (!seletedItem) return;
-            handleDeleteProductFromCart(seletedItem);
-            setSelectedItem(null);
-            setModal2Open(false);
-          }}
-          onCancel={() => setModal2Open(false)}
-        >
-          <div className="font-semibold text-xl py-10">
-            Are you sure you want to remove this product?
-          </div>
-        </Modal>
-        {carts === null || carts.length === 0 ? (
-          <div className="w-[80vw] mx-auto h-[50vh] my-auto flex items-center justify-center flex-col">
-            <Image src="/Cart/emptycart.png" width={80} height={80} />
+      <Voucher
+        isOpen={isOpenVoucher}
+        onClose={() => setIsOpenVoucher(false)}
+        onApply={handleApplyVoucher}
+      />
+
+      <Spin spinning={applyingVoucher} tip="Đang áp dụng voucher...">
+        <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
+          <Modal
+            className="p-5"
+            centered
+            open={modal2Open}
+            title={<span></span>}
+            okText="Delete"
+            cancelText="Cancel"
+            okButtonProps={{
+              size: "large",
+              style: {
+                backgroundColor: "#ff5c5c",
+                border: "none",
+                borderRadius: "4px",
+              },
+            }}
+            cancelButtonProps={{
+              size: "large",
+              style: { borderRadius: "4px" },
+            }}
+            onOk={() => {
+              if (!seletedItem) return;
+              handleDeleteProductFromCart(seletedItem);
+              setSelectedItem(null);
+              setModal2Open(false);
+            }}
+            onCancel={() => setModal2Open(false)}
+          >
             <div className="font-semibold text-xl py-10">
-              You have no product in your cart
+              Are you sure you want to remove this product?
             </div>
-            <div className="flex items-center">
-              <Button
-                className="!rounded-md !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
-                onClick={() => router.push("/product")}
-              >
-                SEE PRODUCTS
-              </Button>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="font-inter py-10 w-[80vw] mx-auto border border-gray-300 bg-white mb-10 rounded-md">
-              <div className="p-2">
-                <Flex gap="middle" vertical>
-                  <Table<Cart>
-                    rowSelection={rowSelection}
-                    columns={columns}
-                    dataSource={carts}
-                    pagination={false}
-                    rowKey="cartItemID"
-                  />
-                </Flex>
+          </Modal>
+
+          {carts === null || carts.length === 0 ? (
+            <div className="w-[80vw] mx-auto h-[50vh] my-auto flex items-center justify-center flex-col">
+              <Image src="/Cart/emptycart.png" width={80} height={80} />
+              <div className="font-semibold text-xl py-10">
+                You have no product in your cart
+              </div>
+              <div className="flex items-center">
+                <Button
+                  className="!rounded-md !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
+                  onClick={() => router.push("/product")}
+                >
+                  SEE PRODUCTS
+                </Button>
               </div>
             </div>
-            <div className="border border-gray-300 w-[80vw] m-auto flex justify-between items-center mx-auto bg-white rounded-md flex-col">
-              {hasSelected && (
-                <div className="flex justify-center px-5 py-5 border-b border-gray-300 w-full">
-                  <div className="flex-1"></div>
-                  <div className="flex-1 flex flex-row justify-end gap-20">
-                    <div className="text-black font-bold text-left pr-6">
-                      Discount voucher
-                    </div>
-                    <div
-                      className="!text-[#0885ce] hover:!text-[#6cb6ff] cursor-pointer font-semibold"
-                      onClick={() => setIsOpenVoucher(true)}
-                    >
-                      Choose voucher
-                    </div>
-                  </div>
+          ) : (
+            <>
+              <div className="font-inter py-10 w-[80vw] mx-auto border border-gray-300 bg-white mb-10 rounded-md">
+                <div className="p-2">
+                  <Flex gap="middle" vertical>
+                    <Table<Cart>
+                      rowSelection={rowSelection}
+                      columns={columns}
+                      dataSource={carts}
+                      pagination={false}
+                      rowKey="cartItemID"
+                    />
+                  </Flex>
                 </div>
-              )}
-              <div className="flex w-full justify-between items-center py-5">
-                <div className="flex flex-row gap-20 ml-2">
-                  <button
-                    className=" px-4 py-2 text-shadow-red-400 font-sans font-semibold cursor-pointer hover:text-gray-700"
-                    onClick={handleChooseAll}
-                  >
-                    Choose all ({carts.length})
-                  </button>
-                  <Button
-                    type="text"
-                    onClick={
-                      hasSelected ? handleDeleteProductInCart : undefined
-                    }
-                    className={`!px-4 !py-6 !border-none !font-semibold !font-sans !text-md
-              !bg-transparent
-              hover:!bg-transparent
-              active:!bg-transparent
-              ${
-                hasSelected
-                  ? "!text-black hover:!text-gray-700 cursor-pointer"
-                  : "!text-gray-400 !cursor-not-allowed"
-              }`}
-                  >
-                    Delete
-                  </Button>
-                </div>
+              </div>
 
-                <div className="mr-4 flex flex-row gap-15">
-                  <div className="flex flex-row justify-center items-center">
-                    <div className=" uppercase text-red-500 font-bold">
-                      Total Price:{"   "}
+              <div className="border border-gray-300 w-[80vw] m-auto flex justify-between items-center mx-auto bg-white rounded-md flex-col">
+                {hasSelected && (
+                  <>
+                    {/* Voucher Section */}
+                    <div className="flex justify-center px-5 py-5 border-b border-gray-300 w-full">
+                      <div className="flex-1"></div>
+                      <div className="flex-1 flex flex-row justify-end gap-20 items-center">
+                        <div className="text-black font-bold text-left pr-6">
+                          Discount voucher
+                        </div>
+                        {appliedVoucher ? (
+                          <div className="flex items-center gap-3">
+                            <Tag color="red" className="!text-base !py-1 !px-3">
+                              {appliedVoucher.code}
+                            </Tag>
+                            <Button
+                              type="link"
+                              danger
+                              onClick={handleRemoveVoucher}
+                            >
+                              Remove
+                            </Button>
+                          </div>
+                        ) : (
+                          <div
+                            className="!text-[#0885ce] hover:!text-[#6cb6ff] cursor-pointer font-semibold"
+                            onClick={() => setIsOpenVoucher(true)}
+                          >
+                            Choose voucher
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="mx-2 font-semibold text-black block">
-                      {formatCurrency(totalPrice)}
-                    </div>
-                  </div>
-                  <div>
-                    <Button
-                      type="primary"
-                      style={{ borderRadius: 0, backgroundColor: "#ff6857" }}
-                      className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md  !border-none hover:!bg-[#ff6857] hover:!text-white"
+
+                    {/* Price Summary */}
+                    {discountData && (
+                      <div className="flex justify-end px-5 py-4 border-b border-gray-300 w-full">
+                        <div className="flex flex-col gap-3 min-w-[350px]">
+                          <div className="flex justify-between text-base">
+                            <span className="text-gray-600">
+                              Tổng tiền hàng:
+                            </span>
+                            <span className="font-semibold">
+                              {formatCurrency(discountData.currentTotalPrice)}
+                            </span>
+                          </div>
+
+                          {discountData.shippingFee > 0 && (
+                            <div className="flex justify-between text-base">
+                              <span className="text-gray-600">
+                                Phí vận chuyển:
+                              </span>
+                              <span className="font-semibold">
+                                {formatCurrency(discountData.shippingFee)}
+                              </span>
+                            </div>
+                          )}
+
+                          <div className="flex justify-between text-base text-red-500">
+                            <span>Giảm giá ({discountData.discountCode}):</span>
+                            <span className="font-semibold">
+                              -{formatCurrency(discountData.discountPrice)}
+                            </span>
+                          </div>
+
+                          <div className="border-t pt-3 flex justify-between text-lg">
+                            <span className="font-bold text-gray-800">
+                              Tổng thanh toán:
+                            </span>
+                            <span className="font-bold text-red-600 text-xl">
+                              {formatCurrency(discountData.finalTotalPrice)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                <div className="flex w-full justify-between items-center py-5">
+                  <div className="flex flex-row gap-20 ml-2">
+                    <button
+                      className="px-4 py-2 font-sans font-semibold cursor-pointer hover:text-gray-700"
+                      onClick={handleChooseAll}
                     >
-                      BUY NOW
+                      Choose all ({carts.length})
+                    </button>
+                    <Button
+                      type="text"
+                      onClick={
+                        hasSelected ? handleDeleteProductInCart : undefined
+                      }
+                      className={`!px-4 !py-6 !border-none !font-semibold !font-sans !text-md
+                        !bg-transparent hover:!bg-transparent active:!bg-transparent
+                        ${
+                          hasSelected
+                            ? "!text-black hover:!text-gray-700 cursor-pointer"
+                            : "!text-gray-400 !cursor-not-allowed"
+                        }`}
+                    >
+                      Delete
                     </Button>
                   </div>
+
+                  <div className="mr-4 flex flex-row gap-15">
+                    <div className="flex flex-row justify-center items-center">
+                      <div className="uppercase text-red-500 font-bold">
+                        Total Price:{" "}
+                      </div>
+                      <div className="mx-2 font-semibold text-black block text-xl">
+                        {formatCurrency(
+                          discountData
+                            ? discountData.finalTotalPrice
+                            : totalPrice,
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <Button
+                        type="primary"
+                        disabled={!hasSelected}
+                        style={{
+                          borderRadius: 0,
+                          backgroundColor: hasSelected ? "#ff6857" : undefined,
+                        }}
+                        className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md !border-none hover:!bg-[#ff6857] hover:!text-white"
+                      >
+                        BUY NOW
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
-      </div>
+            </>
+          )}
+        </div>
+      </Spin>
     </>
   );
 };

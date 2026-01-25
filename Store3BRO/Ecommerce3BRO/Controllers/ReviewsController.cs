@@ -10,8 +10,8 @@ namespace Ecommerce3BRO.Controllers
     [ApiController]
     public class ReviewsController : Controller
     {
-        private readonly IReviewReposity _reviewService;
-        public ReviewsController(IReviewReposity reviewService)
+        private readonly IReviewRepository _reviewService;
+        public ReviewsController(IReviewRepository reviewService)
         {
             _reviewService = reviewService;
         }

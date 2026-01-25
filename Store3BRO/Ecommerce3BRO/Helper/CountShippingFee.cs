@@ -2,9 +2,7 @@
 {
     public static class CountShippingFee
     {
-        public static decimal CountFee(
-            double lat1, double lon1,
-            double lat2, double lon2)
+        public static decimal CountFee(double lat1, double lon1,double lat2, double lon2)
         {
             double distance = GeoHelper.CalculateDistance(lat1, lon1, lat2, lon2);
 

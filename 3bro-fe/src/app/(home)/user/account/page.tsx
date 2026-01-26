@@ -1,8 +1,6 @@
-"use client";
+import { redirect } from "next/navigation";
 
-import ProfileContent from "@/components/user/UserMenu/ProfileContent";
-import UserMenu from "../layout";
-
-export default function AccountPage() {
-  return <ProfileContent />;
+export default function UserPage() {
+  // Server-side redirect to /user/account
+  redirect("/user/account/profile");
 }

@@ -116,7 +116,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Status = ((OrderStatus)o.Status).ToString(),
                     RefundPrice = refundPrice,
                     DiscountPrice = discountPrice,
-                    NetRevenue = o.TotalAmount - refundPrice - discountPrice-o.ShippingFee,
+                    NetRevenue = o.TotalAmount - refundPrice - discountPrice + o.ShippingFee,
                 };
             }).ToList();
             return new ApiResponse<GetOrderByAdminDTO>(result, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
@@ -166,7 +166,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     ShippingFee=o.ShippingFee,
                     SubTotal = subTotal,
                     DiscountAmount = discountAmount -(o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice),
-                    TotalAmount = subTotal- o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
+                    TotalAmount = subTotal + o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
                 };
             }).ToList();
 

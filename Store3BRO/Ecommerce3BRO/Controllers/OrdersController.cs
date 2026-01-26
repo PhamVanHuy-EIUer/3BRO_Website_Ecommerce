@@ -2,6 +2,7 @@
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -19,6 +20,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all orders by admin
         [HttpGet("admin")]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrdersByAdmin()
         {
             return await _orderRepository.GetAllOrderByAdminAsync();
@@ -26,6 +28,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all orders by user
         [HttpGet("user")]
+        [Authorize]
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrdersByUser()
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -39,6 +42,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api add new order with items
         [HttpPost("add-order")]
+        [Authorize]
         public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItems([FromBody] OrderDTO order)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -52,6 +56,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api remove order 
         [HttpDelete("remove-order/{orderId}")]
+        [Authorize]
         public async Task<ApiResponse<Order>> RemoveOrder([FromRoute] Guid orderId)
         {
             return await _orderRepository.RemoveOrderAsync(orderId);
@@ -59,6 +64,7 @@ namespace Ecommerce3BRO.Controllers
 
         //api admin use to get order by status
         [HttpGet("by-status")]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetOrderByStatus([FromQuery] string status)
         {
             return await _orderRepository.GetOrderByStatus(status);
@@ -67,6 +73,7 @@ namespace Ecommerce3BRO.Controllers
 
         //api admin use to update order status
         [HttpPut("update-status/{orderId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<OrderDTO>> UpdateOrderStatus([FromRoute] Guid orderId, [FromQuery] int status)
         {
             return await _orderRepository.UpdateOrderStatus(orderId, status);
@@ -74,6 +81,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get order detail by id
         [HttpGet("order-detail/{orderId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<ViewOrderDetailDTO>> GetOrderDetailById([FromRoute] Guid orderId)
         {
             return await _orderRepository.GetOrderDetailByIdAsync(orderId);

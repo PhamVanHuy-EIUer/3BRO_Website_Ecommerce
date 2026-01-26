@@ -2,6 +2,7 @@
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce3BRO.Controllers
@@ -18,11 +19,12 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all categories
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public Task<ApiResponse<GetCategoryDTO>> GetAllCategories()
         {
             return _categoryService.GetAllCategoryAsync();
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpGet("number-products")]
         public async Task<ApiResponse<NumberProductsInCategoryDTO>> GetProductsInCategory()
         {
@@ -31,6 +33,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api add new category
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetCategoryDTO>> AddNewCategory([FromForm] CategoryDTO category,IFormFile image)
         {
             if (!ModelState.IsValid)
@@ -45,6 +48,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api update category
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, [FromForm] CategoryDTO category,IFormFile? newImage)
         {
             if (!ModelState.IsValid)
@@ -59,6 +63,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api delete category
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetCategoryDTO>> DeleteCategory(Guid id)
         {
             return await _categoryService.DeleteCategory(id);

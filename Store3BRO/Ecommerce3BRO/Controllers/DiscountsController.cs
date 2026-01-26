@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce3BRO.Controllers
@@ -25,6 +26,7 @@ namespace Ecommerce3BRO.Controllers
 
         //api use to add new discount
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetDiscountDTO>> AddNewDiscount([FromBody] InputDiscountDTO discount)
         {
             var discountDTO = new DiscountDTO();
@@ -60,6 +62,7 @@ namespace Ecommerce3BRO.Controllers
 
         // api use to get discount by id
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetDiscountDTO>> GetDiscountById(Guid id)
         {
             return await _discountRepository.GetDiscountByIdAsync(id);
@@ -67,6 +70,7 @@ namespace Ecommerce3BRO.Controllers
 
         // api use to update discount
         [HttpPut]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetDiscountDTO>> UpdateDiscount(Guid id, [FromBody] InputDiscountDTO discount)
         {
             var discountDTO = new DiscountDTO();
@@ -102,12 +106,14 @@ namespace Ecommerce3BRO.Controllers
 
         // api use to delete discount
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetDiscountDTO>> DeleteDiscount(Guid id)
         {
             return await _discountRepository.DeleteDiscountAsync(id);
         }
 
         [HttpPatch("update-status/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<string>> UpdateStatusDiscount(Guid id, [FromBody]UpdateStatusDiscountDTO status)
         {
             return await _discountRepository.updateStatusDiscountAsync(id, status);

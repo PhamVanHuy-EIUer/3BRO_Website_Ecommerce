@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce3BRO.Controllers
@@ -15,12 +16,14 @@ namespace Ecommerce3BRO.Controllers
             _roleRepository = roleRepository;
         }
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetRoleDTO>> GetAllRoles()
         {
             var result = await _roleRepository.GetAllRoleAsync();
             return result;
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetRoleDTO>> AddNewRole([FromBody] RoleDTO role)
         {
             if (!ModelState.IsValid)
@@ -34,12 +37,14 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpPost("apply-roleUser")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetRoleDTO>> ApplyRoleForUser([FromQuery] Guid userId, [FromQuery] Guid roleId)
         {
             var result = await _roleRepository.ApplyRoleForUser(userId, roleId);
             return result;
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetRoleDTO>> DeleteRole([FromQuery] Guid roleId)
         {
             var result = await _roleRepository.DeleteRole(roleId);

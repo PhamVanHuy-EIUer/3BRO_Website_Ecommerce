@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,6 +17,7 @@ namespace Ecommerce3BRO.Controllers
             _cartItemService = cartItemService;
         }
 
+        [Authorize]
         //Api add new item to cart
         [HttpPost("add")]
         public async Task<ApiResponse<CartItemDTO>> AddNewItemToCart([FromQuery] Guid productId, [FromQuery] int quantity)
@@ -28,7 +30,7 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.AddNewItemToCartAsync(productId, userId, quantity);
         }
-
+        [Authorize]
         //Api remove item from cart
         [HttpDelete]
         public async Task<ApiResponse<CartItemDTO>> RemoveItemFromCart([FromQuery] Guid productId)
@@ -43,6 +45,7 @@ namespace Ecommerce3BRO.Controllers
             return await _cartItemService.RemoveItemFromCartAsync(productId,userId);
 
         }
+        [Authorize]
         //Api show item quantity in cart
         [HttpGet("quantity")]
         public async Task<ApiResponse<CartProductDTO>> GetItemQuantityInCart()
@@ -55,14 +58,14 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.ShowItemsInCartAsync(userId);
         }
-
+        [Authorize]
         [HttpPost("preview-price")]
         public async Task<ApiResponse<decimal>> getSeletedProductPrice([FromBody] List<CheckOutItemDTO> items)
         {
             
             return await _cartItemService.PreviewTotalPriceAsync(items);
         }
-
+        [Authorize]
         [HttpDelete("delete-list-product")]
         public async Task<ApiResponse<string>> deleteListItems([FromBody] List<DeleteProductInCartDTO> listItems)
         {

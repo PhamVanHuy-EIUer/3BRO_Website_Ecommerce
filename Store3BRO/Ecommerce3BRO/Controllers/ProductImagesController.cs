@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce3BRO.Controllers
@@ -17,6 +18,7 @@ namespace Ecommerce3BRO.Controllers
 
         // api add new image for product
         [HttpPost("AddNewImageForProduct/{productId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProduct([FromRoute] Guid productId, IFormFile newImage)
         {
             if (!ModelState.IsValid)
@@ -31,6 +33,7 @@ namespace Ecommerce3BRO.Controllers
 
         // api get all images by product id
         [HttpGet("all-imageProduct")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductImageDTO>> GetAllImagesByProductId([FromQuery] Guid productId)
         {
             return await _productImageRepository.GetAllImagesByProductIdAsync(productId);
@@ -38,6 +41,7 @@ namespace Ecommerce3BRO.Controllers
 
 
         [HttpDelete("{imageId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductImageDTO>> RemoveImageFromProduct([FromRoute] Guid imageId)
         {
             return await _productImageRepository.RemoveImageFromProductAsync(imageId);

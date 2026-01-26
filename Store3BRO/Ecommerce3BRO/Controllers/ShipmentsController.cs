@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Ecommerce3BRO.Controllers
@@ -14,12 +15,14 @@ namespace Ecommerce3BRO.Controllers
           _shipmentService = shipmentService;
         }
         [HttpGet("by-page")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetShipmentDTO>> GetShipmentByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             var result = await _shipmentService.GetAllShipmentByPageAsync(currentPage, pageSize);
             return result;
         }
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<ShipmentDTO>> AddNewShipment([FromBody] ShipmentDTO shipment)
         {
             if (!ModelState.IsValid)
@@ -33,6 +36,7 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetShipmentDTO>> UpdateShipment([FromRoute] Guid id, [FromBody] UpdateShipmentDTO shipment)
         {
             if (!ModelState.IsValid)
@@ -46,12 +50,14 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<ShipmentDTO>> DeleteShipment([FromRoute] Guid id)
         {
             var result = await _shipmentService.DeleteShipmentByIdAsync(id);
             return result;
         }
         [HttpGet("by-status")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetShipmentDTO>> GetShipmentByStatus([FromQuery] int status)
         {
             var result = await _shipmentService.GetShipmentByStatusAsync(status);

@@ -1,6 +1,7 @@
 ﻿using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,12 +17,14 @@ namespace Ecommerce3BRO.Controllers
             _reviewService = reviewService;
         }
         [HttpGet]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetReviewDTO>> GetAllReview()
         {
             var result = await _reviewService.GetAllReview();
             return result;
         }
         [HttpPost]
+        [Authorize]
         public async Task<ApiResponse<ReviewDTO>> AddNewReviewAsync([FromBody] ReviewDTO review)
         {
             if (!ModelState.IsValid)
@@ -41,7 +44,8 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpGet("by-user")]
-        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewByIdAsync()
+        [Authorize(Roles = "Admin")]
+        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewByUserAsync()
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
@@ -53,12 +57,14 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpDelete]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetReviewDTO>> DeleteReviewAsync([FromQuery] Guid reviewId)
         {
             var result = await _reviewService.DeleteReviewAsync(reviewId);
             return result;
         }
         [HttpPut]
+        [Authorize(Roles ="User")]
         public async Task<ApiResponse<GetReviewDTO>> UpdateReviewAsync([FromQuery] Guid reviewId, [FromBody] ReviewDTO review)
         {
             if (!ModelState.IsValid)
@@ -72,7 +78,8 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpGet("Detail")]
-        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewDetailByProductIdAsync([FromQuery] Guid reviewId)
+        [Authorize(Roles ="Admin")]
+        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewDetailByIdAsync([FromQuery] Guid reviewId)
         {
             var result = await _reviewService.GetReviewByIdAsync(reviewId);
             return result;

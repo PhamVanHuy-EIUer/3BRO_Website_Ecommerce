@@ -25,6 +25,7 @@ namespace Ecommerce3BRO.Controllers
 
         //function user use to register
         [HttpPost("register")]
+        [AllowAnonymous]
         public async Task<ApiResponse<GetUserDTO>> Register([FromBody] RegisterModel user)
         {
             if (!ModelState.IsValid)
@@ -46,6 +47,7 @@ namespace Ecommerce3BRO.Controllers
 
         // function to active user after enter activation code successfully
         [HttpPost("active-user")]
+        [AllowAnonymous]
         public async Task<ApiResponse<UserDTO?>> ActiveUser([FromQuery] Guid id, [FromQuery] string activeCode)
         {
             var findActiveCode = await _context.ActivationCode.FirstOrDefaultAsync(a => a.Code == activeCode && a.IsUsed == false);
@@ -67,6 +69,7 @@ namespace Ecommerce3BRO.Controllers
 
         // function to send activation code again if activation code is expired
         [HttpPost("send-activecode")]
+        [AllowAnonymous]
         public async Task<ApiResponse<string>> SendActiveCode([FromQuery] Guid id)
         {
             await _userService.SendActiveCodeAsync(id);
@@ -75,6 +78,7 @@ namespace Ecommerce3BRO.Controllers
 
         //function send code to email when user forget password
         [HttpPost("forget-password")]
+        [AllowAnonymous]
         public async Task<ApiResponse<UserDTO?>> ForgetPassWord([FromQuery] string email)
         {
             if (!ModelState.IsValid)
@@ -94,6 +98,7 @@ namespace Ecommerce3BRO.Controllers
 
 
         [HttpPost("update-pass")]
+        [AllowAnonymous]
         public async Task<ApiResponse<string>> UpdatePassword(UpdatePasswordDTO user)
         {
             if (!ModelState.IsValid)
@@ -113,6 +118,7 @@ namespace Ecommerce3BRO.Controllers
 
         //api admin use to view all user
         [HttpGet("get-alluser")]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetUserDTO>> GetAllUser()
         {
             var result = await _userService.GetAllUserAsync();
@@ -121,6 +127,7 @@ namespace Ecommerce3BRO.Controllers
 
         // add user
         [HttpPost("add-user")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetUserDTO>> AddNewUser([FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)
@@ -141,6 +148,7 @@ namespace Ecommerce3BRO.Controllers
 
         //update user by admin
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetUserDTO>> UpdateUser([FromRoute] Guid id, [FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)
@@ -157,9 +165,10 @@ namespace Ecommerce3BRO.Controllers
             }
             return new ApiResponse<GetUserDTO>(null, result, "200", "Update user successfully", true, 0, 0, 0, 0, null, null, null);
         }
-        [Authorize(Roles = "Admin")]
+    
         //delete user
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetUserDTO>> DeleteUserById([FromRoute] Guid id)
         {
             var result = await _userService.DeleteUserByIdAsync(id);
@@ -171,6 +180,7 @@ namespace Ecommerce3BRO.Controllers
         }
 
         // view detail 1 user by admin
+        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ApiResponse<GetUserDTO>> GetUserById([FromRoute] Guid id)
         {
@@ -184,6 +194,7 @@ namespace Ecommerce3BRO.Controllers
 
         // get user by page
         [HttpGet("by-page")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetUserDTO>> GetUserByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             var totalUser = await _context.User.ToListAsync();
@@ -194,6 +205,7 @@ namespace Ecommerce3BRO.Controllers
 
         // user use api to change password
         [HttpPut("change-password")]
+        [Authorize]
         public async Task<ApiResponse<string>> ChangePassword([FromBody] ChangePasswordDTO dto)
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -211,6 +223,7 @@ namespace Ecommerce3BRO.Controllers
 
         // update infor by user
         [HttpPut("by-user")]
+        [Authorize]
         public async Task<ApiResponse<GetUserDTO>> UpdateInfoByUser([FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)
@@ -230,6 +243,7 @@ namespace Ecommerce3BRO.Controllers
             return new ApiResponse<GetUserDTO>(null, result, "200", "Update user successfully", true, 0, 0, 0, 0, null, null, null);
         }
         [HttpGet("user-byclaim")]
+        [Authorize]
         public async Task<IActionResult> GetUserByClaim()
         {
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);

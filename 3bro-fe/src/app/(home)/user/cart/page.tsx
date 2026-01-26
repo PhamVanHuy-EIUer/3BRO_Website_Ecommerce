@@ -23,9 +23,11 @@ import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
 import Voucher from "@/components/user/cart/Voucher";
 import { productService } from "@/services/product.service";
+import { useAuth } from "@/context/AuthContext";
 
 const CartContent = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [api, contextHolder] = notification.useNotification();
   const [carts, setCarts] = useState<Cart[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -171,15 +173,15 @@ const CartContent = () => {
         setIsOpenVoucher(false);
 
         api.success({
-          message: "Áp dụng voucher thành công",
-          description: `Đã áp dụng mã ${discount.code}`,
+          title: "Apply voucher successfully",
+          description: `Apply voucher ${discount.code}`,
           placement: "topRight",
           duration: 3,
         });
       } else {
         api.error({
-          message: "Lỗi áp dụng voucher",
-          description: response.message || "Không thể áp dụng voucher này",
+          title: "Error applying voucher",
+          description: response.message || "Can't apply voucher",
           placement: "topRight",
           duration: 3,
         });
@@ -188,9 +190,8 @@ const CartContent = () => {
     } catch (error: any) {
       console.error("Error applying voucher:", error);
       api.error({
-        message: "Lỗi áp dụng voucher",
-        description:
-          error?.response?.data?.message || "Có lỗi xảy ra khi áp dụng voucher",
+        title: "Error applying voucher",
+        description: error?.response?.data?.message || "Can't apply voucher",
         placement: "topRight",
         duration: 3,
       });
@@ -479,8 +480,18 @@ const CartContent = () => {
                           backgroundColor: hasSelected ? "#ff6857" : undefined,
                         }}
                         className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md !border-none hover:!bg-[#ff6857] hover:!text-white"
+                        onClick={() => {
+                          if (
+                            user?.address === null ||
+                            user?.fullName === null
+                          ) {
+                            router.push("/user");
+                          } else {
+                            router.push("/user/payment");
+                          }
+                        }}
                       >
-                        BUY NOW
+                        CHECK OUT
                       </Button>
                     </div>
                   </div>

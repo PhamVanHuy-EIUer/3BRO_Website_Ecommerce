@@ -1,3 +1,4 @@
+import { FaShopify } from "react-icons/fa";
 import { MdOutlineDiscount } from "react-icons/md";
 export const GoogleIcon = () => (
   <svg
@@ -26,3 +27,5 @@ export const GoogleIcon = () => (
 );
 
 export const DiscountIcon = () => <MdOutlineDiscount size={20} />;
+
+export const OrderIcon = () => <FaShopify size={20} />;

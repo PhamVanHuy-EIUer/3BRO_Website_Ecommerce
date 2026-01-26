@@ -39,7 +39,7 @@ const TopProductChart = () => {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="h-[112.5] bg-[#f5f5f5] p-5 rounded-xl flex-1"
+      className="h-[380px] bg-[#f5f5f5] p-5 rounded-xl flex-1"
     >
       <h2 className="text-lg font-medium mb-4">Top Selling Products</h2>
 

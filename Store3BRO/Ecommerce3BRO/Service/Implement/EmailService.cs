@@ -34,5 +34,27 @@ namespace Ecommerce3BRO.Service.Implement
 
             await smtp.SendMailAsync(message);
         }
+        public async Task SendEmailForContactAsync(string toEmail, string response)
+        {
+            var smtp = new SmtpClient("smtp.gmail.com", 587)
+            {
+                EnableSsl = true,
+                Credentials = new NetworkCredential(
+                    _config["EmailSettings:Username"],
+                    _config["EmailSettings:Password"]
+                )
+            };
+
+            var message = new MailMessage
+            {
+                From = new MailAddress(_config["EmailSettings:Username"]),
+                Subject = "Thư phản hồi ý kiến của bạn",
+                Body = $"Message: {response}"
+            };
+
+            message.To.Add(toEmail);
+
+            await smtp.SendMailAsync(message);
+        }
     }
 }

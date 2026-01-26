@@ -57,7 +57,7 @@ namespace Ecommerce3BRO.Repository.Implement
                         Status = ((ShipmentStatus)s.Status).ToString(),
                         TrackingNumber = s.TrackingNumber
                 }).ToListAsync();
-            return new ApiResponse<GetShipmentDTO>(shipments, null, "200", "Get all shipments by page successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetShipmentDTO>(shipments, null, "200", "Get all shipments by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
 
         }
 

@@ -33,6 +33,7 @@ builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IShipmentRepository,ShipmentRepository>();
+builder.Services.AddScoped<ISupportRepository, SupportRepository>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<ShopLocation>();
 

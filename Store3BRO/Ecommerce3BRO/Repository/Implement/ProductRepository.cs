@@ -680,14 +680,14 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
-            
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             var findCartItems = await _context.CartItem.Include(ci => ci.Cart).Include(ci => ci.Product).ThenInclude(p => p.Category).Where(ci => request.CartItemIds.Contains(ci.Id) && ci.Cart.UserId == userId).ToListAsync();
             Console.WriteLine(findCartItems.Count);
             if (!findCartItems.Any())
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
             }
-            decimal shippingFee = 0;
             decimal totalPrice = 0;
 
             var productList = new List<DiscountProductDTO>();

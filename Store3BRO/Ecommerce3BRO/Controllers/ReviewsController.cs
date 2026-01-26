@@ -84,5 +84,16 @@ namespace Ecommerce3BRO.Controllers
             var result = await _reviewService.GetReviewByIdAsync(reviewId);
             return result;
         }
+        [HttpGet("by-page")]
+        public async Task<ApiResponse<GetReviewDTO>> GetReviewByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _reviewService.GetReviewByPage(currentPage, pageSize);
+        }
+
+        [HttpGet("product-by-page{id}")]
+        public async Task<ApiResponse<GetReviewDTO>> GetReviewByPage([FromRoute] Guid id,[FromQuery] int currentPage, [FromQuery] int pageSize)
+        {
+            return await _reviewService.GetReviewByProduct(id,currentPage,pageSize);
+        }
     }
 }

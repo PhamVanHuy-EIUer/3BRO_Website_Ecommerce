@@ -23,7 +23,6 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all products
         [HttpGet("get-available-products")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> GetAvailableProducts()
         {
             return await _productService.GetAvailableProductsAsync();
@@ -77,7 +76,6 @@ namespace Ecommerce3BRO.Controllers
 
         //api get products by category id
         [HttpGet("by-category")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryId([FromQuery] Guid categoryId)
         {
             return await _productService.GetProductByCategoryIdAsync(categoryId);
@@ -85,7 +83,6 @@ namespace Ecommerce3BRO.Controllers
 
         //api search products
         [HttpGet("search-product")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> SearchProducts([FromQuery] string keyword, [FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.SearchProductByPageAsync(keyword, currentPage, pageSize);
@@ -98,7 +95,6 @@ namespace Ecommerce3BRO.Controllers
         }
         //api get products by page
         [HttpGet("by-page")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.GetProductByPages(currentPage, pageSize);
@@ -106,7 +102,6 @@ namespace Ecommerce3BRO.Controllers
 
         //api get most ordered product by page
         [HttpGet("order-product")]
-        [Authorize]
         public async Task<ApiResponse<GetOrderProductDTO>> GetMostOrderedProductByPages([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.GetMostOrderedProductByPages(currentPage, pageSize);
@@ -114,7 +109,6 @@ namespace Ecommerce3BRO.Controllers
 
         //api get products by category by page
         [HttpGet("category-pages")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync([FromQuery] Guid categoryId, [FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _productService.GetProductByCategoryByPageAsync(categoryId, currentPage, pageSize);
@@ -219,7 +213,6 @@ namespace Ecommerce3BRO.Controllers
 
         //api get products by price range
         [HttpGet("price-range")]
-        [Authorize]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice)
         {
             return await _productService.GetProductByPriceRange(minPrice, maxPrice);

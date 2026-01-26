@@ -12,5 +12,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetReviewDTO>> DeleteReviewAsync(Guid reviewId);
         Task<ApiResponse<GetReviewDTO>> GetReviewByPage(int currentPage, int pageSize);
         Task<ApiResponse<GetReviewDetailDTO>> GetReviewByUser(Guid userId);
+        Task<ApiResponse<GetReviewDTO>> GetReviewByProduct(Guid productId, int currentPage, int pageSize);
     }
 }

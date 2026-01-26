@@ -6,7 +6,7 @@ export const quickMenu = [
     { id: 3, name: "About", href: "/about" },
     { id: 4, name: "Contact", href: "/contact" },
     { id: 5, name: "Sign In", href: "/login" },
-    { id: 6, name: "Account", href: "/user" },
+    { id: 6, name: "Account", href: "/user/account" },
 ];
 
 export const support = [
@@ -16,11 +16,11 @@ export const support = [
 ];
 
 export const Account = [
-    { id: 1, name: "My Account", href: "" },
-    { id: 2, name: "Login", href: "" },
-    { id: 3, name: "Register", href: "" },
-    { id: 4, name: "Cart", href: "" },
-    { id: 5, name: "My Order", href: "" },
+    { id: 1, name: "My Account", href: "/user/account" },
+    { id: 2, name: "Login", href: "/login" },
+    { id: 3, name: "Register", href: "/register" },
+    { id: 4, name: "Cart", href: "/user/cart" },
+    { id: 5, name: "My Order", href: "/user/order" },
 ];
 export const categories = [
     { name: "Woman's Fashion", hasSubmenu: true },

@@ -119,14 +119,7 @@ axiosClient.interceptors.response.use(
 
       // Nếu refresh thành công
       if (response.data?.isSuccess) {
-        // Có thể lấy thông tin user mới nếu cần
-        // const userResponse = await userService.getMyUser();
-        // if (userResponse.data?.isSuccess && userResponse.data?.object) {
-        //   const jsonString = JSON.stringify(userResponse.data.object);
-        //   document.cookie = `CURRENT_USER=${encodeURIComponent(jsonString)}; path=/; max-age=${60 * 60}`;
-        // }
 
-        // Emit event khi token được refresh thành công
         if (typeof window !== "undefined") {
           window.dispatchEvent(new CustomEvent("token-refreshed"));
         }

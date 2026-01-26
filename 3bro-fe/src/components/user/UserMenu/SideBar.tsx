@@ -35,52 +35,52 @@ const Sidebar = () => {
     {
       name: "My Account",
       icon: <UserIcon className="w-5 h-5" />,
-      path: "/user/account",
+      path: "/user/account/profile",
       subItems: [
         {
           name: "Profile",
           icon: <UserIcon className="w-4 h-4" />,
-          path: "/user/account",
+          path: "/user/account/profile",
         },
         {
           name: "Address",
           icon: <MapPinIcon className="w-4 h-4" />,
-          path: "/user/account/address",
+          path: "/user/account/profile/address",
         },
         {
           name: "Change Password",
           icon: <LockIcon className="w-4 h-4" />,
-          path: "/user/account/changePassword",
+          path: "/user/account/profile/changePassword",
         },
       ],
     },
     {
       name: "Purchase Order",
       icon: <BoxIcon className="w-5 h-5" />,
-      path: "/user/purchase",
+      path: "/user/account/purchase",
       subItems: [],
     },
     {
       name: "Notifications",
       icon: <BellIcon className="w-5 h-5" />,
-      path: "/user/notification",
+      path: "/user/account/notification",
       subItems: [
         {
           name: "Order Updates",
           icon: <BoxIcon className="w-4 h-4" />,
-          path: "/user/notification/order-updates",
+          path: "/user/account/notification/order-updates",
         },
         {
           name: "Promotions",
           icon: <TicketIcon className="w-4 h-4" />,
-          path: "/user/notification/promotions",
+          path: "/user/account/notification/promotions",
         },
       ],
     },
     {
       name: "Voucher Wallet",
       icon: <TicketIcon className="w-5 h-5" />,
-      path: "/user/voucher",
+      path: "/user/account/voucher",
       subItems: [],
     },
   ];

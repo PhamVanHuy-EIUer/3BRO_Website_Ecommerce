@@ -10,7 +10,7 @@ const PageLoading = () => {
         alignItems: "center",
       }}
     >
-      <Spin size="large" />
+      <Spin tip="Loading...." size="default" />
     </div>
   );
 };

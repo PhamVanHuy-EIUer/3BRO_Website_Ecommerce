@@ -11,5 +11,5 @@ export const userService = {
     getAllUsersByPage: (currentPage: number, pageSize: number) => axiosClient.get(`/Users/by-page?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
     deleteUser: (id: string) => axiosClient.delete(`/Users/${id}`).then(res => res.data),
     changePassword: (updatePassword: ResetPassword) => axiosClient.put(`/Users/change-password`, updatePassword, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
-    updateProfile: (updateProfile: UpdateProfile) => axiosClient.put(`/Users/update-profile`, updateProfile, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    updateProfile: (updateProfile: UpdateProfile) => axiosClient.put(`/Users/by-user`, updateProfile, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
 };

@@ -5,6 +5,7 @@ import { Product } from "@/models/Product";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/currency";
+import { Rate } from "antd";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -94,19 +95,10 @@ const ProductCard = ({ product }: { product: Product }) => {
           {product && (
             <div className="flex items-center gap-2 mt-2">
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <svg
-                    key={i}
-                    className={`w-4 h-4 ${
-                      i < Math.floor(4)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300 fill-current"
-                    }`}
-                    viewBox="0 0 20 20"
-                  >
-                    <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
-                  </svg>
-                ))}
+                <Rate
+                  disabled
+                  defaultValue={product.rating == null ? 0 : product.rating}
+                />
               </div>
               {/* {product.reviewCount && (
                 <span className="text-gray-500 text-sm">

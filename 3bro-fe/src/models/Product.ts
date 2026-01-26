@@ -10,4 +10,5 @@ export interface Product {
     status?: number;
     createdDate?: string;
     updatedDate?: string;
+    rating?: number;
 }

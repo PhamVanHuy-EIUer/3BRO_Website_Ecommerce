@@ -3,7 +3,7 @@ import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
 import { ChangeEvent, use, useState } from "react";
 import { Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
-import { Image, notification } from "antd";
+import { Image, notification, Rate } from "antd";
 import { formatCurrency } from "@/utils/currency";
 import { ApiResponse } from "@/models/ApiResponse";
 import { cartService } from "@/services/cart.service";
@@ -146,11 +146,10 @@ export default function ProductGallery({
                 {/* Rating */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="flex items-center">
-                    {[...Array(5)].map((_, i) => (
-                      <span key={i} className="text-yellow-400 text-lg">
-                        ★
-                      </span>
-                    ))}
+                    <Rate
+                      disabled
+                      defaultValue={product.rating == null ? 0 : product.rating}
+                    />
                   </div>
                   <span className="text-sm text-gray-500">(150 Reviews)</span>
                   <span className={`text-sm font-medium ${stockColor}`}>

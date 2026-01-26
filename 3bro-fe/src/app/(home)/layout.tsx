@@ -9,15 +9,15 @@ export default function HomeLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider>
-      <div
-        style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
-      >
+    <div
+      style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}
+    >
+      <AuthProvider>
         <Notification />
         <NavBar />
         <main style={{ flex: 1 }}>{children}</main>
         <Footer />
-      </div>
-    </AuthProvider>
+      </AuthProvider>
+    </div>
   );
 }

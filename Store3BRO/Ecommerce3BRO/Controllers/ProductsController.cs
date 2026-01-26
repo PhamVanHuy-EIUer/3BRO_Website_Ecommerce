@@ -238,5 +238,17 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.UpdateProductStatus(productId, status);
         }
+        [HttpGet("item-list")]
+        [Authorize]
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartIemList([FromQuery]List<Guid> cartItemId)
+        {
+            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (findUser == null)
+            {
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var userId = Guid.Parse(findUser.Value);
+            return await _productService.GetProductWithAutoDiscountByCartItemListId(cartItemId,userId);
+        }
     }
 }

@@ -5,7 +5,7 @@ import { Product } from "@/models/Product";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/currency";
-import { Rate } from "antd";
+import { Rate, Tooltip } from "antd";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -19,19 +19,22 @@ const ProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="group relative bg-white hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 rounded-lg h-full flex flex-col">
-      {/* Image Container - Fixed aspect ratio */}
+    <div className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-xl transition-all duration-300">
+      {/* Image Container */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
         {/* Action Icons */}
         <div className="absolute top-3 right-3 flex flex-col gap-2 z-10">
           <button
+            type="button"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              setIsFavorite(!isFavorite);
+              setIsFavorite((prev) => !prev);
             }}
-            className={`bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors ${
-              isFavorite ? "text-red-500" : "text-gray-600"
+            className={`bg-white p-2 rounded-full shadow-md transition-colors ${
+              isFavorite
+                ? "text-red-500 hover:bg-red-50"
+                : "text-gray-600 hover:bg-gray-100"
             }`}
           >
             <Heart className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
@@ -48,27 +51,28 @@ const ProductCard = ({ product }: { product: Product }) => {
 
         {/* Product Image */}
         <Link href={`/product/${product.id}`} className="block w-full h-full">
-          <div className="relative w-full h-full">
-            <Image
-              src={getFirstImage(product.imageUrl)}
-              alt={product.productName}
-              unoptimized
-              fill
-              className="object-contain group-hover:scale-105 transition-transform duration-500 p-6"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
-            />
-          </div>
+          <Image
+            src={getFirstImage(product.imageUrl)}
+            alt={product.productName}
+            fill
+            unoptimized
+            className="object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+            sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
+          />
         </Link>
 
-        {/* Add to Cart Button - Shows on hover */}
+        {/* Add to Cart */}
         <button
+          type="button"
           onClick={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            // onAddToCart(product.id);
             console.log("Add to cart:", product.id);
           }}
-          className="absolute bottom-0 left-0 right-0 bg-black text-white py-3 px-4 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hover:bg-gray-800"
+          className="absolute bottom-0 left-0 right-0 bg-black text-white py-3 px-4
+                     flex items-center justify-center gap-2
+                     opacity-0 group-hover:opacity-100
+                     transition-opacity duration-300 hover:bg-gray-800"
         >
           <ShoppingCart className="w-4 h-4" />
           Add To Cart
@@ -78,35 +82,27 @@ const ProductCard = ({ product }: { product: Product }) => {
       {/* Product Info */}
       <Link
         href={`/product/${product.id}`}
-        className="p-4 flex-1 flex flex-col justify-between"
+        className="p-4 flex-1 flex flex-col"
       >
-        <h3 className="font-medium text-gray-900 text-base mb-2 line-clamp-2 min-h-[12]">
-          {product.productName}
-        </h3>
+        {/* Title */}
+        <Tooltip title={product.productName}>
+          <h3
+            className="text-gray-900 text-base font-medium mb-2
+                         line-clamp-2 leading-6 min-h-[3rem]"
+          >
+            {product.productName}
+          </h3>
+        </Tooltip>
 
+        {/* Price + Rating */}
         <div className="mt-auto">
-          <div className="flex items-center gap-3">
-            <span className="text-red-500 font-semibold text-lg">
-              {formatCurrency(product.price)}
-            </span>
-          </div>
+          <span className="text-red-500 font-semibold text-lg">
+            {formatCurrency(product.price)}
+          </span>
 
-          {/* Optional: Add rating if available */}
-          {product && (
-            <div className="flex items-center gap-2 mt-2">
-              <div className="flex items-center">
-                <Rate
-                  disabled
-                  defaultValue={product.rating == null ? 0 : product.rating}
-                />
-              </div>
-              {/* {product.reviewCount && (
-                <span className="text-gray-500 text-sm">
-                  ({product.reviewCount})
-                </span>
-              )} */}
-            </div>
-          )}
+          <div className="flex items-center gap-2 mt-2">
+            <Rate disabled value={product.rating ?? 0} />
+          </div>
         </div>
       </Link>
     </div>

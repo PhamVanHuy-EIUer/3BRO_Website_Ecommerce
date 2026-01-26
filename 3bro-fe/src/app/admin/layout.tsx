@@ -1,5 +1,6 @@
 import NavBar from "@/components/admin/NavBar";
 import SideBar from "@/components/admin/SideBar";
+import { AuthProvider } from "@/context/AuthContext";
 
 export default function AdminLayout({
   children,
@@ -7,20 +8,28 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="h-screen overflow-hidden flex">
-      {/* Sidebar */}
-      <aside className="w-20 md:w-64 flex-shrink-0 z-20">
-        <SideBar />
-      </aside>
+    <AuthProvider>
+      <div className="h-screen overflow-hidden flex bg-gray-50">
+        {/* Sidebar - Fixed */}
+        <aside className="flex-shrink-0 z-30">
+          <SideBar />
+        </aside>
 
-      {/* Main area */}
-      <div className=" h-screen flex flex-col flex-1 overflow-hidden">
-        <NavBar />
-        {/* Scroll container */}
-        <div className="flex-1 overflow-y-auto">
-          <div className="p-5">{children}</div>
+        {/* Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Navbar - Sticky */}
+          <NavBar />
+
+          {/* Page Content - Scrollable */}
+          <main className="flex-1 overflow-y-auto bg-gray-50">
+            {/* Content Container */}
+            <div className="p-4 sm:p-6 lg:p-8">
+              {/* Content Card/Wrapper */}
+              <div className="max-w-[1600px] mx-auto">{children}</div>
+            </div>
+          </main>
         </div>
       </div>
-    </div>
+    </AuthProvider>
   );
 }

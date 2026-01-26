@@ -350,22 +350,67 @@ export default function DiscountManagement() {
       fixed: "right" as const,
       render: (_: any, record: Discount) => (
         <Space>
+          <span
+            onClick={() => handleEdit(record)}
+            className="cursor-pointer px-2.25 py-1.75 bg-[#155BFA] justify-center items-center rounded-md"
+          >
+            <EditOutlined className="!text-white" />
+          </span>
+
           <Button
             type="primary"
-            icon={<EditOutlined />}
-            size="small"
-            onClick={() => handleEdit(record)}
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => {
+              Modal.confirm({
+                title: (
+                  <>
+                    <p>Are you sure to delete this account?</p>
+                  </>
+                ),
+                content: (
+                  <div>
+                    <p>
+                      <span className="font-semibold">Delete discount</span>{" "}
+                      {record.code}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Code description:</span>{" "}
+                      {record.description}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Discount:</span>{" "}
+                      {record.discountAmount
+                        ? formatCurrency(record.discountAmount)
+                        : `${record.discountPercent}%`}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Minimum Order: </span>{" "}
+                      {record.minOrderAmount}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Quantity:</span>{" "}
+                      {record.quantity}
+                    </p>
+                    <p>
+                      <span className="font-semibold">Time:</span>{" "}
+                      {formatDate(record.startDate)} -{" "}
+                      {formatDate(record.endDate)}
+                    </p>
+                  </div>
+                ),
+                footer: (_, { OkBtn, CancelBtn }) => (
+                  <>
+                    <CancelBtn />
+                    <OkBtn />
+                  </>
+                ),
+                okText: "Delete",
+                cancelText: "Cancel",
+                onOk: () => record.id && handleDelete(record.id),
+              });
+            }}
           />
-          <Popconfirm
-            title="Confirm delete?"
-            description="Are you sure to delete this discount?"
-            onConfirm={() => record.id && handleDelete(record.id)}
-            okText="Delete"
-            cancelText="Cancel"
-            okButtonProps={{ danger: true }}
-          >
-            <Button danger icon={<DeleteOutlined />} size="small" />
-          </Popconfirm>
         </Space>
       ),
     },
@@ -475,7 +520,8 @@ export default function DiscountManagement() {
 
       {/* Create/Edit Modal */}
       <Modal
-        title={editingDiscount ? "Cập nhật Discount" : "Tạo Discount mới"}
+        className="!z-15"
+        title={editingDiscount ? "Update Discount" : "Create new Discount"}
         open={isModalOpen}
         onCancel={() => {
           setIsModalOpen(false);

@@ -1,5 +1,8 @@
 "use client";
-import { notification } from "antd";
+import { ApiResponse } from "@/models/ApiResponse";
+import { SupportRequest } from "@/models/SupportRequest";
+import { supportService } from "@/services/support.service";
+import { Button, notification } from "antd";
 import { MailIcon, PhoneIcon } from "lucide-react";
 import React, { useState } from "react";
 
@@ -46,22 +49,30 @@ const SupportRequestPage = () => {
     setIsSubmitting(true);
 
     try {
-      // Demo: Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res: ApiResponse<SupportRequest> =
+        await supportService.postSupport(formData);
 
-      setTimeout(() => {
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-        api.success({
-          title: "Support request submitted successfully",
+      await new Promise((resolve) => setTimeout(resolve, 4000));
+
+      if (!res.isSuccess) {
+        api.error({
+          title: res.message,
           placement: "topRight",
           duration: 2,
         });
-      }, 4000);
+        return;
+      }
+      setFormData({
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+      api.success({
+        title: "Support request submitted successfully",
+        placement: "topRight",
+        duration: 2,
+      });
     } catch (error) {
       console.error("Error submitting support request:", error);
       api.error({
@@ -143,39 +154,22 @@ const SupportRequestPage = () => {
                 </div>
 
                 {/* Submit Button */}
-                <button
+                <Button
                   onClick={handleSubmit}
+                  type="primary"
+                  danger
+                  loading={isSubmitting}
                   disabled={isSubmitting}
-                  className={`${redColor} text-white font-medium px-12 py-3 rounded hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2`}
+                  style={{
+                    backgroundColor: "#ef4444", // red-500
+                    color: "white",
+                    padding: "1.45rem 5rem", // py-3 px-12
+                    borderRadius: "0.15rem", // rounded
+                    fontWeight: 500!, // font-medium
+                  }}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin h-5 w-5 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                      <span>Sending...</span>
-                    </>
-                  ) : (
-                    <span>Send Request</span>
-                  )}
-                </button>
+                  {isSubmitting ? "Sending..." : "Send Request"}
+                </Button>
               </div>
             </div>
 
@@ -225,17 +219,6 @@ const SupportRequestPage = () => {
                     Address: Thu Dau Mot Ward, Ho Chi Minh City
                   </p>
                 </div>
-              </div>
-
-              {/* Info Box */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-8">
-                <h4 className="text-blue-900 font-semibold mb-2">
-                  Support Hours
-                </h4>
-                <p className="text-blue-800 text-sm">
-                  Our team typically responds within 2-4 hours during business
-                  hours (9 AM - 6 PM GMT+7).
-                </p>
               </div>
             </div>
           </div>

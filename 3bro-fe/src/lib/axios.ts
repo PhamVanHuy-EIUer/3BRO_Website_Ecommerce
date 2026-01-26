@@ -46,7 +46,12 @@ const PUBLIC_ENDPOINTS = [
   "/Auth/login-google",
   "/Auth/forgot-password",
   "/Auth/reset-password",
+
+  "/Product",
+  "/Category",
+  "/Banner",
 ];
+
 
 // Interceptor cho request (có thể thêm token vào header nếu cần)
 axiosClient.interceptors.request.use(
@@ -58,38 +63,25 @@ axiosClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-
-// Interceptor cho response
 axiosClient.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as RetryConfig;
 
-    // Nếu không có response hoặc config
     if (!error.response || !originalRequest) {
       return Promise.reject(error);
     }
 
-    // Nếu request là refresh token endpoint, không retry
+    // ❌ Không retry refresh endpoint
     if (originalRequest.url?.includes("/Auth/refresh")) {
-      // Clear cookie và redirect về login
-      if (typeof window !== "undefined") {
-        document.cookie = "CURRENT_USER=; path=/; max-age=0";
-        if (window.location.pathname !== "/login") {
-          Router.push("/login");
-        }
-      }
       return Promise.reject(error);
     }
 
-    // Kiểm tra xem có phải endpoint public không
     const isPublicEndpoint = PUBLIC_ENDPOINTS.some((endpoint) =>
       originalRequest.url?.includes(endpoint)
     );
 
-    // Nếu không phải lỗi 401, hoặc đã retry, hoặc là public endpoint
+    // ❌ Không refresh cho public API hoặc không phải 401
     if (
       error.response.status !== 401 ||
       originalRequest._retry ||
@@ -98,10 +90,8 @@ axiosClient.interceptors.response.use(
       return Promise.reject(error);
     }
 
-    // Đánh dấu request đã được retry
     originalRequest._retry = true;
 
-    // Nếu đang refresh token, thêm vào queue
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
         failedQueue.push({ resolve, reject });
@@ -110,47 +100,25 @@ axiosClient.interceptors.response.use(
         .catch((err) => Promise.reject(err));
     }
 
-    // Bắt đầu quá trình refresh token
     isRefreshing = true;
 
     try {
-      // Gọi API refresh token
       const response = await axiosClient.post("/Auth/refresh");
 
-      // Nếu refresh thành công
       if (response.data?.isSuccess) {
-
-        if (typeof window !== "undefined") {
-          window.dispatchEvent(new CustomEvent("token-refreshed"));
-        }
-
-        // Xử lý queue
-        processQueue(null, response.data.object);
-
-        // Retry request gốc
+        processQueue(null, null);
         return axiosClient(originalRequest);
-      } else {
-        throw new Error("Refresh token failed");
       }
+
+      throw new Error("Refresh token failed");
     } catch (refreshError) {
-      // Xử lý lỗi refresh token
       processQueue(refreshError, null);
-
-      // Clear cookie
-      if (typeof window !== "undefined") {
-        document.cookie = "CURRENT_USER=; path=/; max-age=0";
-
-        // Redirect về login nếu chưa ở trang login
-        if (window.location.pathname !== "/login") {
-          Router.push("/login");
-        }
-      }
-
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;
     }
   }
 );
+
 
 export default axiosClient;

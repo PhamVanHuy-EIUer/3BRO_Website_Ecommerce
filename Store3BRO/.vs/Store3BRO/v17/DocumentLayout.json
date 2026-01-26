@@ -3,6 +3,14 @@
   "WorkspaceRootPath": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\productimagescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\productimagescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -29,10 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\implement\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\productrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\model\\discount.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,7 +82,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -111,6 +115,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
+              "Title": "ProductImagesController.cs",
+              "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductImagesController.cs",
+              "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\ProductImagesController.cs",
+              "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductImagesController.cs",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\ProductImagesController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-01-26T11:23:07.406Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "ReviewRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\ReviewRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\ReviewRepository.cs",
@@ -123,7 +140,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\appsettings.json",
@@ -136,19 +153,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 0,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
               "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductsController.cs",
               "RelativeToolTip": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
-              "ViewState": "AgIAAJ8AAAAAAAAAAAAiwLMAAAAwAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAALMAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T04:54:49.098Z"
+              "WhenOpened": "2026-01-25T04:54:49.098Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "ShowCheckoutDTO.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\DTO\\ShowCheckoutDTO.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\ShowCheckoutDTO.cs",
@@ -160,7 +178,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Discount.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Model\\Discount.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Model\\Discount.cs",
@@ -172,20 +190,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "IProductRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IProductRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
               "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IProductRepository.cs",
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAUwBwAAAAHAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAUwB0AAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-25T03:53:29.036Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "ProductRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
@@ -197,7 +215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "DiscountsController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\DiscountsController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\DiscountsController.cs",
@@ -209,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "IDiscountRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IDiscountRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IDiscountRepository.cs",
@@ -221,7 +239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 5,
               "Title": "UsersController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\UsersController.cs",
@@ -234,7 +252,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "CheckoutCartItemRequestDTO.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\DTO\\CheckoutCartItemRequestDTO.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\CheckoutCartItemRequestDTO.cs",
@@ -246,7 +264,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
@@ -258,7 +276,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "IUserRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IUserRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IUserRepository.cs",
@@ -270,7 +288,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "OrderEnum.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Helper\\Enums\\OrderEnum.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Helper\\Enums\\OrderEnum.cs",
@@ -282,7 +300,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "OrderDetailRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\OrderDetailRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\OrderDetailRepository.cs",
@@ -294,7 +312,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "UserOrderDTO.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\DTO\\UserOrderDTO.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\DTO\\UserOrderDTO.cs",
@@ -306,7 +324,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "OrderRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\OrderRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\OrderRepository.cs",

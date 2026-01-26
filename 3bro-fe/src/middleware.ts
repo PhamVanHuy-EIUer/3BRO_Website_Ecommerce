@@ -32,7 +32,7 @@ export function middleware(req: NextRequest) {
             const hasAccess = routeRolesLower.some((r) => roleList.includes(r));
 
             if (!hasAccess) {
-                return NextResponse.redirect(new URL("/404", req.url));
+                return NextResponse.redirect(new URL("/forbindden", req.url));
             }
         }
     }

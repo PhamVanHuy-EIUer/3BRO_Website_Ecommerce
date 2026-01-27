@@ -62,7 +62,7 @@ namespace Ecommerce3BRO.Controllers
 
         // api use to get discount by id
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ApiResponse<GetDiscountDTO>> GetDiscountById(Guid id)
         {
             return await _discountRepository.GetDiscountByIdAsync(id);

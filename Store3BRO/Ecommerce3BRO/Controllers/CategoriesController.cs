@@ -19,7 +19,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get all categories
         [HttpGet]
-        [Authorize(Roles ="Admin")]
+        
         public Task<ApiResponse<GetCategoryDTO>> GetAllCategories()
         {
             return _categoryService.GetAllCategoryAsync();
@@ -48,7 +48,6 @@ namespace Ecommerce3BRO.Controllers
 
         //Api update category
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetCategoryDTO>> UpdateCategory(Guid id, [FromForm] CategoryDTO category,IFormFile? newImage)
         {
             if (!ModelState.IsValid)

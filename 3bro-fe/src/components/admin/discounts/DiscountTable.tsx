@@ -112,8 +112,8 @@ export default function DiscountManagement() {
         discountValue: formData.discountValue || 0,
         isPercent: formData.isPercent,
         minOrderAmount: formData.minOrderAmount || 0,
-        startDate: formData.dateRange[0].endOf("day").toISOString(),
-        expiredDate: formData.dateRange[1].endOf("day").toISOString(),
+        startDate: formData.dateRange[0].add(20, "second").toISOString(),
+        expiredDate: formData.dateRange[1].toISOString(),
         quantity: formData.quantity || 0,
       };
 

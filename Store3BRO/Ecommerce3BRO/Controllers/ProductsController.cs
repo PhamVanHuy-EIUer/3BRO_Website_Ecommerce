@@ -128,39 +128,6 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductWithAutoDiscountById(productId, quantity, userId);
         }
 
-        //api get products with auto discount when user checkout on 1 product in cart
-        [HttpGet("product-autodiscount-cartitem")]
-        [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByCartItemId([FromQuery] Guid cartItemId)
-        {
-            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithAutoDiscountByCartItemId(cartItemId, userId);
-        }
-
-        //api get products with auto discount when user checkout on all product in cart
-        [HttpGet("product-autodiscount-cart")]
-        [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId()
-        {
-            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var userId = Guid.Parse(findUser.Value);
-            var cartId = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
-            if (cartId == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
-            }
-            return await _productService.GetProductWithAutoDiscountByCartId(cartId.Id, userId);
-        }
-
         //api get products with discount code when user checkout on 1 product in web
         [HttpGet("product-disccount-directly")]
         [Authorize]
@@ -192,25 +159,7 @@ namespace Ecommerce3BRO.Controllers
                 
             );
         }
-        //api get products with discount code when user checkout on all product in cart
-        [HttpGet("product-discount-cart")]
-        [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartId([FromQuery] string discountCode)
-        {
-            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var userId = Guid.Parse(findUser.Value);
-            var cartId = await _context.Cart.FirstOrDefaultAsync(c => c.UserId == userId);
-            if (cartId == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart not found", false, 0, 0, 0, 0, null, null, null);
-            }
-            return await _productService.GetProductWithDiscountByCartId(cartId.Id, userId, discountCode);
-        }
-
+    
         //api get products by price range
         [HttpGet("price-range")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice)
@@ -231,7 +180,7 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _productService.UpdateProductStatus(productId, status);
         }
-        [HttpGet("item-list")]
+        [HttpPost("item-list")]
         [Authorize]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartIemList([FromQuery]List<Guid> cartItemId)
         {

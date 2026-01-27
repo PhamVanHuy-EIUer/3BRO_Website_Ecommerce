@@ -5,7 +5,7 @@ namespace Ecommerce3BRO.Repository
 {
     public interface IReviewRepository
     {
-        Task<ApiResponse<GetReviewDTO>> GetAllReview();
+       
         Task<ApiResponse<GetReviewDetailDTO>> GetReviewByIdAsync(Guid reviewId);
         Task<ApiResponse<GetReviewDTO>> UpdateReviewAsync(Guid reviewId, ReviewDTO review);
         Task<ApiResponse<ReviewDTO>> AddNewReviewAsync( Guid userId, ReviewDTO review);
@@ -13,5 +13,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetReviewDTO>> GetReviewByPage(int currentPage, int pageSize);
         Task<ApiResponse<GetReviewDetailDTO>> GetReviewByUser(Guid userId);
         Task<ApiResponse<GetReviewDTO>> GetReviewByProduct(Guid productId, int currentPage, int pageSize);
+        Task<ApiResponse<RatingNumberDTO>> GetRatingNumByProduct(Guid productId);
     }
 }

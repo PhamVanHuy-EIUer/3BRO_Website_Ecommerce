@@ -3,6 +3,8 @@ using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
+using System.Net.WebSockets;
 
 namespace Ecommerce3BRO.Repository.Implement
 {
@@ -41,20 +43,38 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetReviewDTO>(null, null, "200", "Delete review successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetReviewDTO>> GetAllReview()
+        public async Task<ApiResponse<RatingNumberDTO>> GetRatingNumByProduct(Guid productId)
         {
-            var reviews = await _context.Review.Where(r => !r.IsDeleted).Include(r => r.User).Include(r => r.Product)
-                .Select(r => new GetReviewDTO
+            var ratings = await _context.Review
+                .Where(r => r.ProductId == productId)
+                .GroupBy(r => r.Rating)
+                .Select(g => new
                 {
-                    ReviewId = r.Id,
-                    ReviewName = r.User.FullName,
-                    PhoneNumber = r.User.Phone,
-                    Rating = r.Rating,
-                    ProductName = r.Product.ProductName,
-                    ReviewDate = r.CreatedDate
-                }).ToListAsync();
-            return new ApiResponse<GetReviewDTO>(reviews, null, "200", "Get all reviews successfully", true, 0, 0, 0, reviews.Count, null, null, null);
+                    Rating = g.Key,
+                    Count = g.Count()
+                })
+                .ToListAsync();
+
+            var dto = new RatingNumberDTO
+            {
+                Rating1 = ratings.FirstOrDefault(x => x.Rating == 1)?.Count ?? 0,
+                Rating2 = ratings.FirstOrDefault(x => x.Rating == 2)?.Count ?? 0,
+                Rating3 = ratings.FirstOrDefault(x => x.Rating == 3)?.Count ?? 0,
+                Rating4 = ratings.FirstOrDefault(x => x.Rating == 4)?.Count ?? 0,
+                Rating5 = ratings.FirstOrDefault(x => x.Rating == 5)?.Count ?? 0,
+            };
+
+            return new ApiResponse<RatingNumberDTO>(
+                null,
+                dto,
+                "200",
+                "Get rating numbers successfully",
+                true,
+                0, 0, 0, 0,
+                null, null, null
+            );
         }
+
 
         public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewByIdAsync(Guid reviewId)
         {

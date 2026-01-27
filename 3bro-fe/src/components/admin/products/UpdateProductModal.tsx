@@ -48,7 +48,7 @@ export const UpdateProductModal = ({
   return (
     <AnimatePresence>
       <motion.div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.5)]"
+        className="fixed inset-0 z-25 flex items-center justify-center bg-[rgba(0,0,0,0.5)]"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

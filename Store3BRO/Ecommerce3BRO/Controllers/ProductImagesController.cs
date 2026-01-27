@@ -33,7 +33,6 @@ namespace Ecommerce3BRO.Controllers
 
         // api get all images by product id
         [HttpGet("all-imageProduct")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductImageDTO>> GetAllImagesByProductId([FromQuery] Guid productId)
         {
             return await _productImageRepository.GetAllImagesByProductIdAsync(productId);

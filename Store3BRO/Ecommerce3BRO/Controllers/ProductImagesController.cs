@@ -19,7 +19,7 @@ namespace Ecommerce3BRO.Controllers
         // api add new image for product
         [HttpPost("AddNewImageForProduct/{productId}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProduct([FromRoute] Guid productId, IFormFile newImage)
+        public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProduct([FromRoute] Guid productId, List<IFormFile> newImages)
         {
             if (!ModelState.IsValid)
             {
@@ -28,7 +28,7 @@ namespace Ecommerce3BRO.Controllers
             x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
         ));
             }
-            return await _productImageRepository.AddNewImageForProductAsync(productId, newImage);
+            return await _productImageRepository.AddNewImageForProductAsync(productId, newImages);
         }
 
         // api get all images by product id

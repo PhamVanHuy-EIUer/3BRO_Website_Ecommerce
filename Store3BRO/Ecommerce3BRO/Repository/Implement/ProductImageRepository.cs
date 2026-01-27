@@ -2,6 +2,7 @@
 using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
+using Microsoft.EntityFrameworkCore;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Ecommerce3BRO.Repository.Implement
@@ -16,54 +17,107 @@ namespace Ecommerce3BRO.Repository.Implement
             _env = env;
         }
 
-        public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProductAsync(Guid productId, IFormFile newImage)
+        //public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProductAsync(Guid productId, List<IFormFile>  newImages)
+        //{
+        //    var findProduct = await _context.Product.FindAsync(productId);
+        //    if(findProduct == null)
+        //    {
+        //        return new ApiResponse<GetProductImageDTO>(null, null, "404", "Product is not founded", false, 0, 0, 0, 0, null, null, null);
+        //    }
+        //    string? imageUrl = null;
+
+        //    if (newImage != null)
+        //    {
+        //        var ext = Path.GetExtension(newImage.FileName).ToLower();
+        //        var allowExt = new[] { ".png", ".jpg", ".jpeg", ".webp" };
+
+        //        if (!allowExt.Contains(ext))
+        //            return new ApiResponse<GetProductImageDTO>(null, null, "400", "Image is invalid", false, 0, 0, 0, 0, null, null, null);
+
+        //        var folderPath = Path.Combine(
+        //            _env.WebRootPath,
+        //            "images",
+        //            "products"
+        //        );
+
+        //        Directory.CreateDirectory(folderPath);
+
+        //        var fileName = $"{Guid.NewGuid()}{ext}";
+        //        var fullPath = Path.Combine(folderPath, fileName);
+
+        //        using var stream = new FileStream(fullPath, FileMode.Create);
+        //        await newImage.CopyToAsync(stream);
+        //        imageUrl = $"/images/products/{fileName}";
+        //    }
+        //    var productImage = new ProductImage
+        //    {
+        //        ProductId = productId,
+        //        ImageUrl = imageUrl
+        //    };
+        //    await _context.ProductImage.AddAsync(productImage);
+        //    await _context.SaveChangesAsync();
+        //    var productImageDto = new GetProductImageDTO
+        //    {
+        //        Id = productImage.Id,
+        //        ProductName = findProduct.ProductName,
+        //        ImageUrl = productImage.ImageUrl
+        //    };
+        //    return new ApiResponse<GetProductImageDTO>(null, productImageDto, "200", "Add image to product successfully", true, 0, 0, 0, 0, null, null, null);
+        //}
+        public async Task<ApiResponse<GetProductImageDTO>> AddNewImageForProductAsync( Guid productId,List<IFormFile> newImages)
         {
             var findProduct = await _context.Product.FindAsync(productId);
-            if(findProduct == null)
+            if (findProduct == null)
             {
-                return new ApiResponse<GetProductImageDTO>(null, null, "404", "Product is not founded", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetProductImageDTO>(
+                    null, null, "404", "Product is not found", false,
+                    0, 0, 0, 0, null, null, null);
             }
-            string? imageUrl = null;
 
-            if (newImage != null)
+            if (newImages == null || !newImages.Any())
             {
-                var ext = Path.GetExtension(newImage.FileName).ToLower();
-                var allowExt = new[] { ".png", ".jpg", ".jpeg", ".webp" };
+                return new ApiResponse<GetProductImageDTO>(
+                    null, null, "400", "Image list is empty", false,
+                    0, 0, 0, 0, null, null, null);
+            }
 
+            var allowExt = new[] { ".png", ".jpg", ".jpeg", ".webp" };
+            var folderPath = Path.Combine(_env.WebRootPath, "images", "products");
+            Directory.CreateDirectory(folderPath);
+
+            var productImages = new List<ProductImage>();
+            var resultDtos = new List<GetProductImageDTO>();
+
+            foreach (var image in newImages)
+            {
+                var ext = Path.GetExtension(image.FileName).ToLower();
                 if (!allowExt.Contains(ext))
-                    return new ApiResponse<GetProductImageDTO>(null, null, "400", "Image is invalid", false, 0, 0, 0, 0, null, null, null);
-
-                var folderPath = Path.Combine(
-                    _env.WebRootPath,
-                    "images",
-                    "products"
-                );
-
-                Directory.CreateDirectory(folderPath);
+                {
+                    return new ApiResponse<GetProductImageDTO>(null, null, "400", $"Invalid image format: {image.FileName}", false,  0, 0, 0, 0, null, null, null);
+                }
 
                 var fileName = $"{Guid.NewGuid()}{ext}";
                 var fullPath = Path.Combine(folderPath, fileName);
 
                 using var stream = new FileStream(fullPath, FileMode.Create);
-                await newImage.CopyToAsync(stream);
+                await image.CopyToAsync(stream);
 
-                imageUrl = $"/images/products/{fileName}";
+                var imageUrl = $"/images/products/{fileName}";
+
+                var productImage = new ProductImage
+                {
+                    ProductId = productId,
+                    ImageUrl = imageUrl
+                };
+
+                productImages.Add(productImage);
             }
-            var productImage = new ProductImage
-            {
-                ProductId = productId,
-                ImageUrl = imageUrl
-            };
-            await _context.ProductImage.AddAsync(productImage);
+
+            await _context.ProductImage.AddRangeAsync(productImages);
             await _context.SaveChangesAsync();
-            var productImageDto = new GetProductImageDTO
-            {
-                Id = productImage.Id,
-                ProductName = findProduct.ProductName,
-                ImageUrl = productImage.ImageUrl
-            };
-            return new ApiResponse<GetProductImageDTO>(null, productImageDto, "200", "Add image to product successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetProductImageDTO>( null, null, "200", "Add images to product successfully", true, 0, 0, 0, 0, null, null, null);
         }
+
 
         public async Task<ApiResponse<GetProductImageDTO>> GetAllImagesByProductIdAsync(Guid productId)
         {

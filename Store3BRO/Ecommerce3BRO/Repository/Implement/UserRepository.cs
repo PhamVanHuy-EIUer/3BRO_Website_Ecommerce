@@ -68,10 +68,10 @@ namespace Ecommerce3BRO.Repository.Implement
             return getUserDTO;
         }
 
-        public async Task<ApiResponse<string>> ChangePasswordAsync(Guid id,ChangePasswordDTO user)
+        public async Task<ApiResponse<string>> ChangePasswordAsync(Guid id, ChangePasswordDTO user)
         {
             var findUser = await _context.User.FindAsync(id);
-            if(findUser == null)
+            if (findUser == null)
             {
                 return new ApiResponse<string>(null, null, "400", "User is not exist", false, 0, 0, 0, 0, null, null, null);
             }
@@ -80,7 +80,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<string>(null, null, "400", "Password is wrong ", false, 0, 0, 0, 0, null, null, null);
             }
-            if(user.NewPassword != user.ConfirmNewPassword)
+            if (user.NewPassword != user.ConfirmNewPassword)
             {
                 return new ApiResponse<string>(null, null, "400", "Confirm password is failed ", false, 0, 0, 0, 0, null, null, null);
             }
@@ -88,8 +88,8 @@ namespace Ecommerce3BRO.Repository.Implement
             await _context.SaveChangesAsync();
             return new ApiResponse<string>(null, null, "200", "Change password successfully", true, 0, 0, 0, 0, null, null, null);
         }
-           
-        
+
+
 
 
         public async Task<GetUserDTO?> DeleteUserByIdAsync(Guid id)
@@ -169,7 +169,7 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<IEnumerable<GetUserDTO>> GetAllUserAsync()
         {
-            var list = await _context.User.Where(u=>u.IsDeleted==false).Select(u => new GetUserDTO()
+            var list = await _context.User.Where(u => u.IsDeleted == false).Select(u => new GetUserDTO()
             {
                 Id = u.Id,
                 Address = u.Address,
@@ -189,7 +189,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetUserWithRole>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
             }
-            var roles= await _context.UserRole
+            var roles = await _context.UserRole
                 .Where(ur => ur.UserId == findUser.Id)
                 .Include(ur => ur.Role)
                 .Select(ur => ur.Role.RoleName)
@@ -334,7 +334,7 @@ namespace Ecommerce3BRO.Repository.Implement
             GetUserDTO getUserDTO = new GetUserDTO()
             {
                 Id = newUser.Id,
-                Address =newUser.Address,
+                Address = newUser.Address,
                 CreatedDate = newUser.CreatedDate,
                 Email = newUser.Email,
                 FullName = newUser.FullName,
@@ -371,9 +371,10 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return false;
             }
-            var findCode = await _context.ActivationCode.FirstOrDefaultAsync(c => c.UserId == findUser.Id&&c.IsUsed==false&&c.ExpireDate>DateTime.UtcNow);
-            if (findCode == null) { 
-              return false;
+            var findCode = await _context.ActivationCode.FirstOrDefaultAsync(c => c.UserId == findUser.Id && c.IsUsed == false && c.ExpireDate > DateTime.UtcNow);
+            if (findCode == null)
+            {
+                return false;
             }
             if (findCode.Code != user.ActivationCode)
             {
@@ -408,20 +409,30 @@ namespace Ecommerce3BRO.Repository.Implement
                 IsActive = findUser.IsActive,
                 Phone = findUser.Phone
             };
-            var findUserLocation = await _context.UserLocation.Where(l => l.UserId == findUser.Id&&l.IsActive).ToListAsync();
-            foreach (UserLocation l in findUserLocation)
+            //var findUserLocation = await _context.UserLocation.Where(l => l.UserId == findUser.Id&&l.IsActive).ToListAsync();
+            //foreach (UserLocation l in findUserLocation)
+            //{
+            //    l.IsActive = false;
+            //}
+            var findUserLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id);
+            if (findUserLocation == null)
             {
-                l.IsActive = false;
+                var newLocation = new UserLocation
+                {
+                    UserId = findUser.Id,
+                    Latitude = user.Latitude,
+                    Longitude = user.Longitude,
+                    CreatedDate = DateTime.UtcNow,
+                    IsActive = true
+                };
+                await _context.UserLocation.AddAsync(newLocation);
             }
-            var newLocation = new UserLocation
+            else
             {
-                UserId = findUser.Id,
-                Latitude = user.Latitude,
-                Longitude = user.Longitude,
-                CreatedDate = DateTime.UtcNow,
-                IsActive = true
-            };
-            await _context.UserLocation.AddAsync(newLocation);
+                findUserLocation.CreatedDate = DateTime.Now;
+                findUserLocation.Latitude = user.Latitude;
+                findUserLocation.Longitude = user.Longitude;
+            }
             try
             {
                 await _context.SaveChangesAsync();

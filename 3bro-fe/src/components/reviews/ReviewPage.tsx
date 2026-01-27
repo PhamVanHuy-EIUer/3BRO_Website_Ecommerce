@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import Link from "next/link";
 import Stars from "../products/Stars";
 import { formatDate } from "@/utils/date";
 import { Review } from "@/models/Review";
@@ -15,21 +14,17 @@ interface star {
 const ReviewPage = ({
   data,
   reviewCount,
-  //   setloading,
-  //   setdialogType,
-  //   setselectedReview,
-  //   setselectedRating,
-  allReview,
   productID,
+  currentPage,
+  totalPages,
+  onPageChange,
 }: {
   productID: string;
   data: Review[];
   reviewCount: number;
-  //   setdialogType: React.Dispatch<React.SetStateAction<string | null>>;
-  //   setloading: React.Dispatch<React.SetStateAction<boolean>>;
-  //   setselectedReview: React.Dispatch<React.SetStateAction<null | Review>>;
-  //   setselectedRating: React.Dispatch<React.SetStateAction<number>>;
-  allReview: boolean;
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
 }) => {
   const [one, setone] = useState(0);
   const [two, settwo] = useState(0);
@@ -84,6 +79,42 @@ const ReviewPage = ({
   useEffect(() => {
     Calculate();
   }, [data]);
+
+  // Tạo mảng các số trang để hiển thị
+  const getPageNumbers = () => {
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+
+    if (totalPages <= maxPagesToShow) {
+      for (let i = 1; i <= totalPages; i++) {
+        pageNumbers.push(i);
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push("...");
+        pageNumbers.push(totalPages);
+      } else if (currentPage >= totalPages - 2) {
+        pageNumbers.push(1);
+        pageNumbers.push("...");
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          pageNumbers.push(i);
+        }
+      } else {
+        pageNumbers.push(1);
+        pageNumbers.push("...");
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          pageNumbers.push(i);
+        }
+        pageNumbers.push("...");
+        pageNumbers.push(totalPages);
+      }
+    }
+
+    return pageNumbers;
+  };
 
   return (
     <section className="py-24 relative">
@@ -157,7 +188,7 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full xl:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
+                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
                     <span
                       style={{
                         height: "100%",
@@ -170,10 +201,10 @@ const ReviewPage = ({
                     ></span>
                   </p>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    40
+                    30
                   </p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     3
                   </p>
@@ -196,7 +227,7 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full xl:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
+                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
                     <span
                       style={{
                         height: "100%",
@@ -209,10 +240,10 @@ const ReviewPage = ({
                     ></span>
                   </p>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    20
+                    30
                   </p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     2
                   </p>
@@ -235,7 +266,7 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full xl:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
+                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
                     <span
                       style={{
                         height: "100%",
@@ -248,10 +279,10 @@ const ReviewPage = ({
                     ></span>
                   </p>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    16
+                    30
                   </p>
                 </div>
-                <div className="flex items-center">
+                <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     1
                   </p>
@@ -274,7 +305,7 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full xl:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
+                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
                     <span
                       style={{
                         height: "100%",
@@ -287,12 +318,12 @@ const ReviewPage = ({
                     ></span>
                   </p>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    8
+                    30
                   </p>
                 </div>
               </div>
             </div>
-            <div className="col-span-12 max-xl:mt-8 xl:col-span-8 xl:pl-8 w-full min-h-[230px]">
+            <div className="col-span-12 xl:col-span-8 xl:pl-8 w-full">
               <div className="grid grid-cols-12 h-full px-8 max-lg:py-8 rounded-3xl bg-gray-100 w-full max-xl:max-w-3xl max-xl:mx-auto">
                 <div className="col-span-12 md:col-span-8 flex items-center">
                   <div className="flex flex-col sm:flex-row items-center max-lg:justify-center w-full h-full">
@@ -327,124 +358,115 @@ const ReviewPage = ({
                     </div>
                   </div>
                 </div>
-                <div className="col-span-12 md:col-span-4 max-lg:mt-8 md:pl-8">
-                  <div className="flex items-center flex-col justify-center w-full h-full ">
-                    {/* <button
-                      onClick={() => setdialogType("create")}
-                      className="rounded-full px-4 py-4 bg-indigo-600 font-semibold text-md text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
-                    >
-                      Write A Review
-                    </button> */}
-                    {!allReview && (
-                      <Link href={`/all-reviews/${productID}`}>
-                        <button className="rounded-full px-4 py-4 bg-white font-semibold text-md text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200">
-                          See All Reviews
-                        </button>
-                      </Link>
-                    )}
-                  </div>
-                </div>
               </div>
             </div>
           </div>
-          <div className="pb-8 border-b border-gray-200 max-xl:max-w-3xl max-xl:mx-auto">
-            <h4 className="font-manrope font-semibold text-2xl leading-10 text-black mb-6">
-              Recent Reviews
-            </h4>
-            <div className="flex flex-col gap-5">
-              {data.map((each, index) => (
-                <div className="border-[1px] px-4 rounded-xl py-4" key={index}>
-                  <div className="flex sm:items-center flex-col sm:flex-row justify-between  mb-4">
-                    <div className="flex gap-3 flex-col">
-                      <Stars stars={each.rating} size={40} />
+          {/* Decorative Section */}
+          <div className="mt-16 max-xl:max-w-3xl max-xl:mx-auto">
+            <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-8 md:p-12">
+              <div className="pb-8 border-b border-gray-200 max-xl:max-w-3xl max-xl:mx-auto">
+                <h4 className="font-manrope font-semibold text-2xl leading-10 text-black mb-6">
+                  Recent Reviews
+                </h4>
+                <div className="flex flex-col gap-5">
+                  {data.map((each, index) => (
+                    <div
+                      className="border-[1px] px-4 rounded-xl py-4"
+                      key={index}
+                    >
+                      <div className="flex sm:items-center flex-col sm:flex-row justify-between  mb-4">
+                        <div className="flex gap-3 flex-col">
+                          <Stars stars={each.rating} size={40} />
 
-                      <p className="text-xl font-medium">{each.comment}</p>
-                    </div>
-                    <div className="flex items-end gap-3 flex-col">
-                      <p className="font-medium text-base leading-7 text-gray-400">
-                        {formatDate(each.reviewDate)}
-                      </p>
-                      <h6 className="font-semibold text-lg leading-8 text-black">
-                        @{each.reviewName}
-                      </h6>
-                      {/* {defaultAccount.userID === each.userid && (
-                        <div className="flex gap-5">
-                          <button
-                            onClick={() => {
-                              setselectedRating(each.rating);
-                              setselectedReview(each);
-                              setdialogType("edit");
-                            }}
-                            className="rounded-full px-4 py-2 bg-indigo-600 font-semibold text-md text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
-                          >
-                            Edit Review
-                          </button>
-                          <button
-                            onClick={() => {
-                              setselectedReview(each);
-                              setdialogType("delete");
-                            }}
-                            className="rounded-full px-4 py-2 bg-white border-[1px] font-semibold text-md text-black whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:text-white hover:bg-red-400 hover:shadow-red-400"
-                          >
-                            Delete Review
-                          </button>
+                          <p className="text-xl font-medium">{each.comment}</p>
                         </div>
-                      )} */}
+                        <div className="flex items-end gap-3 flex-col">
+                          <p className="font-medium text-base leading-7 text-gray-400">
+                            {formatDate(each.reviewDate)}
+                          </p>
+                          <h6 className="font-semibold text-lg leading-8 text-black">
+                            @{each.reviewName}
+                          </h6>
+                        </div>
+                      </div>
+
+                      <p className="font-normal text-lg leading-8 text-gray-500 ">
+                        {each.comment}
+                      </p>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Pagination Component */}
+              {totalPages > 1 && (
+                <div className="flex flex-col sm:flex-row items-center justify-between pt-8 max-xl:max-w-3xl max-xl:mx-auto gap-4">
+                  <div className="text-sm text-gray-700">
+                    Showing page{" "}
+                    <span className="font-semibold">{currentPage}</span> of{" "}
+                    <span className="font-semibold">{totalPages}</span>
                   </div>
 
-                  <p className="font-normal text-lg leading-8 text-gray-500 ">
-                    {each.comment}
-                  </p>
+                  <div className="flex items-center gap-2">
+                    {/* Previous Button */}
+                    <button
+                      onClick={() => onPageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                        currentPage === 1
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white"
+                      }`}
+                    >
+                      Previous
+                    </button>
+
+                    {/* Page Numbers */}
+                    <div className="flex gap-1">
+                      {getPageNumbers().map((pageNum, index) => {
+                        if (pageNum === "...") {
+                          return (
+                            <span
+                              key={`ellipsis-${index}`}
+                              className="px-3 py-2 text-gray-500"
+                            >
+                              ...
+                            </span>
+                          );
+                        }
+
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => onPageChange(pageNum as number)}
+                            className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                              currentPage === pageNum
+                                ? "bg-indigo-600 text-white shadow-md"
+                                : "bg-white text-gray-700 border border-gray-300 hover:bg-indigo-100"
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {/* Next Button */}
+                    <button
+                      onClick={() => onPageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className={`px-4 py-2 rounded-lg font-medium transition-all duration-300 ${
+                        currentPage === totalPages
+                          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                          : "bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-600 hover:text-white"
+                      }`}
+                    >
+                      Next
+                    </button>
+                  </div>
                 </div>
-              ))}
+              )}
             </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-8  max-xl:max-w-3xl max-xl:mx-auto">
-            {/* <p className="font-normal text-lg py-[1px] text-black">{reviewCount} reviews</p> */}
-            {/* <form>
-                        <div className="flex">
-
-                            <div className="relative ">
-                                <div className=" absolute -left-0 px-2 top-0 py-2">
-                                    <p className="font-normal text-lg leading-8 text-gray-500">Sort by:</p>
-
-                                </div>
-                                <input type="text"
-                                    className="block w-60 h-11 pr-4 pl-20 py-2.5 text-lg leading-8 font-medium rounded-full cursor-pointer shadow-xs text-black bg-transparent placeholder-black focus:outline-gray-200 "
-                                    placeholder="Most Relevant"/>
-                                <div id="dropdown-button" data-target="dropdown"
-                                    className="dropdown-toggle flex-shrink-0 cursor-pointer z-10 inline-flex items-center py-2.5 px-4 text-base font-medium text-center text-gray-900 bg-transparent absolute right-0 top-2 pl-2 "
-                                    ><svg className="ml-2" width="12" height="7" viewBox="0 0 12 7" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <path
-                                            d="M1 1.5L4.58578 5.08578C5.25245 5.75245 5.58579 6.08579 6 6.08579C6.41421 6.08579 6.74755 5.75245 7.41421 5.08579L11 1.5"
-                                            stroke="#6B7280" strokeWidth="1.5" strokeLinecap="round"
-                                            strokeLinejoin="round" />
-                                    </svg>
-                                </div>
-                                <div id="dropdown"
-                                    className="absolute top-9 right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700">
-                                    <ul className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                                        aria-labelledby="dropdown-button">
-                                        <li>
-                                            <a href="#"
-                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Most Relevant</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">last week</a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">oldest</a>
-                                        </li>
-                                        
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </form> */}
           </div>
         </div>
       </div>

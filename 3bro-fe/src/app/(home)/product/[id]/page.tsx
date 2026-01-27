@@ -18,7 +18,6 @@ import { notification } from "antd";
 
 const SingleProduct = () => {
   const PAGE_SIZE = 4;
-  const CURRENT_PAGE = 1;
   const { id } = useParams<{ id: string }>();
   const [api, contextHolder] = notification.useNotification();
   const [product, setProduct] = useState<Product | null>(null);
@@ -28,6 +27,8 @@ const SingleProduct = () => {
   const [reviewCount, setReviewCount] = useState(0);
   const [productReview, setProductReview] = useState<Review[]>([]);
   const [totalPage, setTotalPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
+
   // Fetch product
   useEffect(() => {
     if (!id) return;
@@ -61,7 +62,7 @@ const SingleProduct = () => {
       } catch (error) {
         console.error(error);
         api.error({
-          title: "Error fetch image",
+          message: "Error fetch image",
           placement: "topRight",
           duration: 2,
         });
@@ -82,7 +83,7 @@ const SingleProduct = () => {
         console.error(error);
         setRecommendedProducts([]);
         api.error({
-          title: "Error fetch recommend product",
+          message: "Error fetch recommend product",
           placement: "topRight",
           duration: 2,
         });
@@ -91,17 +92,28 @@ const SingleProduct = () => {
       }
     };
 
+    fetchProduct();
+    fetchImages();
+    fetchRecommendedProducts();
+  }, [id]);
+
+  // Fetch reviews when page changes
+  useEffect(() => {
+    if (!id) return;
+
     const fetchReview = async () => {
+      setLoading(true);
       try {
         const res: ApiResponse<Review> =
-          await reviewService.getReviewByProductId(id, CURRENT_PAGE, PAGE_SIZE);
+          await reviewService.getReviewByProductId(id, currentPage, PAGE_SIZE);
         if (res?.isSuccess && res.list) {
           setProductReview(res.list);
           setTotalPage(res.totalPage);
+          setReviewCount(res.totalPage);
         } else {
           setProductReview([]);
           api.error({
-            title: "Error fetch review",
+            message: "Error fetch review",
             placement: "topRight",
             duration: 2,
           });
@@ -109,30 +121,48 @@ const SingleProduct = () => {
       } catch (error) {
         console.error(error);
         setProductReview([]);
+        api.error({
+          message: "Error fetch review",
+          placement: "topRight",
+          duration: 2,
+        });
       } finally {
         setLoading(false);
       }
     };
 
-    fetchProduct();
-    fetchImages();
     fetchReview();
-    fetchRecommendedProducts();
-  }, [id]);
+  }, [id, currentPage]);
 
-  if (loading) return <div className="py-20 text-center">Loading...</div>;
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPage) {
+      setCurrentPage(page);
+      // Scroll to review section
+      const reviewSection = document.getElementById("review-section");
+      if (reviewSection) {
+        reviewSection.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }
+  };
+
+  if (loading && !product)
+    return <div className="py-20 text-center">Loading...</div>;
   if (!product) return <NotFound />;
 
   return (
     <div className="w-[90vw] mx-auto py-10">
+      {contextHolder}
       <ProductGallery product={product} imageProduct={imageProduct} />
 
-      <div className="mt-16">
+      <div id="review-section" className="mt-16">
         <ReviewPage
           data={productReview}
-          allReview={totalPage > 1}
           productID={id}
-          reviewCount={totalPage}
+          reviewCount={reviewCount}
+          currentPage={currentPage}
+          totalPages={totalPage}
+          onPageChange={handlePageChange}
         />
       </div>
       <div className="mt-16">

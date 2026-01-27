@@ -105,23 +105,38 @@ export default function DiscountManagement() {
     try {
       setLoading(true);
 
-      const payload: DiscountDTO = {
+      const nowUtc = dayjs().add(30, "second"); // buffer an toàn
+
+      const basePayload: DiscountDTO = {
         id: editingDiscount?.id,
         code: formData.code.toUpperCase(),
         description: formData.description,
         discountValue: formData.discountValue || 0,
         isPercent: formData.isPercent,
         minOrderAmount: formData.minOrderAmount || 0,
-        startDate: formData.dateRange[0].add(20, "second").toISOString(),
-        expiredDate: formData.dateRange[1].toISOString(),
+        startDate: formData.dateRange[0].toISOString(),
+        expiredDate: formData.dateRange[1].endOf("day").toISOString(),
         quantity: formData.quantity || 0,
       };
 
       if (editingDiscount && editingDiscount.id) {
         // Update
         try {
-          const res: ApiResponse<Discount> =
-            await discountService.updateDiscount(editingDiscount.id, payload);
+          const payload: DiscountDTO = { ...basePayload };
+
+          const oldStartDate = dayjs(editingDiscount.startDate);
+          if (oldStartDate.isAfter(dayjs())) {
+            const newStartDate = dayjs(formData.dateRange[0]);
+            payload.startDate = newStartDate.isBefore(nowUtc)
+              ? nowUtc.toISOString()
+              : newStartDate.toISOString();
+          }
+
+          const res = await discountService.updateDiscount(
+            editingDiscount.id,
+            payload,
+          );
+
           if (res.code !== "200") {
             message.error(res.message);
             return;
@@ -133,7 +148,15 @@ export default function DiscountManagement() {
       } else {
         // Create
         try {
-          console.log(payload);
+          const startDate = dayjs(formData.dateRange[0]).isBefore(nowUtc)
+            ? nowUtc
+            : dayjs(formData.dateRange[0]);
+
+          const payload: DiscountDTO = {
+            ...basePayload,
+            startDate: startDate.toISOString(),
+          };
+
           const res: ApiResponse<Discount> =
             await discountService.addDiscount(payload);
           if (res.code !== "201") {

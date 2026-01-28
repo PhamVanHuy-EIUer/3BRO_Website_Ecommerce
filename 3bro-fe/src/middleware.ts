@@ -10,7 +10,6 @@ const protectedRoutes = [
 export function middleware(req: NextRequest) {
     const pathname = req.nextUrl.pathname;
 
-    // Lấy token từ HttpOnly cookie
     const token = req.cookies.get("access_token")?.value;
 
     // Lấy role từ cookie (không HttpOnly, để middleware đọc được)

@@ -33,10 +33,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const refreshAuth = useCallback(async () => {
     try {
       const res = await userService.getMe();
-      if (res.data.code === "200" && res.data.object) {
+      if (res.code === "200" && res.object) {
         setAuthorized(true);
-        setUser(res.data.object);
-        console.log("Auth refreshed, user:", res.data.object);
+        setUser(res.object);
+        console.log("Auth refreshed, user:", res.object);
       } else {
         setAuthorized(false);
         setUser(null);
@@ -52,17 +52,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (data: LoginRequest) => {
     const res = await AuthService.login(data);
-    if (res.data.code !== "200") {
-      throw new Error(res.data.message);
+    if (res.code !== "200") {
+      throw new Error(res.message);
     }
 
     await refreshAuth();
+    console.log("Login successful, user:", user);
   };
 
   const logout = async () => {
-    await AuthService.logout();
+    const res = await AuthService.logout();
+    if (res.code !== "200") {
+      throw new Error(res.message);
+    }
     setAuthorized(false);
     setUser(null);
+    console.log("Logout successful", res);
   };
 
   // Fetch user khi mount

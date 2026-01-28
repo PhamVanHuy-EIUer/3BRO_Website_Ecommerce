@@ -15,7 +15,21 @@ import ReviewPage from "@/components/reviews/ReviewPage";
 import { Review } from "@/models/Review";
 import { reviewService } from "@/services/review.service";
 import { notification } from "antd";
+interface Star {
+  rating1?: number;
+  rating2?: number;
+  rating3?: number;
+  rating4?: number;
+  rating5?: number;
+}
 
+interface Rating {
+  one?: number;
+  two?: number;
+  three?: number;
+  four?: number;
+  five?: number;
+}
 const SingleProduct = () => {
   const PAGE_SIZE = 4;
   const { id } = useParams<{ id: string }>();
@@ -28,6 +42,13 @@ const SingleProduct = () => {
   const [productReview, setProductReview] = useState<Review[]>([]);
   const [totalPage, setTotalPage] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
+  const [rating, setRating] = useState<Rating>({
+    one: 0,
+    two: 0,
+    three: 0,
+    four: 0,
+    five: 0,
+  });
 
   // Fetch product
   useEffect(() => {
@@ -131,6 +152,27 @@ const SingleProduct = () => {
       }
     };
 
+    const fetchStar = async () => {
+      try {
+        const res: ApiResponse<Star> = await reviewService.getRating(id);
+        const { rating1, rating2, rating3, rating4, rating5 } =
+          res.object || {};
+        if (res.isSuccess && res.object) {
+          setRating({
+            one: rating1,
+            two: rating2,
+            three: rating3,
+            four: rating4,
+            five: rating5,
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStar();
     fetchReview();
   }, [id, currentPage]);
 
@@ -158,6 +200,8 @@ const SingleProduct = () => {
       <div id="review-section" className="mt-16">
         <ReviewPage
           data={productReview}
+          averageRating={product.rating}
+          rating={rating}
           productID={id}
           reviewCount={reviewCount}
           currentPage={currentPage}

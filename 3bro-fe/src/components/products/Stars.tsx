@@ -1,5 +1,5 @@
 import React from "react";
-import ReactStars from "react-stars";
+import ReactStars from "@/data/react-stars";
 
 interface StarsProps {
   stars: number;

@@ -38,7 +38,7 @@ function LoginPage() {
       const loginRequest: LoginRequest = { email, password };
       await login(loginRequest);
       const isAdmin = user?.roleList?.includes("Admin") ?? false;
-
+      console.log(user);
       if (isAdmin) {
         router.replace("/admin");
       } else {

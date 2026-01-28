@@ -3,18 +3,22 @@ import React, { useEffect, useRef, useState } from "react";
 import Stars from "../products/Stars";
 import { formatDate } from "@/utils/date";
 import { Review } from "@/models/Review";
+import { on } from "events";
 
-interface star {
-  one: number;
-  two: number;
-  three: number;
-  four: number;
-  five: number;
+interface Star {
+  one?: number;
+  two?: number;
+  three?: number;
+  four?: number;
+  five?: number;
 }
+
 const ReviewPage = ({
   data,
   reviewCount,
   productID,
+  rating,
+  averageRating,
   currentPage,
   totalPages,
   onPageChange,
@@ -22,63 +26,33 @@ const ReviewPage = ({
   productID: string;
   data: Review[];
   reviewCount: number;
+  rating?: Star;
+  averageRating?: number;
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
 }) => {
-  const [one, setone] = useState(0);
-  const [two, settwo] = useState(0);
-  const [three, setthree] = useState(0);
-  const [four, setfour] = useState(0);
-  const [five, setfive] = useState(0);
+  // Sử dụng rating từ API nếu có, nếu không thì dùng 0
+  const one = rating?.one || 0;
+  const two = rating?.two || 0;
+  const three = rating?.three || 0;
+  const four = rating?.four || 0;
+  const five = rating?.five || 0;
 
-  let stars: any = { one: 0, two: 0, three: 0, four: 0, five: 0 };
-  function addStars(num: number) {
-    if (num < 2) {
-      stars.one++;
-    } else if (num < 3) {
-      stars.two++;
-    } else if (num < 4) {
-      stars.three++;
-    } else if (num < 5) {
-      stars.four++;
-    } else {
-      stars.five++;
-    }
-  }
-  function varAssign(variable: string, number: number) {
-    switch (variable) {
-      case "one":
-        setone(number);
-        break;
-      case "two":
-        settwo(number);
-        break;
-      case "three":
-        setthree(number);
-        break;
-      case "four":
-        setfour(number);
-        break;
-      case "five":
-        setfive(number);
-        break;
-    }
-  }
-  async function Calculate() {
-    if (reviewCount > 0) {
-      await data.map((each) => addStars(each.rating));
-      const sumTotal = Object.keys(stars).reduce((previous, key) => {
-        return previous + stars[key];
-      }, 0);
-      Object.keys(stars).forEach(function (key) {
-        varAssign(key, Math.round((stars[key] * 100) / sumTotal));
-      });
-    }
-  }
-  useEffect(() => {
-    Calculate();
-  }, [data]);
+  // Tính tổng số reviews từ rating
+  const totalReviews = one + two + three + four + five;
+
+  // Tính phần trăm cho mỗi mức rating
+  const getPercentage = (count: number) => {
+    if (totalReviews === 0) return 0;
+    return Math.round((count * 100) / totalReviews);
+  };
+
+  const onePercent = getPercentage(one);
+  const twoPercent = getPercentage(two);
+  const threePercent = getPercentage(three);
+  const fourPercent = getPercentage(four);
+  const fivePercent = getPercentage(five);
 
   // Tạo mảng các số trang để hiển thị
   const getPageNumbers = () => {
@@ -126,6 +100,7 @@ const ReviewPage = ({
           <div className="grid grid-cols-12 mb-11">
             <div className="col-span-12 xl:col-span-4 flex items-center">
               <div className="box flex flex-col gap-y-4 w-full max-xl:max-w-3xl mx-auto">
+                {/* 5 Stars */}
                 <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     5
@@ -149,22 +124,21 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
-                    <span
+                  <div className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3 overflow-hidden">
+                    <div
                       style={{
+                        width: `${fivePercent}%`,
                         height: "100%",
-                        width: `${five}%`,
-                        borderRadius: "30px",
-                        backgroundColor:
-                          "rgb(99 102 241 / var(--tw-bg-opacity))",
-                        display: "flex",
+                        backgroundColor: "#FBBF24", // vàng giống star
                       }}
-                    ></span>
-                  </p>
+                    />
+                  </div>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    30
+                    {five}
                   </p>
                 </div>
+
+                {/* 4 Stars */}
                 <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     4
@@ -188,22 +162,21 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
-                    <span
+                  <div className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3 overflow-hidden">
+                    <div
                       style={{
+                        width: `${fourPercent}%`,
                         height: "100%",
-                        width: `${four}%`,
-                        borderRadius: "30px",
-                        backgroundColor:
-                          "rgb(99 102 241 / var(--tw-bg-opacity))",
-                        display: "flex",
+                        backgroundColor: "#FBBF24", // vàng giống star
                       }}
-                    ></span>
-                  </p>
+                    />
+                  </div>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    30
+                    {four}
                   </p>
                 </div>
+
+                {/* 3 Stars */}
                 <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     3
@@ -227,22 +200,21 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
-                    <span
+                  <div className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3 overflow-hidden">
+                    <div
                       style={{
+                        width: `${threePercent}%`,
                         height: "100%",
-                        width: `${three}%`,
-                        borderRadius: "30px",
-                        backgroundColor:
-                          "rgb(99 102 241 / var(--tw-bg-opacity))",
-                        display: "flex",
+                        backgroundColor: "#FBBF24", // vàng giống star
                       }}
-                    ></span>
-                  </p>
+                    />
+                  </div>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    30
+                    {three}
                   </p>
                 </div>
+
+                {/* 2 Stars */}
                 <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     2
@@ -266,22 +238,21 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
-                    <span
+                  <div className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3 overflow-hidden">
+                    <div
                       style={{
+                        width: `${twoPercent}%`,
                         height: "100%",
-                        width: `${two}%`,
-                        borderRadius: "30px",
-                        backgroundColor:
-                          "rgb(99 102 241 / var(--tw-bg-opacity))",
-                        display: "flex",
+                        backgroundColor: "#FBBF24", // vàng giống star
                       }}
-                    ></span>
-                  </p>
+                    />
+                  </div>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    30
+                    {two}
                   </p>
                 </div>
+
+                {/* 1 Star */}
                 <div className="flex items-center w-full">
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
                     1
@@ -305,46 +276,43 @@ const ReviewPage = ({
                       </clipPath>
                     </defs>
                   </svg>
-                  <p className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3">
-                    <span
+                  <div className="h-2 w-full sm:min-w-[278px] rounded-[30px] bg-gray-200 ml-5 mr-3 overflow-hidden">
+                    <div
                       style={{
+                        width: `${onePercent}%`,
                         height: "100%",
-                        width: `${one}%`,
-                        borderRadius: "30px",
-                        backgroundColor:
-                          "rgb(99 102 241 / var(--tw-bg-opacity))",
-                        display: "flex",
+                        backgroundColor: "#FBBF24", // vàng giống star
                       }}
-                    ></span>
-                  </p>
+                    />
+                  </div>
                   <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
-                    30
+                    {one}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="col-span-12 xl:col-span-8 xl:pl-8 w-full">
+            <div className="col-span-12 max-xl:mt-8 xl:col-span-8 xl:pl-8 w-full min-h-[230px]">
               <div className="grid grid-cols-12 h-full px-8 max-lg:py-8 rounded-3xl bg-gray-100 w-full max-xl:max-w-3xl max-xl:mx-auto">
                 <div className="col-span-12 md:col-span-8 flex items-center">
                   <div className="flex flex-col sm:flex-row items-center max-lg:justify-center w-full h-full">
                     <div className="sm:pr-3 sm:border-r border-gray-200 flex items-center justify-center flex-col">
                       <h2 className="font-manrope font-bold text-4xl text-black text-center mb-4">
-                        {data.length > 0 ? data[0].rating : 0}
+                        {averageRating ? averageRating.toFixed(1) : "0.0"}
                       </h2>
                       <div className="flex items-center gap-3 mb-4">
                         <Stars
                           size={40}
-                          stars={data.length > 0 ? data[0].rating : 0}
+                          stars={averageRating ? averageRating : 0}
                         />
                       </div>
                       <p className="font-normal leading-8 text-gray-400">
-                        {reviewCount} Ratings
+                        {totalReviews} Ratings
                       </p>
                     </div>
 
                     <div className="sm:pl-3 sm:border-l border-gray-200 flex items-center justify-center flex-col">
                       <h2 className="font-manrope font-bold text-4xl text-black text-center mb-4">
-                        {data.length > 0 ? data[0].rating : 0}
+                        {data.length > 0 ? data[0].rating.toFixed(1) : "0.0"}
                       </h2>
                       <div className="flex items-center gap-3 mb-4">
                         <Stars
@@ -371,7 +339,7 @@ const ReviewPage = ({
                 <div className="flex flex-col gap-5">
                   {data.map((each, index) => (
                     <div
-                      className="border-[1px] px-4 rounded-xl py-4"
+                      className="border-[1px] px-4 rounded-xl py-4 bg-white"
                       key={index}
                     >
                       <div className="flex sm:items-center flex-col sm:flex-row justify-between  mb-4">

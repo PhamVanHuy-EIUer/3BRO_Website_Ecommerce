@@ -25,9 +25,12 @@ namespace Ecommerce3BRO.Repository.Implement
             var subtotal = findOrderDetail.UnitPrice * findOrderDetail.Quantity;
             var order = await _context.Order.Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount).Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.Id == findOrderDetail.OrderId);
             var appliedDiscount = order.OrderDiscounts.Where(od => od.IsUsed).Sum(od =>
-        od.Discount.DiscountAmount ??
-        order.TotalAmount * (od.Discount.DiscountPercent ?? 0) / 100
-    );
+                od.Discount.DiscountAmount ??
+                //order.TotalAmount * (od.Discount.DiscountPercent ?? 0) / 100
+                (od.Discount.MaxDiscountAmount.HasValue
+                    ? Math.Min(order.TotalAmount * (od.Discount.DiscountPercent ?? 0) / 100, od.Discount.MaxDiscountAmount.Value)
+                    : order.TotalAmount * (od.Discount.DiscountPercent ?? 0) / 100)
+            );
 
             var newRefund = new Refund
             {

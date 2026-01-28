@@ -418,8 +418,22 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 decimal discountValue = 0;
 
+                //if (d.DiscountPercent.HasValue)
+                //    discountValue = totalPrice * d.DiscountPercent.Value / 100;
                 if (d.DiscountPercent.HasValue)
-                    discountValue = totalPrice * d.DiscountPercent.Value / 100;
+                {
+                    decimal calculatedValue = totalPrice * d.DiscountPercent.Value / 100;
+
+                    if (d.MaxDiscountAmount.HasValue)
+                    {
+                        // Lấy min giữa (giá trị tính theo %) và (mức trần)
+                        discountValue = Math.Min(calculatedValue, d.MaxDiscountAmount.Value);
+                    }
+                    else
+                    {
+                        discountValue = calculatedValue;
+                    }
+                }
 
                 if (d.DiscountAmount.HasValue)
                     discountValue = Math.Max(discountValue, d.DiscountAmount.Value);
@@ -500,8 +514,23 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 decimal discountValue = 0;
 
+                //if (d.DiscountPercent.HasValue)
+                //    discountValue = totalPrice * d.DiscountPercent.Value / 100;
+
                 if (d.DiscountPercent.HasValue)
-                    discountValue = totalPrice * d.DiscountPercent.Value / 100;
+                {
+                    decimal calculatedValue = totalPrice * d.DiscountPercent.Value / 100;
+
+                    if (d.MaxDiscountAmount.HasValue)
+                    {
+                        // Lấy min giữa (giá trị tính theo %) và (mức trần)
+                        discountValue = Math.Min(calculatedValue, d.MaxDiscountAmount.Value);
+                    }
+                    else
+                    {
+                        discountValue = calculatedValue;
+                    }
+                }
 
                 if (d.DiscountAmount.HasValue)
                     discountValue = Math.Max(discountValue, d.DiscountAmount.Value);
@@ -580,17 +609,39 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Discount not found", false, 0, 0, 0, 0, null, null, null);
             }
+            //if (findDiscount.DiscountPercent.HasValue)
+            //    {
+            //        discountPrice = totalPrice * findDiscount.DiscountPercent.Value/100m;
+            //    }
+
+            //    if(findDiscount.DiscountAmount.HasValue)
+            //    {
+            //        discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
+            //    }
+
+            //    discountPrice = Math.Min(discountPrice, totalPrice);
+
+            //
             if (findDiscount.DiscountPercent.HasValue)
-                {
-                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value/100m;
-                }
+            {
+                decimal calculatedValue = totalPrice * findDiscount.DiscountPercent.Value / 100m;
 
-                if(findDiscount.DiscountAmount.HasValue)
+                if (findDiscount.MaxDiscountAmount.HasValue)
                 {
-                    discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
+                    discountPrice = Math.Min(calculatedValue, findDiscount.MaxDiscountAmount.Value);
                 }
+                else
+                {
+                    discountPrice = calculatedValue;
+                }
+            }
 
-                discountPrice = Math.Min(discountPrice, totalPrice);
+            if (findDiscount.DiscountAmount.HasValue)
+            {
+                discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
+            }
+
+            discountPrice = Math.Min(discountPrice, totalPrice); //
             var checkout = new ShowCheckoutDTO
             {
                 productList = productList,
@@ -628,16 +679,39 @@ namespace Ecommerce3BRO.Repository.Implement
 
             if (findDiscount != null)
             {
+                //if (findDiscount.DiscountPercent.HasValue)
+                //{
+                //    discountPrice = totalPrice * findDiscount.DiscountPercent.Value / 100;
+                //}
+                //if (findDiscount.DiscountAmount.HasValue)
+                //{
+                //    discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
+                //}
+                //discountPrice = Math.Min(discountPrice, totalPrice);
+
+                //
                 if (findDiscount.DiscountPercent.HasValue)
                 {
-                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value / 100;
+                    decimal calculatedValue = totalPrice * findDiscount.DiscountPercent.Value / 100m;
+
+                    if (findDiscount.MaxDiscountAmount.HasValue)
+                    {
+                        discountPrice = Math.Min(calculatedValue, findDiscount.MaxDiscountAmount.Value);
+                    }
+                    else
+                    {
+                        discountPrice = calculatedValue;
+                    }
                 }
+
                 if (findDiscount.DiscountAmount.HasValue)
                 {
                     discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
                 }
-                discountPrice = Math.Min(discountPrice, totalPrice);
+
+                discountPrice = Math.Min(discountPrice, totalPrice); //
             }
+
             var checkoutWithDiscount = new ShowCheckoutDTO
             {
                 Vouchers = await _discount.GetDiscountByUser(totalPrice),

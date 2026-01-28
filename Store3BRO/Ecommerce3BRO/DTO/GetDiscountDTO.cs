@@ -21,6 +21,9 @@ namespace Ecommerce3BRO.DTO
 
         [Column(TypeName = "decimal(10, 2)")]
         public decimal? MinOrderAmount { get; set; }
+        // Mức giảm tối đa cho loại giảm theo %
+        [Column(TypeName = "decimal(10, 2)")]
+        public decimal? MaxDiscountAmount { get; set; }
 
         public DateTime StartDate { get; set; }
 

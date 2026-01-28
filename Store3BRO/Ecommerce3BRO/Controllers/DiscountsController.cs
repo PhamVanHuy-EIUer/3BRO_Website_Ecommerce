@@ -38,6 +38,8 @@ namespace Ecommerce3BRO.Controllers
                     Description = discount.Description,
                     DiscountPercent = Convert.ToInt32(discount.discountValue),
                     MinOrderAmount = discount.MinOrderAmount,
+                    //  Mức giảm tối đa cho loại giảm theo %
+                    MaxDiscountAmount = discount.MaxDiscountAmount,
                     StartDate = discount.StartDate,
                     ExpiredDate = discount.ExpiredDate,
                     Quantity = discount.Quantity
@@ -82,6 +84,8 @@ namespace Ecommerce3BRO.Controllers
                     Description = discount.Description,
                     DiscountPercent = (int)discount.discountValue,
                     MinOrderAmount = discount.MinOrderAmount,
+                    //  Mức giảm tối đa cho loại giảm theo %
+                    MaxDiscountAmount = discount.MaxDiscountAmount,
                     StartDate = discount.StartDate,
                     ExpiredDate = discount.ExpiredDate,
                     Quantity = discount.Quantity

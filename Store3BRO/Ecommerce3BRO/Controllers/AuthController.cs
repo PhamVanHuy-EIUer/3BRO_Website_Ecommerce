@@ -55,14 +55,14 @@ namespace Ecommerce3BRO.Controllers
             Response.Cookies.Append("access_token", token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
             Response.Cookies.Append("role", roles, new CookieOptions
             {
-                HttpOnly = false,
-                Secure = true,
+                HttpOnly = true,
+                Secure = false,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
             });
@@ -79,7 +79,7 @@ namespace Ecommerce3BRO.Controllers
             var options = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             };
@@ -175,7 +175,7 @@ namespace Ecommerce3BRO.Controllers
                     Response.Cookies.Append("access_token", newToken, new CookieOptions
                     {
                         HttpOnly = true,
-                        Secure = true,
+                        Secure = false,
                         SameSite = SameSiteMode.None,
                         Expires = DateTime.UtcNow.AddMinutes(15)
                     });
@@ -194,7 +194,7 @@ namespace Ecommerce3BRO.Controllers
                     var option = new CookieOptions
                     {
                         HttpOnly = true,
-                        Secure = true,
+                        Secure = false,
                         SameSite = SameSiteMode.None,
                         Expires = DateTime.UtcNow.AddDays(7)
                     };
@@ -216,6 +216,7 @@ namespace Ecommerce3BRO.Controllers
                         null, null, "201", "Login with Google successfully without password",
                         true, 0, 0, 0, 0, newToken, null, null));
                 }
+               
             }
             user.GoogleId ??= googleId;
             user.Provider = "Google";
@@ -227,7 +228,7 @@ namespace Ecommerce3BRO.Controllers
             Response.Cookies.Append("access_token", token, new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
@@ -246,7 +247,7 @@ namespace Ecommerce3BRO.Controllers
             var options = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = true,
+                Secure = false,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddDays(7)
             };

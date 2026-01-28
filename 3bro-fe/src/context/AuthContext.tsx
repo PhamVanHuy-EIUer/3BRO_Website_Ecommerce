@@ -10,6 +10,7 @@ import { userService } from "@/services/user.service";
 import { AuthService } from "@/services/auth.service";
 import { LoginRequest } from "@/models/LoginRequest";
 import { User } from "@/models/User";
+import { i } from "framer-motion/client";
 
 type AuthContextType = {
   authorized: boolean;
@@ -18,6 +19,7 @@ type AuthContextType = {
   isAdmin: boolean;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<void>;
   refreshAuth: () => Promise<void>;
 };
 
@@ -58,6 +60,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     await refreshAuth();
     console.log("Login successful, user:", user);
+  };
+
+  const loginWithGoogle = async (idToken: string) => {
+    const res = await AuthService.loginWithGoogle(idToken);
+    if (res.code !== "200") {
+      throw new Error(res.message);
+    }
+    if (res.isSuccess) {
+      console.log(res);
+      await refreshAuth();
+    }
   };
 
   const logout = async () => {
@@ -107,7 +120,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ authorized, loading, user, isAdmin, login, logout, refreshAuth }}
+      value={{
+        authorized,
+        loading,
+        user,
+        isAdmin,
+        login,
+        logout,
+        loginWithGoogle,
+        refreshAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

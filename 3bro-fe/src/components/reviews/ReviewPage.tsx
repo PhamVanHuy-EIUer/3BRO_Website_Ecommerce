@@ -358,9 +358,9 @@ const ReviewPage = ({
                         </div>
                       </div>
 
-                      <p className="font-normal text-lg leading-8 text-gray-500 ">
+                      {/* <p className="font-normal text-lg leading-8 text-gray-500 ">
                         {each.comment}
-                      </p>
+                      </p> */}
                     </div>
                   ))}
                 </div>

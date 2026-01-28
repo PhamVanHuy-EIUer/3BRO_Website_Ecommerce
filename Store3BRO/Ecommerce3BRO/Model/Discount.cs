@@ -24,7 +24,8 @@ public partial class Discount
 
  
     public decimal? MinOrderAmount { get; set; }
-
+    //Mức giảm tối đa cho loại giảm theo %
+    public decimal? MaxDiscountAmount { get; set; }
     public DateTime StartDate { get; set; }
 
     public DateTime EndDate { get; set; }

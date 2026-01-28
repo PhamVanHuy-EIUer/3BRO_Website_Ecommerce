@@ -103,7 +103,11 @@ namespace Ecommerce3BRO.Repository.Implement
                     .Where(od => od.IsUsed)
                     .Sum(od =>
                         od.Discount.DiscountAmount ??
-                        (o.TotalAmount * od.Discount.DiscountPercent.Value / 100));
+                        //(o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                        (od.Discount.MaxDiscountAmount.HasValue
+                            ? Math.Min(o.TotalAmount * od.Discount.DiscountPercent.Value / 100, od.Discount.MaxDiscountAmount.Value)
+                            : o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                    );
 
                 return new GetOrderByAdminDTO
                 {
@@ -144,7 +148,11 @@ namespace Ecommerce3BRO.Repository.Implement
                     .Where(od => od.IsUsed)
                     .Sum(od =>
                         od.Discount.DiscountAmount ??
-                        (o.TotalAmount * od.Discount.DiscountPercent.Value / 100));
+                        //(o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                        (od.Discount.MaxDiscountAmount.HasValue
+                            ? Math.Min(o.TotalAmount * od.Discount.DiscountPercent.Value / 100, od.Discount.MaxDiscountAmount.Value)
+                            : o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                    );
 
                 return new UserOrderDTO
                 {

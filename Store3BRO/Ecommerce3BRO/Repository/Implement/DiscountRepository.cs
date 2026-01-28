@@ -42,6 +42,12 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetDiscountDTO>(null, null, "400", "Expired date must be after start date", false, 0, 0, 0, 0, null, null, null);
             }
+
+            // Nếu là giảm % và có MaxDiscountAmount thì phải > 0
+            if (discountDTO.DiscountPercent.HasValue && discountDTO.MaxDiscountAmount.HasValue && discountDTO.MaxDiscountAmount <= 0)
+            {
+                return new ApiResponse<GetDiscountDTO>(null, null, "400", "Max discount amount must be greater than 0", false, 0, 0, 0, 0, null, null, null);
+            }
             var code = discountDTO.Code.Trim().ToUpper();
 
             var existingDiscount = await _context.Discount
@@ -58,6 +64,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 DiscountAmount = discountDTO.DiscountAmount,
                 DiscountPercent = discountDTO.DiscountPercent,
                 MinOrderAmount = discountDTO.MinOrderAmount,
+                //  Mức giảm tối đa cho loại giảm theo %
+                MaxDiscountAmount = discountDTO.MaxDiscountAmount,
                 Quantity = discountDTO.Quantity,
                 StartDate = discountDTO.StartDate,
                 EndDate = discountDTO.ExpiredDate,
@@ -75,6 +83,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 DiscountAmount = newDiscount.DiscountAmount,
                 DiscountPercent = newDiscount.DiscountPercent,
                 MinOrderAmount = newDiscount.MinOrderAmount,
+                // Trả về kết quả
+                MaxDiscountAmount = newDiscount.MaxDiscountAmount,
                 Quantity = newDiscount.Quantity,
                 StartDate = newDiscount.StartDate,
                 EndDate = newDiscount.EndDate,
@@ -133,6 +143,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 DiscountPercent = discount.DiscountPercent,
                 EndDate = discount.EndDate,
                 MinOrderAmount = discount.MinOrderAmount,
+                // Mức giảm tối đa cho loại giảm theo %
+                MaxDiscountAmount = discount.MaxDiscountAmount,
                 Quantity = discount.Quantity,
                 StartDate = discount.StartDate,
                 IsActive = discount.IsActive
@@ -157,6 +169,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 DiscountPercent = discount.DiscountPercent,
                 EndDate = discount.EndDate, 
                 MinOrderAmount = discount.MinOrderAmount,
+                // Mức giảm tối đa cho loại giảm theo %
+                MaxDiscountAmount = discount.MaxDiscountAmount,
                 Quantity = discount.Quantity,
                 StartDate = discount.StartDate, 
                 IsActive = discount.IsActive
@@ -178,6 +192,8 @@ namespace Ecommerce3BRO.Repository.Implement
                     DiscountPercent = discount.DiscountPercent,
                     EndDate = discount.EndDate,
                     MinOrderAmount = discount.MinOrderAmount,
+                    // Mức giảm tối đa cho loại giảm theo %
+                    MaxDiscountAmount = discount.MaxDiscountAmount,
                     Quantity = discount.Quantity,
                     StartDate = discount.StartDate,
                     IsActive = discount.IsActive
@@ -218,6 +234,8 @@ namespace Ecommerce3BRO.Repository.Implement
             findDiscount.DiscountAmount = discountDTO.DiscountAmount;
             findDiscount.DiscountPercent = discountDTO.DiscountPercent;
             findDiscount.MinOrderAmount = discountDTO.MinOrderAmount;
+            //  Mức giảm tối đa cho loại giảm theo %
+            findDiscount.MaxDiscountAmount = discountDTO.MaxDiscountAmount;
             findDiscount.StartDate = discountDTO.StartDate;
             findDiscount.EndDate = discountDTO.ExpiredDate;
             findDiscount.Quantity = discountDTO.Quantity;
@@ -232,6 +250,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 DiscountPercent = findDiscount.DiscountPercent,
                 EndDate = findDiscount.EndDate,
                 MinOrderAmount = findDiscount.MinOrderAmount,
+                // Mức giảm tối đa cho loại giảm theo %
+                MaxDiscountAmount = findDiscount.MaxDiscountAmount,
                 Quantity = findDiscount.Quantity,
                 StartDate = findDiscount.StartDate,
                 IsActive = findDiscount.IsActive

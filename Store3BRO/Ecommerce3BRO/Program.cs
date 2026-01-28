@@ -19,10 +19,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-builder.Services.AddScoped<IAuthService,AuthService>();
-builder.Services.AddScoped<IProductRepository,ProductRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICartRepository, CartRepository>();
 builder.Services.AddScoped<ICartItemRepository, CartItemRepository>();
@@ -32,7 +32,7 @@ builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 builder.Services.AddScoped<IProductImageRepository, ProductImageRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-builder.Services.AddScoped<IShipmentRepository,ShipmentRepository>();
+builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 builder.Services.AddScoped<ISupportRepository, SupportRepository>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<ShopLocation>();
@@ -40,7 +40,7 @@ builder.Services.AddScoped<ShopLocation>();
 builder.Services.AddDbContext<Ecommerce3BROContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddSwaggerGen(c =>
 {
-    // ?? C?u hình Swagger ?? hi?n th? nút Authorize (Bearer)
+    // Cấu hình Swagger để hiển thị nút Authorize (Bearer)
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Bearer {token})",
@@ -92,23 +92,31 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             }
         };
     });
+
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.SuppressModelStateInvalidFilter = true;
 });
+
+// ✅ FIX: Cấu hình CORS đúng - cho phép cả localhost:3000 và localhost:7041
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:3000")
+            .WithOrigins(
+                "http://localhost:3000",
+                "http://localhost:7041",
+                "https://localhost:7041"  // Nếu dùng HTTPS
+            )
             .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowCredentials(); // nếu dùng cookie / auth
+            .AllowCredentials(); // Quan trọng để gửi cookies
     });
 });
 
 builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -119,11 +127,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// ✅ Phải đặt CORS trước Authentication
 app.UseCors("AllowFrontend");
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
 app.MapControllers();
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Ecommerce3BROContext>();
@@ -149,4 +161,5 @@ using (var scope = app.Services.CreateScope())
         Console.ResetColor();
     }
 }
+
 app.Run();

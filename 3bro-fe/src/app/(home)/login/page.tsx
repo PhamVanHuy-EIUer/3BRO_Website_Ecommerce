@@ -6,19 +6,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LoginRequest } from "@/models/LoginRequest";
-import { AuthService } from "@/services/auth.service";
 import { notification } from "antd";
 import { useAuth } from "@/context/AuthContext";
-// import Cookies from "js-cookie";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
 
 function LoginPage() {
   const router = useRouter();
-  const { login, user } = useAuth();
+  const { login, loginWithGoogle, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [api, conttextHolder] = notification.useNotification();
+  const [api, contextHolder] = notification.useNotification();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,24 +36,23 @@ function LoginPage() {
       setLoading(true);
       const loginRequest: LoginRequest = { email, password };
       await login(loginRequest);
+
       const isAdmin = user?.roleList?.includes("Admin") ?? false;
-      console.log(user);
+
+      api.success({
+        message: "Success",
+        description: "Login successfully",
+        duration: 2,
+      });
+
       if (isAdmin) {
         router.replace("/admin");
       } else {
         router.replace("/");
       }
-      api.success({
-        title: "Success",
-        description: "Login successfully",
-        duration: 2,
-      });
-
-      // Redirect sau login'
-      router.replace("/");
     } catch (err: any) {
       api.error({
-        title: "Login error",
+        message: "Login error",
         description:
           err.response?.data?.message || "Email or password is incorrect",
       });
@@ -63,14 +61,50 @@ function LoginPage() {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    // TODO: Google OAuth (sẽ làm sau)
-    console.log("Google Sign In");
+  const handleGoogleSuccess = async (credential: string) => {
+    console.log("Received Google credential");
+
+    try {
+      setLoading(true);
+      await loginWithGoogle(credential);
+
+      const isAdmin = user?.roleList?.includes("Admin") ?? false;
+
+      api.success({
+        message: "Success",
+        description: "Login successfully",
+        duration: 2,
+      });
+
+      if (isAdmin) {
+        router.replace("/admin");
+      } else {
+        router.replace("/");
+      }
+    } catch (err: any) {
+      console.error("Google login error:", err);
+      api.error({
+        message: "Login with Google error",
+        description:
+          err.response?.data?.message || err.message || "Login failed",
+        duration: 2,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    api.error({
+      message: "Login Failed",
+      description: "Google login failed",
+      duration: 2,
+    });
   };
 
   return (
     <>
-      {conttextHolder}
+      {contextHolder}
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-6xl w-full">
           {/* Left Side */}
@@ -82,6 +116,7 @@ function LoginPage() {
                 fill
                 className="object-contain"
                 sizes="50vw"
+                priority
               />
             </div>
           </div>
@@ -133,16 +168,12 @@ function LoginPage() {
               </div>
             </form>
 
-            <div className="mt-6">
-              <button
-                onClick={handleGoogleSignIn}
-                className="w-full flex items-center justify-center gap-3 border-2 border-gray-300 hover:border-gray-400 rounded py-2 transition-colors"
-              >
-                <GoogleIcon />
-                <span className="text-gray-700 font-medium">
-                  Sign up with Google
-                </span>
-              </button>
+            {/* Google Sign-In */}
+            <div className="mt-6 flex justify-center">
+              <GoogleSignInButton
+                onSuccess={handleGoogleSuccess}
+                onError={handleGoogleError}
+              />
             </div>
 
             <div className="mt-6 text-center">

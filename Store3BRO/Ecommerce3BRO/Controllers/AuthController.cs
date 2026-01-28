@@ -114,7 +114,13 @@ namespace Ecommerce3BRO.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-
+            Response.Cookies.Append("access_token", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddMinutes(15)
+            });
             Response.Cookies.Delete("access_token");
             Response.Cookies.Delete("refresh_token");
 

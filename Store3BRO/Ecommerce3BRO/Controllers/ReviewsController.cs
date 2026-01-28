@@ -84,7 +84,6 @@ namespace Ecommerce3BRO.Controllers
         }
 
         [HttpGet("product-by-page{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetReviewDTO>> GetReviewByPage([FromRoute] Guid id,[FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _reviewService.GetReviewByProduct(id,currentPage,pageSize);

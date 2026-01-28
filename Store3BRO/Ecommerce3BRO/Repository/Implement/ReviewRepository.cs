@@ -133,7 +133,8 @@ namespace Ecommerce3BRO.Repository.Implement
                     PhoneNumber = r.User.Phone,
                     ProductName = r.Product.ProductName,
                     ReviewDate = r.CreatedDate,
-                    ReviewName = r.User.FullName
+                    ReviewName = r.User.FullName,
+                    Comment = r.Comment
                 }).ToListAsync();
             return new ApiResponse<GetReviewDTO>(reviews, null, "200", "Get reviews of product by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }

@@ -67,7 +67,6 @@ namespace Ecommerce3BRO.Controllers
 
         //Api get product by id
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductDTO>> GetProductById(Guid id)
         {
             return await _productService.GetProductByIdAsync(id);

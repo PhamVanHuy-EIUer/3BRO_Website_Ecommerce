@@ -30,6 +30,8 @@ const Sidebar = () => {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
 
   const menuItems: MenuItem[] = [
     {
@@ -95,8 +97,9 @@ const Sidebar = () => {
     return pathname === subItem.path;
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
+    await delay(2000);
     router.push("/login");
   };
 

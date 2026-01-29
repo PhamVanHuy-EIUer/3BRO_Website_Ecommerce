@@ -9,25 +9,28 @@ import { LoginRequest } from "@/models/LoginRequest";
 import { notification } from "antd";
 import { useAuth } from "@/context/AuthContext";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { Eye, EyeOff } from "lucide-react";
+import { m } from "framer-motion";
 
 function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogle, user } = useAuth();
+  const { login, loginWithGoogle, user, contextHolder } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [api, contextHolder] = notification.useNotification();
-
+  const delay = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
     if (!email || !password) {
-      api.warning({
-        title: "Login",
-        description: "Please enter email and password",
-        duration: 2,
+      notification.error({
+        title: "Missing information",
+        description: "Email and password are required",
+        duration: 5,
       });
       return;
     }
@@ -38,24 +41,14 @@ function LoginPage() {
       await login(loginRequest);
 
       const isAdmin = user?.roleList?.includes("Admin") ?? false;
-
-      api.success({
-        message: "Success",
-        description: "Login successfully",
-        duration: 2,
-      });
-
+      await delay(2000);
       if (isAdmin) {
         router.replace("/admin");
       } else {
         router.replace("/");
       }
     } catch (err: any) {
-      api.error({
-        message: "Login error",
-        description:
-          err.response?.data?.message || "Email or password is incorrect",
-      });
+      console.log(err);
     } finally {
       setLoading(false);
     }
@@ -67,14 +60,8 @@ function LoginPage() {
     try {
       setLoading(true);
       await loginWithGoogle(credential);
-
+      await delay(2000);
       const isAdmin = user?.roleList?.includes("Admin") ?? false;
-
-      api.success({
-        message: "Success",
-        description: "Login successfully",
-        duration: 2,
-      });
 
       if (isAdmin) {
         router.replace("/admin");
@@ -83,22 +70,15 @@ function LoginPage() {
       }
     } catch (err: any) {
       console.error("Google login error:", err);
-      api.error({
-        message: "Login with Google error",
-        description:
-          err.response?.data?.message || err.message || "Login failed",
-        duration: 2,
-      });
     } finally {
       setLoading(false);
     }
   };
 
   const handleGoogleError = () => {
-    api.error({
-      message: "Login Failed",
-      description: "Google login failed",
-      duration: 2,
+    notification.error({
+      title: "Login with Google error",
+      description: "Login failed",
     });
   };
 
@@ -138,14 +118,25 @@ function LoginPage() {
                 />
               </div>
 
-              <div>
+              <div className="relative">
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-0 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
+                  className="w-full px-0 py-2 pr-10 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="w-5 h-5" />
+                  ) : (
+                    <Eye className="w-5 h-5" />
+                  )}
+                </button>
               </div>
 
               {error && <p className="text-red-500 text-sm">{error}</p>}

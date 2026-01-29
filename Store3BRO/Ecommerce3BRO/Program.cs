@@ -161,5 +161,4 @@ using (var scope = app.Services.CreateScope())
         Console.ResetColor();
     }
 }
-
 app.Run();

@@ -6,6 +6,7 @@ using Ecommerce3BRO.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -180,6 +181,8 @@ namespace Ecommerce3BRO.Controllers
                     await _context.SaveChangesAsync();
 
                     var newRoleList = await _authService.GetRolesByUser(user.Email);
+                    var newRoles = string.Join(",", newRoleList);
+
                     var newToken = _authService.GenerateAccessToken(user.Email, user.Id, newRoleList);
 
                     Response.Cookies.Append("access_token", newToken, new CookieOptions
@@ -188,6 +191,13 @@ namespace Ecommerce3BRO.Controllers
                         Secure = true,
                         SameSite = SameSiteMode.None,
                         Expires = DateTime.UtcNow.AddMinutes(15)
+                    });
+                    Response.Cookies.Append("role", newRoles, new CookieOptions
+                    {
+                        HttpOnly = false,
+                        Secure = true,
+                        SameSite = SameSiteMode.None,
+                        Expires = DateTime.Now.AddMinutes(15)
                     });
 
                     var oldToken = await _context.RefreshToken
@@ -227,11 +237,13 @@ namespace Ecommerce3BRO.Controllers
                         true, 0, 0, 0, 0, newToken, null, null));
                 }
             }
+            user.IsActive = true;
             user.GoogleId ??= googleId;
             user.Provider = "Google";
             await _context.SaveChangesAsync();
 
             var roleList = await _authService.GetRolesByUser(user.Email);
+            var roles = string.Join(",", roleList);
             var token = _authService.GenerateAccessToken(user.Email, user.Id, roleList);
 
             Response.Cookies.Append("access_token", token, new CookieOptions
@@ -241,7 +253,14 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddMinutes(15)
             });
-
+            Response.Cookies.Append("role", roles, new CookieOptions
+            {
+                HttpOnly = false,
+                Secure = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.Now.AddMinutes(15)
+            });
+            Console.WriteLine(roles);
             var oldTokens = await _context.RefreshToken
                 .Where(x => x.UserId == user.Id && !x.IsRevoked)
                 .ToListAsync();

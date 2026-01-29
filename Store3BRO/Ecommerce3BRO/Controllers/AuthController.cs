@@ -232,7 +232,7 @@ namespace Ecommerce3BRO.Controllers
 
                     await _context.SaveChangesAsync();
 
-                    return BadRequest(new ApiResponse<UserDTO?>(
+                    return Ok(new ApiResponse<UserDTO?>(
                         null, null, "201", "Login with Google successfully without password",
                         true, 0, 0, 0, 0, newToken, null, null));
                 }
@@ -260,7 +260,6 @@ namespace Ecommerce3BRO.Controllers
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
             });
-            Console.WriteLine(roles);
             var oldTokens = await _context.RefreshToken
                 .Where(x => x.UserId == user.Id && !x.IsRevoked)
                 .ToListAsync();

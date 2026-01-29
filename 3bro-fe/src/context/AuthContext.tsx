@@ -5,18 +5,22 @@ import {
   useEffect,
   useState,
   useCallback,
+  ReactElement,
+  JSXElementConstructor,
 } from "react";
 import { userService } from "@/services/user.service";
 import { AuthService } from "@/services/auth.service";
 import { LoginRequest } from "@/models/LoginRequest";
 import { User } from "@/models/User";
-import { i } from "framer-motion/client";
+import { useRouter } from "next/navigation";
+import { notification } from "antd";
 
 type AuthContextType = {
   authorized: boolean;
   loading: boolean;
   user: User | null;
   isAdmin: boolean;
+  contextHolder: ReactElement<unknown, string | JSXElementConstructor<any>>;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
   loginWithGoogle: (idToken: string) => Promise<void>;
@@ -29,6 +33,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  const [api, contextHolder] = notification.useNotification();
 
   const isAdmin = user?.roleList?.includes("Admin") ?? false;
 
@@ -53,34 +59,83 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = async (data: LoginRequest) => {
-    const res = await AuthService.login(data);
-    if (res.code !== "200") {
-      throw new Error(res.message);
-    }
+    try {
+      const res = await AuthService.login(data);
+      if (res.code !== "200") {
+        throw new Error(res.message);
+      }
 
-    await refreshAuth();
-    console.log("Login successful, user:", user);
+      api.success({
+        title: "Success",
+        description: "Login successfully",
+        duration: 2,
+      });
+      await refreshAuth();
+      console.log("Login successful, user:", user);
+    } catch (error: any) {
+      api.error({
+        title: "Login error",
+        description:
+          error.response?.data?.message || "Email or password is incorrect",
+      });
+      throw error;
+    }
   };
 
   const loginWithGoogle = async (idToken: string) => {
-    const res = await AuthService.loginWithGoogle(idToken);
-    if (res.code !== "200") {
-      throw new Error(res.message);
-    }
-    if (res.isSuccess) {
-      console.log(res);
-      await refreshAuth();
+    try {
+      const res = await AuthService.loginWithGoogle(idToken);
+
+      if (res.code === "201") {
+        router.push("/setup-password");
+      } else if (res.code === "200") {
+        api.success({
+          title: "Success",
+          description: "Login successfully",
+          duration: 2,
+        });
+        await refreshAuth();
+      } else
+        (err: any) => {
+          api.error({
+            title: "Login with Google error",
+            description:
+              err.response?.data?.message || err.message || "Login failed",
+            duration: 2,
+          });
+        };
+    } catch (error: any) {
+      console.error("Google login error:", error);
+      throw error;
     }
   };
 
   const logout = async () => {
-    const res = await AuthService.logout();
-    if (res.code !== "200") {
-      throw new Error(res.message);
+    try {
+      const res = await AuthService.logout();
+      if (res.code !== "200") {
+        throw new Error(res.message);
+      } else if (res.code === "200") {
+        api.success({
+          title: "Success",
+          description: "Logout successfully",
+          duration: 2,
+        });
+        setAuthorized(false);
+        setUser(null);
+        await refreshAuth();
+
+        console.log("Logout successful", res);
+      }
+    } catch (error: any) {
+      console.error("Logout error:", error);
+      api.error({
+        title: "Logout error",
+        description: error.message || "Logout failed",
+        duration: 2,
+      });
+      throw error;
     }
-    setAuthorized(false);
-    setUser(null);
-    console.log("Logout successful", res);
   };
 
   // Fetch user khi mount
@@ -121,6 +176,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
+        contextHolder,
         authorized,
         loading,
         user,

@@ -71,7 +71,6 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpGet("Detail")]
-        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewDetailByIdAsync([FromQuery] Guid reviewId)
         {
             var result = await _reviewService.GetReviewByIdAsync(reviewId);
@@ -89,7 +88,6 @@ namespace Ecommerce3BRO.Controllers
             return await _reviewService.GetReviewByProduct(id,currentPage,pageSize);
         }
         [HttpGet("rating{productId}")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<RatingNumberDTO>> GetRatingByProduct([FromRoute] Guid productId)
         {
             return await _reviewService.GetRatingNumByProduct(productId);

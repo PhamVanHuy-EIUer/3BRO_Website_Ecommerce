@@ -260,6 +260,19 @@ namespace Ecommerce3BRO.Controllers
 
             return Ok(result);
         }
+        [HttpPost("check-forget")]
+        public async Task<ApiResponse<string>> CheckForgetPassword([FromQuery] string email, [FromQuery] string activationCode)
+        {
+            if (email == null || activationCode == null)
+            {
+                return new ApiResponse<string>(null, null, "400", "Email or activationCode is required", false, 0, 0, 0, 0, null, null, null);
+            }
+            if (!await _userService.CheckForgetPasswordAsync(email, activationCode))
+            {
+                return new ApiResponse<string>(null, null, "404", "ActivationCode is wrong", false, 0, 0, 0, 0, null, null, null);
+            }
+            return new ApiResponse<string>(null, null, "200", "Check forget password successfully", false, 0, 0, 0, 0, null, null, null);
+        }
     }
 }
 

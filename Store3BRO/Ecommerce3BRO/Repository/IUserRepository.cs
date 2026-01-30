@@ -11,6 +11,7 @@ namespace Ecommerce3BRO.Repository
         Task  SendActiveCodeAsync(Guid id);
         Task<UserDTO?> ForgetPasswordAsync(string email);
         Task<bool> UpdatePasswordAsync(UpdatePasswordDTO user);
+        Task<bool> CheckForgetPasswordAsync(string email,string activecode);
         Task<UserDTO?> LoginAsync(LoginModel login);
         Task<IEnumerable<GetUserDTO>> GetAllUserAsync();
         Task<GetUserDTO?> AddNewUserAsync(UserDTO user);

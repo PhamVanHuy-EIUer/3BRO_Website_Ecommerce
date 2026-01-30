@@ -3,6 +3,7 @@ using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Service;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography;
 
 namespace Ecommerce3BRO.Repository.Implement
@@ -89,8 +90,25 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<string>(null, null, "200", "Change password successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-
-
+        public async Task<bool> CheckForgetPasswordAsync(string email,string activecode)
+        {
+            var findUser = await _context.User.FirstOrDefaultAsync(fu => fu.Email == email);
+            if (findUser == null)
+            {
+                return false;
+            }
+            var findCode = await _context.ActivationCode.FirstOrDefaultAsync(c => c.UserId == findUser.Id && c.IsUsed == false && c.ExpireDate > DateTime.UtcNow);
+            if (findCode == null)
+            {
+                return false;
+            }
+            if (findCode.Code != activecode)
+            {
+                return false;
+            }
+            findCode.IsUsed = true;
+            return true;
+        }
 
         public async Task<GetUserDTO?> DeleteUserByIdAsync(Guid id)
         {
@@ -371,16 +389,10 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return false;
             }
-            var findCode = await _context.ActivationCode.FirstOrDefaultAsync(c => c.UserId == findUser.Id && c.IsUsed == false && c.ExpireDate > DateTime.UtcNow);
-            if (findCode == null)
+            if (user.ConfirmPassword != user.Password)
             {
                 return false;
             }
-            if (findCode.Code != user.ActivationCode)
-            {
-                return false;
-            }
-            findCode.IsUsed = true;
             findUser.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
             await _context.SaveChangesAsync();
             return true;

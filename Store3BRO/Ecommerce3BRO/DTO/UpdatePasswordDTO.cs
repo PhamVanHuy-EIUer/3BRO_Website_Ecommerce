@@ -12,7 +12,9 @@ namespace Ecommerce3BRO.DTO
         [Required(ErrorMessage = "Password is required")]
         [MinLength(8, ErrorMessage = "Password must have more  8 characters")]
         public string Password { get; set; }
-        public string ActivationCode { get; set; }
+        [Required(ErrorMessage = "ComfirmPassword is required")]
+        [MinLength(8, ErrorMessage = "Password must have more  8 characters")]
+        public string ConfirmPassword { get; set; }
 
     }
 }

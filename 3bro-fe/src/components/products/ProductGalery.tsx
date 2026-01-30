@@ -147,6 +147,8 @@ export default function ProductGallery({
                       </div>
                     ),
                   }}
+                  width={500}
+                  height={500}
                 />
               </div>
             </div>

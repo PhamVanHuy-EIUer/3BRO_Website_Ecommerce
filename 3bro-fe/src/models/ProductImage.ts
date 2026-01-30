@@ -1,6 +1,6 @@
 export type ProductImage = {
-    id: number;
-    productId: string;
+    id: string;
+    productName: string;
     imageUrl: string;
-    createdAt?: string;
+
 }

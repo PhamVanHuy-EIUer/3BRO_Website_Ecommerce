@@ -82,13 +82,13 @@ axiosClient.interceptors.response.use(
     );
 
     // ❌ Không refresh cho public API hoặc không phải 401
-    if (
-      error.response.status !== 401 ||
-      originalRequest._retry ||
-      isPublicEndpoint
-    ) {
-      return Promise.reject(error);
-    }
+    // if (
+    //   error.response.status !== 401 ||
+    //   originalRequest._retry ||
+    //   isPublicEndpoint
+    // ) {
+    //   return Promise.reject(error);
+    // }
 
     originalRequest._retry = true;
 

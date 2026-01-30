@@ -375,12 +375,13 @@ export default function DiscountManagement() {
         <Space>
           <span
             onClick={() => handleEdit(record)}
-            className="cursor-pointer px-2.25 py-1.75 bg-[#155BFA] justify-center items-center rounded-md"
+            className="cursor-pointer px-3 py-2 bg-[#155BFA] justify-center items-center rounded-md"
           >
             <EditOutlined className="!text-white" />
           </span>
 
           <Button
+            style={{ padding: "17px 17px" }}
             type="primary"
             danger
             icon={<DeleteOutlined />}

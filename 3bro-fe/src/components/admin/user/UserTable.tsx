@@ -6,6 +6,7 @@ import { ColumnsType } from "antd/es/table";
 import { motion } from "framer-motion";
 import { DeleteUserModal } from "./DeleteUserModal";
 import { Search } from "lucide-react";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 const UserTable = () => {
   const PAGE_SIZE = 8;
@@ -65,21 +66,22 @@ const UserTable = () => {
       key: "action",
       render: (_, record: User) => (
         <Space size="middle">
-          <button
-            className="px-2 py-1 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition-colors"
+          <span
+            className="px-3 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition-colors"
             // onClick={() => handleUpdateClick(record)}
           >
-            Update
-          </button>
-          <button
-            className="px-2 py-1 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition-colors"
+            <EditOutlined />
+          </span>
+
+          <span
+            className="px-3 py-2 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition-colors"
             onClick={() => {
               setSelectedUser(record);
               setDeleteModal(true);
             }}
           >
-            Delete
-          </button>
+            <DeleteOutlined />
+          </span>
         </Space>
       ),
     },
@@ -96,7 +98,7 @@ const UserTable = () => {
         >
           <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
             <h2 className="text-lg md:text-xl font-semibold text-gray-950">
-              Product List
+              User List
             </h2>
             <div className="flex justify-center items-center gap-4">
               <div className="relative justify-end">

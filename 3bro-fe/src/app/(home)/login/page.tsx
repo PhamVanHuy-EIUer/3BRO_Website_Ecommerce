@@ -10,18 +10,16 @@ import { notification } from "antd";
 import { useAuth } from "@/context/AuthContext";
 import GoogleSignInButton from "@/components/GoogleSignInButton";
 import { Eye, EyeOff } from "lucide-react";
-import { m } from "framer-motion";
 
 function LoginPage() {
   const router = useRouter();
-  const { login, loginWithGoogle, user, contextHolder } = useAuth();
+  const { login, loginWithGoogle, user, contextHolder, isAdmin } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const delay = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -39,9 +37,7 @@ function LoginPage() {
       setLoading(true);
       const loginRequest: LoginRequest = { email, password };
       await login(loginRequest);
-
-      const isAdmin = user?.roleList?.includes("Admin") ?? false;
-      await delay(2000);
+      console.log(isAdmin);
       if (isAdmin) {
         router.replace("/admin");
       } else {
@@ -55,20 +51,17 @@ function LoginPage() {
   };
 
   const handleGoogleSuccess = async (credential: string) => {
-    console.log("Received Google credential");
-
     try {
       setLoading(true);
-      await loginWithGoogle(credential);
-      await delay(2000);
+
+      const result = await loginWithGoogle(credential);
+
+      if (result === "SETUP_PASSWORD") return;
+
       const isAdmin = user?.roleList?.includes("Admin") ?? false;
 
-      if (isAdmin) {
-        router.replace("/admin");
-      } else {
-        router.replace("/");
-      }
-    } catch (err: any) {
+      router.replace(isAdmin ? "/admin" : "/");
+    } catch (err) {
       console.error("Google login error:", err);
     } finally {
       setLoading(false);

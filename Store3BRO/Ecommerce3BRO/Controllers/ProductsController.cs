@@ -166,7 +166,7 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductByPriceRange(minPrice, maxPrice);
         }
         [HttpGet("ascending-cost")]
-        [Authorize]
+        
         public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
         {
             return await _productService.GetProductByAscendingPrice();

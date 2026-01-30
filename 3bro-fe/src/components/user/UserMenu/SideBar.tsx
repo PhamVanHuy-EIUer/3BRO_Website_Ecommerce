@@ -12,6 +12,7 @@ import {
   LogOutIcon,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { notification } from "antd";
 
 interface SubItem {
   name: string;
@@ -30,6 +31,7 @@ const Sidebar = () => {
   const { user, logout } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const [api, contextHolder] = notification.useNotification();
   const delay = (ms: number) =>
     new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -98,94 +100,110 @@ const Sidebar = () => {
   };
 
   const handleLogout = async () => {
-    await logout();
-    await delay(2000);
-    router.push("/login");
+    try {
+      await logout();
+
+      api.success({
+        message: "Success",
+        description: "Logout successfully",
+        duration: 2,
+      });
+
+      router.push("/login");
+    } catch (err) {
+      api.error({
+        message: "Error",
+        description: "Logout failed",
+      });
+    }
   };
 
   return (
-    <div className="w-full md:w-62.5 shrink-0">
-      {/* User Profile Section */}
-      <div className="flex items-center gap-3 mb-8 px-2">
-        <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300">
-          <UserIcon className="w-6 h-6 text-gray-500" />
-        </div>
-        <div>
-          <h3
-            className="font-bold text-black truncate w-32"
-            title={user?.fullName}
-          >
-            {user?.fullName}
-          </h3>
-          <Link
-            href="/user/account"
-            className="text-gray-500 text-sm flex items-center gap-1 hover:text-[#DB4444] transition-colors"
-          >
-            <svg
-              width="12"
-              height="12"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-            </svg>
-            Edit Profile
-          </Link>
-        </div>
-      </div>
-
-      {/* Menu Items */}
-      <div className="space-y-6">
-        {menuItems.map((item) => (
-          <div key={item.name}>
-            {/* Main Menu Item */}
-            <Link
-              href={item.path}
-              className={`flex items-center gap-2 font-medium cursor-pointer mb-2 transition-colors ${
-                isActiveMenu(item)
-                  ? "text-[#DB4444]"
-                  : "text-black hover:text-[#DB4444]"
-              }`}
-            >
-              {item.icon}
-              <span>{item.name}</span>
-            </Link>
-
-            {/* Submenu Items */}
-            {item.subItems.length > 0 && isActiveMenu(item) && (
-              <div className="ml-7 flex flex-col gap-2">
-                {item.subItems.map((sub) => (
-                  <div
-                    key={sub.name}
-                    onClick={() => router.push(sub.path)}
-                    className={`flex items-center gap-2 text-sm cursor-pointer transition-colors ${
-                      isActiveSubmenu(sub)
-                        ? "text-[#DB4444]"
-                        : "text-gray-500 hover:text-[#DB4444]"
-                    }`}
-                  >
-                    {sub.icon}
-                    <span>{sub.name}</span>
-                  </div>
-                ))}
-              </div>
-            )}
+    <>
+      {contextHolder}
+      <div className="w-full md:w-62.5 shrink-0">
+        {/* User Profile Section */}
+        <div className="flex items-center gap-3 mb-8 px-2">
+          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center border border-gray-300">
+            <UserIcon className="w-6 h-6 text-gray-500" />
           </div>
-        ))}
+          <div>
+            <h3
+              className="font-bold text-black truncate w-32"
+              title={user?.fullName}
+            >
+              {user?.fullName}
+            </h3>
+            <Link
+              href="/user/account"
+              className="text-gray-500 text-sm flex items-center gap-1 hover:text-[#DB4444] transition-colors"
+            >
+              <svg
+                width="12"
+                height="12"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              Edit Profile
+            </Link>
+          </div>
+        </div>
 
-        {/* Logout Button */}
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-2 font-medium cursor-pointer text-gray-600 hover:text-red-600 transition-colors w-full"
-        >
-          <LogOutIcon className="w-5 h-5" />
-          <span>Logout</span>
-        </button>
+        {/* Menu Items */}
+        <div className="space-y-6">
+          {menuItems.map((item) => (
+            <div key={item.name}>
+              {/* Main Menu Item */}
+              <Link
+                href={item.path}
+                className={`flex items-center gap-2 font-medium cursor-pointer mb-2 transition-colors ${
+                  isActiveMenu(item)
+                    ? "text-[#DB4444]"
+                    : "text-black hover:text-[#DB4444]"
+                }`}
+              >
+                {item.icon}
+                <span>{item.name}</span>
+              </Link>
+
+              {/* Submenu Items */}
+              {item.subItems.length > 0 && isActiveMenu(item) && (
+                <div className="ml-7 flex flex-col gap-2">
+                  {item.subItems.map((sub) => (
+                    <div
+                      key={sub.name}
+                      onClick={() => router.push(sub.path)}
+                      className={`flex items-center gap-2 text-sm cursor-pointer transition-colors ${
+                        isActiveSubmenu(sub)
+                          ? "text-[#DB4444]"
+                          : "text-gray-500 hover:text-[#DB4444]"
+                      }`}
+                    >
+                      {sub.icon}
+                      <span>{sub.name}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 font-medium cursor-pointer text-gray-600 hover:text-red-600 transition-colors w-full"
+          >
+            <LogOutIcon className="w-5 h-5" />
+            <span>Logout</span>
+          </button>
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

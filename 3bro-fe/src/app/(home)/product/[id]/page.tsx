@@ -49,7 +49,7 @@ const SingleProduct = () => {
     four: 0,
     five: 0,
   });
-
+  
   // Fetch product
   useEffect(() => {
     if (!id) return;

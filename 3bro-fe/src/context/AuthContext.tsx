@@ -14,6 +14,7 @@ import { LoginRequest } from "@/models/LoginRequest";
 import { User } from "@/models/User";
 import { useRouter } from "next/navigation";
 import { notification } from "antd";
+import { ApiResponse } from "@/models/ApiResponse";
 
 type AuthContextType = {
   authorized: boolean;
@@ -23,7 +24,7 @@ type AuthContextType = {
   contextHolder: ReactElement<unknown, string | JSXElementConstructor<any>>;
   login: (data: LoginRequest) => Promise<void>;
   logout: () => Promise<void>;
-  loginWithGoogle: (idToken: string) => Promise<void>;
+  loginWithGoogle: (idToken: string) => Promise<string>;
   refreshAuth: () => Promise<void>;
 };
 
@@ -36,22 +37,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
 
-  const isAdmin = user?.roleList?.includes("Admin") ?? false;
-
+  const [isAdmin, setIsAdmin] = useState(false);
   const refreshAuth = useCallback(async () => {
     try {
-      const res = await userService.getMe();
+      const res: ApiResponse<User> = await userService.getMe();
+
       if (res.code === "200" && res.object) {
         setAuthorized(true);
         setUser(res.object);
-        console.log("Auth refreshed, user:", res.object);
+
+        const admin = res.object.roleList?.includes("Admin") ?? false;
+        setIsAdmin(admin);
+
+        console.log("Roles:", res.object.roleList);
       } else {
         setAuthorized(false);
+        setIsAdmin(false);
         setUser(null);
       }
     } catch (error) {
       console.log("Refresh auth failed:", error);
       setAuthorized(false);
+      setIsAdmin(false);
       setUser(null);
     } finally {
       setLoading(false);
@@ -64,7 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (res.code !== "200") {
         throw new Error(res.message);
       }
-
+      console.log(res);
       api.success({
         title: "Success",
         description: "Login successfully",
@@ -88,25 +95,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (res.code === "201") {
         router.push("/setup-password");
-      } else if (res.code === "200") {
+        return "SETUP_PASSWORD";
+      }
+
+      if (res.code === "200") {
         api.success({
           title: "Success",
           description: "Login successfully",
           duration: 2,
         });
         await refreshAuth();
-      } else
-        (err: any) => {
-          api.error({
-            title: "Login with Google error",
-            description:
-              err.response?.data?.message || err.message || "Login failed",
-            duration: 2,
-          });
-        };
-    } catch (error: any) {
-      console.error("Google login error:", error);
-      throw error;
+        return "LOGIN_SUCCESS";
+      }
+
+      throw new Error("Unexpected login response");
+    } catch (err: any) {
+      api.error({
+        title: "Login with Google error",
+        description:
+          err.response?.data?.message || err.message || "Login failed",
+        duration: 2,
+      });
+      throw err;
     }
   };
 
@@ -115,25 +125,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const res = await AuthService.logout();
       if (res.code !== "200") {
         throw new Error(res.message);
-      } else if (res.code === "200") {
-        api.success({
-          title: "Success",
-          description: "Logout successfully",
-          duration: 2,
-        });
-        setAuthorized(false);
-        setUser(null);
-        await refreshAuth();
-
-        console.log("Logout successful", res);
       }
+
+      setAuthorized(false);
+      setUser(null);
+      await refreshAuth();
+
+      console.log("Logout successful", res);
     } catch (error: any) {
       console.error("Logout error:", error);
-      api.error({
-        title: "Logout error",
-        description: error.message || "Logout failed",
-        duration: 2,
-      });
       throw error;
     }
   };

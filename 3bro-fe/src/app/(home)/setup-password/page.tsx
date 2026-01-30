@@ -93,8 +93,8 @@ const SetupPassword: React.FC = () => {
   return (
     <>
       {contextHolder}
-      <div className="max-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-6xl w-full">
+      <div className="h-[80vh] bg-gray-50 flex items-center justify-center p-4">
+        <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-6xl w-full h-[50vh]">
           {/* Left Side */}
           <div className="w-2/3 p-12 items-center justify-center hidden md:flex">
             <div className="relative w-full h-full">

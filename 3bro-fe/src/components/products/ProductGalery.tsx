@@ -10,6 +10,7 @@ import { cartService } from "@/services/cart.service";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
 import { a } from "framer-motion/client";
+import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
 
 export default function ProductGallery({
   product,
@@ -20,9 +21,16 @@ export default function ProductGallery({
 }) {
   const getFirstImage = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return "/blank.jpg";
-    return imageUrl.startsWith("http")
-      ? imageUrl
-      : `https://localhost:7041${imageUrl}`;
+
+    // Nếu đã là URL đầy đủ (http hoặc https), trả về trực tiếp
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+
+    // Nếu là đường dẫn tương đối, thêm base URL
+    const baseUrl = "https://localhost:7041";
+    const path = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+    return `${baseUrl}${path}`;
   };
 
   const [active, setActive] = useState(getFirstImage(product.imageUrl));
@@ -33,6 +41,7 @@ export default function ProductGallery({
   const stockStatus = isInStock ? "In Stock" : "Out of Stock";
   const stockColor = isInStock ? "text-green-500" : "text-red-500";
   const [api, contextHolder] = notification.useNotification();
+  const { authorized } = useAuth();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -43,6 +52,7 @@ export default function ProductGallery({
   };
 
   const hadleAddToCart = async () => {
+    if (!authorized) return router.push("/login");
     try {
       const res: ApiResponse<any> = await cartService.addCart(
         product.id,
@@ -96,12 +106,10 @@ export default function ProductGallery({
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <Image
+                  <img
                     src={getFirstImage(product.imageUrl)}
                     alt={product.productName}
-                    width={100}
-                    height={100}
-                    className=" object-cover"
+                    className="w-full h-full object-cover"
                   />
                 </button>
 
@@ -117,7 +125,7 @@ export default function ProductGallery({
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <Image
+                      <img
                         src={getFirstImage(img.imageUrl)}
                         alt={`${product.productName} - ${img.id}`}
                         className="w-full h-full object-cover"
@@ -126,12 +134,19 @@ export default function ProductGallery({
                   ))}
               </div>
 
-              {/* Main Image */}
+              {/* Main Image - Chỉ ảnh này mới có thể zoom */}
               <div className="flex-1 bg-linear-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                <img
+                <Image
                   src={active}
                   alt={product.productName}
-                  className="w-full h-full object-contain "
+                  className="w-full h-full object-cover"
+                  preview={{
+                    cover: (
+                      <div className="flex items-center justify-center text-white text-xl">
+                        <ZoomInOutlined />
+                      </div>
+                    ),
+                  }}
                 />
               </div>
             </div>

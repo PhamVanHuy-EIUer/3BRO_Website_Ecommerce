@@ -12,4 +12,6 @@ export const userService = {
     deleteUser: (id: string) => axiosClient.delete(`/Users/${id}`).then(res => res.data),
     changePassword: (updatePassword: ResetPassword) => axiosClient.put(`/Users/change-password`, updatePassword, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
     updateProfile: (updateProfile: UpdateProfile) => axiosClient.put(`/Users/by-user`, updateProfile, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    forgetPassword: (email: string) => axiosClient.post(`/Users/forget-password?email=${email}`),
+    updateForForgetPassword: (email: string, password: string, activationCodeCode: string) => axiosClient.post(`/Users/update-pass`, { email, password, activationCodeCode }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
 };

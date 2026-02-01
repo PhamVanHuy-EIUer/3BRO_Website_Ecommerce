@@ -72,6 +72,7 @@ namespace Ecommerce3BRO.Controllers
                     return NotFound("Payment not found");
                 }
                 findPayment.Status = 1;
+                findPayment.PaymentDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
             return Ok();

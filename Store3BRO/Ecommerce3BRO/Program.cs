@@ -1,4 +1,5 @@
 ﻿using Ecommerce3BRO.Data;
+using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Repository.Implement;
 using Ecommerce3BRO.Service;
@@ -34,9 +35,13 @@ builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 builder.Services.AddScoped<IShipmentRepository, ShipmentRepository>();
 builder.Services.AddScoped<ISupportRepository, SupportRepository>();
+builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<ShopLocation>();
+builder.Services.AddHttpClient<IMomoService, MomoService>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
+builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("Momo"));
 builder.Services.AddDbContext<Ecommerce3BROContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddSwaggerGen(c =>
 {

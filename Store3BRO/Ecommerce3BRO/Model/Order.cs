@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Ecommerce3BRO.Model;
 
 [Table("Order")]
-public partial class Order
+public  class Order
 {
     [Key]
     public Guid Id { get; set; }
@@ -19,6 +19,8 @@ public partial class Order
     public decimal TotalAmount { get; set; }
 
     [StringLength(50)]
+    [RegularExpression("^(Transfer|Cash)$",
+        ErrorMessage = "Payment methods accepted are bank transfer or cash.")]
     public string PaymentMethod { get; set; }
 
     public int? Status { get; set; }

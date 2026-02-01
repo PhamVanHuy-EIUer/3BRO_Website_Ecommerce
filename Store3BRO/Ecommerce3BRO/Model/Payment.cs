@@ -13,7 +13,7 @@ public partial class Payment
 
     public Guid OrderId { get; set; }
 
-    public DateTime PaymentDate { get; set; }
+    public DateTime? PaymentDate { get; set; }
 
     [Column(TypeName = "decimal(10, 2)")]
     public decimal Amount { get; set; }

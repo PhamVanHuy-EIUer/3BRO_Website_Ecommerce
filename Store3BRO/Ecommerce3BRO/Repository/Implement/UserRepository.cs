@@ -398,7 +398,7 @@ namespace Ecommerce3BRO.Repository.Implement
             return true;
         }
 
-        public async Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UserDTO user)
+        public async Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UpdateUserDTO user)
         {
 
             var findUser = await _context.User.FindAsync(id);
@@ -407,7 +407,6 @@ namespace Ecommerce3BRO.Repository.Implement
                 return null;
             }
             findUser.CreatedDate = DateTime.Now;
-            findUser.Email = user.Email;
             findUser.Address = user.Address;
             findUser.Phone = user.Phone;
             findUser.FullName = user.FullName;

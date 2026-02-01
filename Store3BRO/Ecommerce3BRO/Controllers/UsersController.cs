@@ -149,7 +149,7 @@ namespace Ecommerce3BRO.Controllers
         //update user by admin
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ApiResponse<GetUserDTO>> UpdateUser([FromRoute] Guid id, [FromBody] UserDTO user)
+        public async Task<ApiResponse<GetUserDTO>> UpdateUser([FromRoute] Guid id, [FromBody] UpdateUserDTO user)
         {
             if (!ModelState.IsValid)
             {
@@ -224,7 +224,7 @@ namespace Ecommerce3BRO.Controllers
         // update infor by user
         [HttpPut("by-user")]
         [Authorize]
-        public async Task<ApiResponse<GetUserDTO>> UpdateInfoByUser([FromBody] UserDTO user)
+        public async Task<ApiResponse<GetUserDTO>> UpdateInfoByUser([FromBody] UpdateUserDTO user)
         {
             if (!ModelState.IsValid)
             {

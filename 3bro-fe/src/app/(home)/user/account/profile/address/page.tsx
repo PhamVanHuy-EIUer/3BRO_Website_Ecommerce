@@ -91,7 +91,9 @@ export default function AddressPage() {
       phoneNumber: user?.phone || prev.phoneNumber,
       email: user?.email || prev.email,
     }));
+
     if (!user?.address) return;
+    setAddress(user.address);
 
     const parsed = parseVNAddress(user.address);
     if (!parsed) return;
@@ -116,11 +118,42 @@ export default function AddressPage() {
     }
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const { latitude: lat, longitude: lng } = position.coords;
         setLatitude(lat);
         setLongtitude(lng);
-        setIsLoadingLocation(false);
+
+        // Gọi reverse geocoding để lấy địa chỉ từ tọa độ
+        try {
+          const res = await fetch(
+            `/api/nominatim/reverse?lat=${lat}&lon=${lng}`,
+          );
+
+          if (!res.ok) throw new Error("Reverse geocoding failed");
+
+          const data = await res.json();
+
+          if (data && data.display_name) {
+            setAddress(data.display_name);
+
+            // Parse địa chỉ và cập nhật form
+            const parsed = parseVNAddress(data.display_name);
+            if (parsed) {
+              setFormData((prev) => ({
+                ...prev,
+                detailedAddress: parsed.detailedAddress,
+                ward: parsed.ward,
+                district: parsed.district,
+                city: parsed.city || prev.city,
+              }));
+            }
+          }
+        } catch (err) {
+          console.error("Error getting address from coordinates:", err);
+          // Vẫn giữ tọa độ ngay cả khi không lấy được địa chỉ
+        } finally {
+          setIsLoadingLocation(false);
+        }
       },
       (error) => {
         let errorMessage = "";
@@ -150,17 +183,17 @@ export default function AddressPage() {
     );
   };
 
-  const handleUpdateUser = async () => {
-    // const newProfile: UpdateProfile = {
-    //   fullName: formData.fullName,
-    //   phone: formData.phoneNumber,
-    //   address: address,
-    //   latitude: latitude,
-    //   longtitude: longtitude,
-    // };
-    // const res: ApiResponse<UpdateProfile> =
-    // await userService.updateProfileByUser(newProfile);
-  };
+  // const handleUpdateUser = async () => {
+  //   const newProfile: UpdateProfile = {
+  //     fullName: formData.fullName,
+  //     phone: formData.phoneNumber,
+  //     address: address,
+  //     latitude: latitude,
+  //     longtitude: longtitude,
+  //   };
+  //   const res: ApiResponse<UpdateProfile> =
+  //     await userService.updateProfileByUser(newProfile);
+  // };
   const handleInputChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -228,22 +261,30 @@ export default function AddressPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const finalCity =
-      formData.city === "Khác" ? formData.customCity : formData.city;
-
-    const fullAddressData = {
-      ...formData,
-      city: finalCity,
+    const newProfile: UpdateProfile = {
+      fullName: formData.fullName,
+      phone: formData.phoneNumber,
       address: address,
       latitude: latitude,
       longtitude: longtitude,
     };
+    try {
+      const res: ApiResponse<UpdateProfile> =
+        await userService.updateProfileByUser(newProfile);
 
-    console.log("Thông tin địa chỉ:", fullAddressData);
-    alert("Đã lưu địa chỉ thành công! (Xem console để kiểm tra)");
+      if (res.isSuccess) {
+        api.success({
+          title: "Thành công",
+          description: "Caập nhat thong tin thanh cong",
+          duration: 2,
+        });
+        refreshAuth();
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -380,7 +421,6 @@ export default function AddressPage() {
                     name="district"
                     value={formData.district}
                     onChange={handleInputChange}
-                    required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Quận 1"
                   />
@@ -496,7 +536,7 @@ export default function AddressPage() {
                 type="submit"
                 className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 transition-colors font-medium"
               >
-                Lưu địa chỉ
+                Update
               </button>
             </form>
           </div>

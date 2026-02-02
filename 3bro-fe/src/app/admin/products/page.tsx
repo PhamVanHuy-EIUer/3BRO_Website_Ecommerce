@@ -144,7 +144,7 @@ export default function ProductAdmin() {
   // Define columns for Ant Design Table
   const columns: ColumnsType<Product> = [
     {
-      title: "Hình ảnh",
+      title: "Image",
       dataIndex: "imageUrl",
       key: "imageUrl",
       width: 100,
@@ -157,7 +157,7 @@ export default function ProductAdmin() {
       ),
     },
     {
-      title: "Tên sản phẩm",
+      title: "Product Name",
       dataIndex: "productName",
       key: "productName",
       sorter: (a, b) => a.productName.localeCompare(b.productName),
@@ -171,7 +171,7 @@ export default function ProductAdmin() {
       ),
     },
     {
-      title: "Danh mục",
+      title: "Category",
       dataIndex: "categoryName",
       key: "categoryName",
       render: (text: string) => (
@@ -181,7 +181,7 @@ export default function ProductAdmin() {
       ),
     },
     {
-      title: "Giá",
+      title: "Price",
       dataIndex: "price",
       key: "price",
       sorter: (a, b) => a.price - b.price,
@@ -192,28 +192,28 @@ export default function ProductAdmin() {
       ),
     },
     {
-      title: "Tồn kho",
+      title: "Stock",
       dataIndex: "stock",
       key: "stock",
       sorter: (a, b) => a.stock - b.stock,
       render: (stock: number) => (
         <Tag color={stock > 0 ? "green" : "red"}>
-          {stock > 0 ? `${stock}` : "Hết hàng"}
+          {stock > 0 ? `${stock}` : "Out of Stock"}
         </Tag>
       ),
     },
     {
-      title: "Trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       render: (status: number) => (
         <Tag color={status === 1 ? "green" : "red"}>
-          {status === 1 ? "Hoạt động" : "Ngừng bán"}
+          {status === 1 ? "Active" : "Inactive"}
         </Tag>
       ),
     },
     {
-      title: "Thao tác",
+      title: "Actions",
       key: "action",
       width: 150,
       render: (_, record) => (
@@ -412,8 +412,8 @@ export default function ProductAdmin() {
     } catch (error) {
       console.error("Error updating product:", error);
       api.error({
-        message: "Lỗi",
-        description: "Không thể cập nhật sản phẩm. Vui lòng thử lại.",
+        message: "Error",
+        description: "Cannot update product. Please try again.",
         duration: 2,
       });
     }
@@ -428,16 +428,16 @@ export default function ProductAdmin() {
       setShowDeleteModal(false);
       setSelectedProduct(null);
       api.success({
-        message: "Thành công",
-        description: "Xóa sản phẩm thành công",
+        message: "Success",
+        description: "Delete product successfully",
         duration: 2,
       });
       loadProducts();
     } catch (error) {
       console.error("Error deleting product:", error);
       api.error({
-        message: "Lỗi",
-        description: "Không thể xóa sản phẩm. Vui lòng thử lại.",
+        message: "Error",
+        description: "Cannot delete product. Please try again.",
         duration: 2,
       });
     }
@@ -545,7 +545,7 @@ export default function ProductAdmin() {
               pagination={{
                 pageSize: pageSize,
                 showSizeChanger: true,
-                showTotal: (total) => `Tổng ${total} sản phẩm`,
+                showTotal: (total) => `Total ${total} products`,
                 pageSizeOptions: ["5", "10", "20", "50", "100"],
                 onShowSizeChange: (current, size) => setPageSize(size),
               }}
@@ -569,7 +569,7 @@ export default function ProductAdmin() {
                 {/* Product Name */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Tên Sản Phẩm *
+                    Product Name *
                   </label>
                   <input
                     type="text"
@@ -581,14 +581,14 @@ export default function ProductAdmin() {
                       })
                     }
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-                    placeholder="Nhập tên sản phẩm"
+                    placeholder="Enter product name"
                   />
                 </div>
 
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Mô Tả
+                    Description
                   </label>
                   <textarea
                     value={newProduct.description}
@@ -600,7 +600,7 @@ export default function ProductAdmin() {
                     }
                     rows={4}
                     className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all resize-none"
-                    placeholder="Nhập mô tả sản phẩm"
+                    placeholder="Enter product description"
                   />
                 </div>
 
@@ -608,7 +608,7 @@ export default function ProductAdmin() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Giá *
+                      Price *
                     </label>
                     <input
                       type="number"
@@ -622,7 +622,7 @@ export default function ProductAdmin() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Số Lượng *
+                      Quantity *
                     </label>
                     <input
                       type="number"
@@ -639,10 +639,10 @@ export default function ProductAdmin() {
                 {/* Category */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Danh Mục *
+                    Category *
                   </label>
                   <Select
-                    placeholder="Chọn danh mục"
+                    placeholder="Select category"
                     value={newProduct.categoryId || undefined}
                     onChange={(value) =>
                       setNewProduct({ ...newProduct, categoryId: value })
@@ -666,7 +666,7 @@ export default function ProductAdmin() {
                 {/* Main Image */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Ảnh Chính *
+                    Main Image *
                   </label>
                   <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-blue-500 transition-colors">
                     {mainImagePreview ? (
@@ -687,7 +687,7 @@ export default function ProductAdmin() {
                             }}
                             className="text-red-600 text-sm font-medium hover:underline"
                           >
-                            Xóa ảnh
+                            Remove image
                           </button>
                         </div>
                       </div>
@@ -695,7 +695,7 @@ export default function ProductAdmin() {
                       <label className="flex flex-col items-center gap-2 cursor-pointer">
                         <Upload size={40} className="text-slate-400" />
                         <span className="text-sm font-medium text-slate-600">
-                          Click để chọn ảnh chính
+                          Click to select main image
                         </span>
                         <input
                           type="file"
@@ -711,14 +711,14 @@ export default function ProductAdmin() {
                 {/* Additional Images */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Ảnh Bổ Sung
+                    Additional Images
                   </label>
                   <div className="space-y-4">
                     <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-blue-500 transition-colors">
                       <label className="flex flex-col items-center gap-2 cursor-pointer">
                         <ImageIcon size={40} className="text-slate-400" />
                         <span className="text-sm font-medium text-slate-600">
-                          Click để thêm nhiều ảnh
+                          Click to add multiple images
                         </span>
                         <input
                           type="file"
@@ -758,7 +758,7 @@ export default function ProductAdmin() {
                     onClick={handleAddProduct}
                     className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
                   >
-                    Thêm Sản Phẩm
+                    Add Product
                   </button>
                   <button
                     onClick={() => {
@@ -767,7 +767,7 @@ export default function ProductAdmin() {
                     }}
                     className="px-6 py-3 border border-slate-300 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
                   >
-                    Hủy
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -783,14 +783,14 @@ export default function ProductAdmin() {
                 <div className="p-3 bg-white/20 rounded-full">
                   <Edit size={24} />
                 </div>
-                <h2 className="text-2xl font-bold">Chỉnh Sửa Sản Phẩm</h2>
+                <h2 className="text-2xl font-bold">Edit Product</h2>
               </div>
 
               <div className="p-6 space-y-6 max-h-[calc(100vh-200px)] overflow-y-auto">
                 {/* Product Name */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Tên Sản Phẩm *
+                    Product Name *
                   </label>
                   <input
                     type="text"
@@ -808,7 +808,7 @@ export default function ProductAdmin() {
                 {/* Description */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Mô Tả
+                    Description
                   </label>
                   <textarea
                     value={editProduct.description}
@@ -827,7 +827,7 @@ export default function ProductAdmin() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Giá *
+                      Price *
                     </label>
                     <input
                       type="number"
@@ -843,7 +843,7 @@ export default function ProductAdmin() {
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Số Lượng *
+                      Quantity *
                     </label>
                     <input
                       type="number"
@@ -862,10 +862,10 @@ export default function ProductAdmin() {
                 {/* Category */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Danh Mục *
+                    Category *
                   </label>
                   <Select
-                    placeholder="Chọn danh mục"
+                    placeholder="Select category"
                     value={editProduct.categoryName}
                     onChange={(value) => {
                       const category = categories.find((c) => c.id === value);
@@ -894,7 +894,7 @@ export default function ProductAdmin() {
                 {/* Update Main Image */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Cập Nhật Ảnh Chính
+                    Update Main Image
                   </label>
                   <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 hover:border-blue-500 transition-colors">
                     <div className="flex items-center gap-4">
@@ -911,8 +911,8 @@ export default function ProductAdmin() {
                         <Upload size={32} className="text-slate-400" />
                         <span className="text-sm font-medium text-slate-600">
                           {editMainImage
-                            ? "Ảnh mới đã chọn"
-                            : "Click để đổi ảnh chính"}
+                            ? "New image selected"
+                            : "Click to change main image"}
                         </span>
                         <input
                           type="file"
@@ -929,7 +929,7 @@ export default function ProductAdmin() {
                 {productImages.length > 0 && (
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Ảnh Hiện Tại
+                      Current Images
                     </label>
                     <div className="grid grid-cols-4 gap-4">
                       {productImages.map((img) => (
@@ -954,14 +954,14 @@ export default function ProductAdmin() {
                 {/* Add New Images */}
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-2">
-                    Thêm Ảnh Mới
+                    Add New Images
                   </label>
                   <div className="space-y-4">
                     <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-blue-500 transition-colors">
                       <label className="flex flex-col items-center gap-2 cursor-pointer">
                         <ImageIcon size={40} className="text-slate-400" />
                         <span className="text-sm font-medium text-slate-600">
-                          Click để thêm nhiều ảnh
+                          Click to add multiple images
                         </span>
                         <input
                           type="file"
@@ -1001,7 +1001,7 @@ export default function ProductAdmin() {
                     onClick={handleUpdateProduct}
                     className="flex-1 bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
                   >
-                    Cập Nhật
+                    Update
                   </button>
                   <button
                     onClick={() => {
@@ -1011,7 +1011,7 @@ export default function ProductAdmin() {
                     }}
                     className="px-6 py-3 border border-slate-300 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
                   >
-                    Hủy
+                    Cancel
                   </button>
                 </div>
               </div>
@@ -1027,7 +1027,7 @@ export default function ProductAdmin() {
                 <div className="p-3 bg-white/20 rounded-full">
                   <Trash2 size={24} />
                 </div>
-                <h2 className="text-2xl font-bold">Xác Nhận Xóa</h2>
+                <h2 className="text-2xl font-bold">Confirm Delete</h2>
               </div>
 
               <div className="p-6 space-y-6">
@@ -1048,10 +1048,11 @@ export default function ProductAdmin() {
                       </p>
                       <div className="flex items-center gap-4 text-sm">
                         <span className="font-semibold text-slate-700">
-                          Giá: {selectedProduct.price.toLocaleString("vi-VN")}đ
+                          Price: {selectedProduct.price.toLocaleString("vi-VN")}
+                          đ
                         </span>
                         <span className="font-semibold text-slate-700">
-                          Tồn: {selectedProduct.stock}
+                          Stock: {selectedProduct.stock}
                         </span>
                       </div>
                     </div>
@@ -1063,8 +1064,8 @@ export default function ProductAdmin() {
                     <Eye size={24} className="text-red-600" />
                   </div>
                   <p className="text-sm text-red-800">
-                    <strong>Cảnh báo:</strong> Bạn có chắc chắn muốn xóa sản
-                    phẩm này? Hành động này không thể hoàn tác.
+                    <strong>Warning:</strong> Are you sure you want to delete
+                    this product? This action cannot be undo.
                   </p>
                 </div>
 
@@ -1074,7 +1075,7 @@ export default function ProductAdmin() {
                     onClick={handleDeleteProduct}
                     className="flex-1 bg-gradient-to-r from-red-600 to-orange-600 text-white py-3 rounded-xl font-semibold hover:shadow-lg transition-all"
                   >
-                    Xóa Sản Phẩm
+                    Delete Product
                   </button>
                   <button
                     onClick={() => {
@@ -1083,7 +1084,7 @@ export default function ProductAdmin() {
                     }}
                     className="px-6 py-3 border border-slate-300 rounded-xl font-semibold hover:bg-slate-50 transition-colors"
                   >
-                    Hủy
+                    Cancel
                   </button>
                 </div>
               </div>

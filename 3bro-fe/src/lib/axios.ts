@@ -82,13 +82,13 @@ axiosClient.interceptors.response.use(
     );
 
     // ❌ Không refresh cho public API hoặc không phải 401
-    // if (
-    //   error.response.status !== 401 ||
-    //   originalRequest._retry ||
-    //   isPublicEndpoint
-    // ) {
-    //   return Promise.reject(error);
-    // }
+    if (
+      error.response.status !== 401 ||
+      originalRequest._retry ||
+      isPublicEndpoint
+    ) {
+      return Promise.reject(error);
+    }
 
     originalRequest._retry = true;
 
@@ -113,6 +113,8 @@ axiosClient.interceptors.response.use(
       throw new Error("Refresh token failed");
     } catch (refreshError) {
       processQueue(refreshError, null);
+
+      Router.replace("/login");
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

@@ -30,8 +30,25 @@ namespace Ecommerce3BRO.Controllers
         [HttpPost("momo")]
         public async Task<IActionResult> PayWithMomo(MomoCheckoutRequest request)
         {
-            var order = await _context.Order.FindAsync(request.OrderId);
-
+            var order = await _context.Order
+           .Include(o => o.User)
+           .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+           .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
+           .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount).FirstOrDefaultAsync(o=>o.Id==request.OrderId);
+            var refundPrice = order.OrderDetails
+                  .Where(od => od.IsReturn)
+                  .SelectMany(od => od.Refunds)
+                  .Sum(r => r.RefundAmount);
+            var discountPrice = order.OrderDiscounts
+                   .Where(od => od.IsUsed)
+                   .Sum(od =>
+                       od.Discount.DiscountAmount ??
+                       //(o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                       (od.Discount.MaxDiscountAmount.HasValue
+                           ? Math.Min(order.TotalAmount * od.Discount.DiscountPercent.Value / 100, od.Discount.MaxDiscountAmount.Value)
+                           : order.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                   );
+            var total = order.TotalAmount - discountPrice - refundPrice + order.ShippingFee;
             if (order == null)
                 return BadRequest("Order not found");
 
@@ -40,7 +57,7 @@ namespace Ecommerce3BRO.Controllers
 
             var momoResponse = await _momoService.CreatePaymentAsync(
                 order.Id,
-                order.TotalAmount,
+                total,
                 $"Pay order {order.Id} by 3BRO Store"
             );
 

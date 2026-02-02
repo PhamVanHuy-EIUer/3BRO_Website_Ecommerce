@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Radio,
@@ -28,6 +28,7 @@ import {
   CheckCircleOutlined,
   CloseCircleOutlined,
   CreditCardOutlined,
+  LoadingOutlined,
 } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
@@ -166,6 +167,7 @@ const paymentMethods: PaymentMethod[] = [
 ];
 
 const PaymentUser: React.FC = () => {
+  const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [selectedAddress] = useState<Address>(fakeAddress);
   const [shippingMethod, setShippingMethod] = useState<string>("standard");
   const [paymentMethod, setPaymentMethod] = useState<string>("cod");
@@ -174,7 +176,15 @@ const PaymentUser: React.FC = () => {
     useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
-  const { Text } = Typography;
+
+  // Simulate page loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setPageLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Calculate totals
   const subtotal = fakeProducts.reduce(
@@ -288,6 +298,29 @@ const PaymentUser: React.FC = () => {
     // In real app, redirect to order history or home
   };
 
+  // Page Loading Screen
+  if (pageLoading) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          background: "linear-gradient(135deg, #f5f7fa 0%, #fef5e7 100%)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: 24,
+        }}
+      >
+        <Spin
+          indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />}
+          size="large"
+        />
+        <Text style={{ fontSize: 16, color: "#8c8c8c" }}>Loading Page...</Text>
+      </div>
+    );
+  }
+
   if (orderResult) {
     return (
       <div
@@ -397,7 +430,6 @@ const PaymentUser: React.FC = () => {
           level={2}
           style={{
             margin: 0,
-            fontFamily: '"Playfair Display", serif',
             background: "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
@@ -783,7 +815,15 @@ const PaymentUser: React.FC = () => {
       <Modal
         title={
           <Space>
-            <GiftOutlined style={{ color: "#d4380d", fontSize: 20 }} />
+            <GiftOutlined
+              style={{
+                color: "#d4380d",
+                fontSize: 20,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            />
             <Text strong style={{ fontSize: 18 }}>
               Chọn mã giảm giá
             </Text>
@@ -795,25 +835,25 @@ const PaymentUser: React.FC = () => {
         width={600}
         style={{ borderRadius: 16 }}
       >
-        <List
-          dataSource={vouchers}
-          renderItem={(voucher: Voucher) => (
-            <List.Item style={{ padding: 0, marginBottom: 16 }}>
+        <Space orientation="vertical" size={16} style={{ width: "100%" }}>
+          {vouchers.map((voucher: Voucher) => {
+            const isSelected = selectedVoucher?.code === voucher.code;
+
+            return (
               <Card
+                key={voucher.code}
                 hoverable
                 onClick={() => handleSelectVoucher(voucher)}
                 style={{
                   width: "100%",
-                  border:
-                    selectedVoucher?.code === voucher.code
-                      ? "2px solid #d4380d"
-                      : "2px solid #f0f0f0",
+                  border: isSelected
+                    ? "2px solid #d4380d"
+                    : "2px solid #f0f0f0",
                   borderRadius: 12,
-                  background:
-                    selectedVoucher?.code === voucher.code ? "#fff4e6" : "#fff",
+                  background: isSelected ? "#fff4e6" : "#fff",
+                  cursor: "pointer",
                   transition: "all 0.3s",
                 }}
-                bodyStyle={{ padding: 16 }}
               >
                 <Space
                   orientation="vertical"
@@ -837,31 +877,34 @@ const PaymentUser: React.FC = () => {
                     >
                       {voucher.code}
                     </Tag>
-                    {selectedVoucher?.code === voucher.code && (
+
+                    {isSelected && (
                       <CheckCircleOutlined
                         style={{ color: "#52c41a", fontSize: 20 }}
                       />
                     )}
                   </div>
+
                   <Text strong style={{ fontSize: 16 }}>
                     {voucher.description}
                   </Text>
+
                   <Text type="secondary" style={{ fontSize: 13 }}>
                     Điều kiện: {voucher.condition}
                   </Text>
                 </Space>
               </Card>
-            </List.Item>
-          )}
-        />
+            );
+          })}
+        </Space>
       </Modal>
 
       {/* Global Styles */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         
         * {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
         }
         
         .ant-card-head-title {

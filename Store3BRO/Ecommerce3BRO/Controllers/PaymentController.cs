@@ -35,6 +35,14 @@ namespace Ecommerce3BRO.Controllers
            .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
            .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
            .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount).FirstOrDefaultAsync(o=>o.Id==request.OrderId);
+            var findPayment = await _context.Payment.FirstOrDefaultAsync(p => p.OrderId == order.Id);
+            if (findPayment.PayUrl!=null&&findPayment.ExpiredUrlTime>DateTime.UtcNow)
+            {
+                return Ok(new
+                {
+                    payUrl = findPayment.PayUrl
+                });
+            }
             var refundPrice = order.OrderDetails
                   .Where(od => od.IsReturn)
                   .SelectMany(od => od.Refunds)
@@ -63,7 +71,10 @@ namespace Ecommerce3BRO.Controllers
 
             if (momoResponse.ResultCode != 0)
                 return BadRequest(momoResponse.Message);
-
+           
+            findPayment.PayUrl = momoResponse.PayUrl;
+            findPayment.ExpiredUrlTime = DateTime.UtcNow.AddHours(1).AddMinutes(40);
+            await _context.SaveChangesAsync();
             return Ok(new
             {
                 payUrl = momoResponse.PayUrl

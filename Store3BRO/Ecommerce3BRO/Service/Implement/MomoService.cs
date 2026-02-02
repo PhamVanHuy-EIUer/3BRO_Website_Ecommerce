@@ -23,7 +23,6 @@ namespace Ecommerce3BRO.Service.Implement
             string orderInfo)
         {
             var requestId = Guid.NewGuid().ToString("N");
-
             var rawData =
                 $"accessKey={_options.AccessKey}" +
                 $"&amount={(long)amount}" +

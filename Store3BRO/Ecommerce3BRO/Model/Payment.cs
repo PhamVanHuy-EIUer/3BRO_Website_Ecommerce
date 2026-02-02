@@ -31,4 +31,6 @@ public partial class Payment
     [ForeignKey("OrderId")]
     
     public  Order? Order { get; set; }
+    public string? PayUrl { get; set; }
+    public DateTime? ExpiredUrlTime { get; set; }
 }

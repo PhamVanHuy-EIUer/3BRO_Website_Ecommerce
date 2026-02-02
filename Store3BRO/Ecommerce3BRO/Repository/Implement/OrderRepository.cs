@@ -74,7 +74,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 }
                 totalAmount += orderDetail.Quantity * orderDetail.UnitPrice;
             }
-            newOrder.TotalAmount = totalAmount + newOrder.ShippingFee;
+            newOrder.TotalAmount = totalAmount;
             await _context.Order.AddAsync(newOrder);
             await _context.SaveChangesAsync();
             if (order.DiscountId != null)

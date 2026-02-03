@@ -34,7 +34,6 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             await _context.SaveChangesAsync();
             return userDTO;
-
         }
 
         public async Task<GetUserDTO?> AddNewUserAsync(UserDTO user)
@@ -263,8 +262,7 @@ namespace Ecommerce3BRO.Repository.Implement
            CreatedDate = u.CreatedDate,
            FullName = u.FullName,
            Phone = u.Phone
-       })
-       .ToListAsync();
+       }).ToListAsync();
             return listOfPage;
         }
 
@@ -432,7 +430,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 {
                     UserId = findUser.Id,
                     Latitude = user.Latitude,
-                    Longitude = user.Longitude,
+                    Longitude = user.Longtitude,
                     CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 };
@@ -442,7 +440,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 findUserLocation.CreatedDate = DateTime.Now;
                 findUserLocation.Latitude = user.Latitude;
-                findUserLocation.Longitude = user.Longitude;
+                findUserLocation.Longitude = user.Longtitude;
             }
             try
             {

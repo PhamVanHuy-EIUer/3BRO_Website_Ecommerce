@@ -10,5 +10,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<CartProductDTO>> ShowItemsInCartAsync(Guid userId);
         Task<ApiResponse<decimal>> PreviewTotalPriceAsync(List<CheckOutItemDTO> items);
         Task<ApiResponse<string>> DeleteListProductsInCartAsync(List<DeleteProductInCartDTO> listProducts, Guid userId);
+        Task<ApiResponse<CartProductDTO>> ChangeQuantityProductOfCartItem( Guid cartItemId,int quantity);
     }
 }

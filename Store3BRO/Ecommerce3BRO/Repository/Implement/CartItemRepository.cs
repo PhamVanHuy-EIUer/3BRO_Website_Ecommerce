@@ -62,6 +62,31 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<CartItemDTO>(null, null, "200", "Add item to cart successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task<ApiResponse<CartProductDTO>> ChangeQuantityProductOfCartItem(Guid cartItemId,int quantity)
+        {
+            var findCartItem = await _context.CartItem.Include(ci=>ci.Product).ThenInclude(ci=>ci.Category).FirstOrDefaultAsync(ci=>ci.Id==cartItemId);
+            if (quantity > findCartItem.Product.Stock)
+            {
+                return new ApiResponse<CartProductDTO>(null, null, "400", "Quantity product is out of stock", false, 0, 0, 0, 0, null, null, null);
+            }
+            if (findCartItem == null) {
+                return new ApiResponse<CartProductDTO>(null, null, "404", "Cart Item not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            findCartItem.Quantity = quantity;
+            await _context.SaveChangesAsync();
+            var dto = new CartProductDTO
+            {
+                ProductId = findCartItem.Product.Id,
+                ProductName = findCartItem.Product.ProductName,
+                Price = findCartItem.Price,
+                Quantity = findCartItem.Quantity,
+                CategoryName = findCartItem.Product.Category.CategoryName,
+                ImageUrl = findCartItem.Product.ImageUrl,
+                CartItemID = findCartItem.Id
+            };
+            return new ApiResponse<CartProductDTO>(null, dto, "200", "Change quantity of item successfully", false, 0, 0, 0, 0, null, null, null);
+        }
+
         public async Task<ApiResponse<string>> DeleteListProductsInCartAsync(List<DeleteProductInCartDTO> listProducts, Guid userId)
         {
 

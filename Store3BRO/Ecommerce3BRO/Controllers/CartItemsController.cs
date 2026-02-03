@@ -77,6 +77,11 @@ namespace Ecommerce3BRO.Controllers
             var userId = Guid.Parse(user.Value);
             return await _cartItemService.DeleteListProductsInCartAsync(listItems, userId);
         }
-        
+        [Authorize]
+        [HttpPut("quantity/{cartItemId}")]
+        public async Task<ApiResponse<CartProductDTO>> ChangeQuantityProductOfCartItem([FromRoute] Guid cartItemId, [FromQuery] int quantity)
+        {
+            return await _cartItemService.ChangeQuantityProductOfCartItem(cartItemId, quantity);
+        }
     }
 }

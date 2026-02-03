@@ -7,6 +7,7 @@ import {
   BellIcon,
   TicketIcon,
   UserIcon,
+  Edit2Icon,
   MapPinIcon,
   LockIcon,
   LogOutIcon,
@@ -47,9 +48,9 @@ const Sidebar = () => {
           path: "/user/account/profile",
         },
         {
-          name: "Address",
-          icon: <MapPinIcon className="w-4 h-4" />,
-          path: "/user/account/profile/address",
+          name: "Edit Profile",
+          icon: <Edit2Icon className="w-4 h-4" />,
+          path: "/user/account/profile/edit-profile",
         },
         {
           name: "Change Password",

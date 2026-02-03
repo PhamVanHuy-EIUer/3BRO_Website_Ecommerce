@@ -7,7 +7,7 @@ import { userService } from "@/services/user.service";
 import { notification } from "antd";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import PageLoading from "@/components/Loading";
+import LoadingUser from "@/components/LoadingUser";
 
 const ChangePasswordContent: React.FC = () => {
   const { refreshAuth } = useAuth();
@@ -64,13 +64,14 @@ const ChangePasswordContent: React.FC = () => {
   return (
     <>
       {contextHolder}
-      {loading && <PageLoading />}
+
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
         <div className="p-6">
+          {loading && <LoadingUser />}
           <h2 className="text-2xl font-bold mb-6">Change Password</h2>
           <div className="max-w-md space-y-4">
             <div>

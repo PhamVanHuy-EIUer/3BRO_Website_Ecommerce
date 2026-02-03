@@ -88,18 +88,18 @@ const NavBar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`sticky top-0 z-50 bg-white transition-all duration-300 ${
+      className={`sticky top-0 z-1100 bg-white transition-all duration-300 ${
         isScrolled
           ? "shadow-lg border-b border-gray-200"
           : "border-b border-gray-300"
       }`}
     >
-      <div className="w-[85vw] mx-auto py-4">
+      <div className="w-[85vw] mx-auto py-4 ">
         <div className="flex justify-between items-center gap-8">
           {/* Logo */}
           <Link
             href="/"
-            className="uppercase text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent hover:from-gray-600 hover:to-gray-800 transition-all duration-300"
+            className="uppercase text-2xl md:text-3xl font-bold bg-linear-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent hover:from-gray-600 hover:to-gray-800 transition-all duration-300"
           >
             3bro
           </Link>

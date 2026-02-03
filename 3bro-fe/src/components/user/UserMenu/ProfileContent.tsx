@@ -134,7 +134,7 @@ const ProfileContent: React.FC = () => {
             <button
               type="submit"
               className={`${bgRed} text-white px-6 py-2 rounded hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed`}
-              onClick={() => router.push("profile/address")}
+              onClick={() => router.push("profile/edit-profile")}
             >
               Edit Profile
             </button>

@@ -2,5 +2,9 @@
 import ChangePasswordContent from "@/components/user/UserMenu/ChangePasswordContent";
 
 export default function ChangePasswordPage() {
-  return <ChangePasswordContent />;
+  return (
+    <div className="relative">
+      <ChangePasswordContent />
+    </div>
+  );
 }

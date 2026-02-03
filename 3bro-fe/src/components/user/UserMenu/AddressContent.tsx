@@ -174,7 +174,7 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Tìm kiếm: Đường Lê Lợi, Nguyễn Huệ, Bến Thành..."
+              placeholder="Search: Le Loi Street, Nguyen Hue, Ben Thanh..."
               className="w-full px-4 py-3 pr-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {isSearching && (
@@ -233,10 +233,10 @@ const LeafletMap: React.FC<LeafletMapProps> = ({
             !isSearching && (
               <div className="mt-2 bg-white rounded-lg shadow-lg p-4">
                 <p className="text-sm text-gray-500 text-center">
-                  Không tìm thấy kết quả cho "{searchQuery}"
+                  No results found for "{searchQuery}"
                 </p>
                 <p className="text-xs text-gray-400 text-center mt-1">
-                  Thử thêm "đường" hoặc tên quận/thành phố
+                  Try adding "street" or a district/city name
                 </p>
               </div>
             )}

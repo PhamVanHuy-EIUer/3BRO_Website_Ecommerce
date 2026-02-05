@@ -251,7 +251,7 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
                             <div style={{ marginBottom: 4 }}>
                               • Number of vouchers: {item.quantity}
                             </div>
-                            {item.maxDiscountAmount > 0 && (
+                            {item.maxDiscountAmount && (
                               <div style={{ marginBottom: 4 }}>
                                 • Max discount amount:{" "}
                                 {formatCurrency(item.maxDiscountAmount)}

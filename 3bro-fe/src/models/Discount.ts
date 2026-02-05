@@ -5,7 +5,7 @@ export type Discount = {
     discountPercent: number;
     discountAmount: number;
     minOrderAmount: number;
-    maxDiscountAmount?: number;
+    maxDiscountAmount: number | null,
     startDate: string;
     endDate: string;
     quantity: number;

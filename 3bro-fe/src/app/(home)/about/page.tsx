@@ -1,3 +1,4 @@
+import { style } from "framer-motion/client";
 import React from "react";
 
 const AboutUsContent: React.FC = () => {
@@ -8,9 +9,14 @@ const AboutUsContent: React.FC = () => {
 
   return (
     <div className="font-inter bg-white">
-      {/* ================= HERO SECTION (OUR STORY) ================= */}
       <section
-        className={`h-[400px] ${placeholderBg} flex flex-col items-center justify-center text-center px-4`}
+        className={`h-[550px] ${placeholderBg} flex flex-col items-center justify-center text-center px-4`}
+        style={{
+          backgroundImage: "url('/About/our_story.jpg')",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "cover",
+          backgroundPosition: "top",
+        }}
       >
         <h1 className="text-black text-5xl font-bold mb-4">OUR STORY</h1>
         <p className="text-black text-lg font-medium opacity-80">
@@ -43,13 +49,16 @@ const AboutUsContent: React.FC = () => {
           {/* Image Placeholder */}
           <div
             className={`lg:w-1/2 h-[350px] w-full rounded-lg ${placeholderBg}`}
+            style={{
+              backgroundImage: "url('/About/who_are_we.jpg')",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           ></div>
         </section>
 
-        {/* ================= OUR MISSION SECTION ================= */}
-        {/* Sử dụng lg:flex-row-reverse để đảo vị trí ảnh và chữ trên màn hình lớn */}
         <section className="flex flex-col-reverse lg:flex-row-reverse items-center gap-20">
-          {/* Text Content */}
           <div className="lg:w-1/2 space-y-6">
             <h2 className="text-black text-[32px] font-bold">Our Mission</h2>
             <div className={`${textGray} text-base leading-[1.6]`}>
@@ -64,10 +73,15 @@ const AboutUsContent: React.FC = () => {
           {/* Image Placeholder */}
           <div
             className={`lg:w-1/2 h-[350px] w-full rounded-lg ${placeholderBg}`}
+            style={{
+              backgroundImage: "url('/About/our_mission.jpg')",
+              backgroundRepeat: "no-repeat",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
           ></div>
         </section>
 
-        {/* ================= MEET OUR TEAM SECTION ================= */}
         <section className="text-center">
           <h2 className="text-black text-[32px] font-bold mb-16">
             Meet Our Team
@@ -75,9 +89,15 @@ const AboutUsContent: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             {/* Team Member 1 */}
             <div className="flex flex-col items-center">
-              {/* Circle Placeholder (r=80 -> width/height=160px) */}
+              {/* image person */}
               <div
                 className={`w-[160px] h-[160px] rounded-full ${placeholderBg} mb-6`}
+                style={{
+                  backgroundImage: "url('/About/people1.jpg')",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  backgroundPosition: "top",
+                }}
               ></div>
               <h3 className="text-black text-lg font-semibold">John Doe</h3>
               <p className={`${textGray} text-sm`}>Founder & CEO</p>
@@ -86,6 +106,12 @@ const AboutUsContent: React.FC = () => {
             <div className="flex flex-col items-center">
               <div
                 className={`w-[160px] h-[160px] rounded-full ${placeholderBg} mb-6`}
+                style={{
+                  backgroundImage: "url('/About/people2.jpg')",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  backgroundPosition: "top",
+                }}
               ></div>
               <h3 className="text-black text-lg font-semibold">Jane Smith</h3>
               <p className={`${textGray} text-sm`}>Creative Director</p>
@@ -94,6 +120,12 @@ const AboutUsContent: React.FC = () => {
             <div className="flex flex-col items-center">
               <div
                 className={`w-[160px] h-[160px] rounded-full ${placeholderBg} mb-6`}
+                style={{
+                  backgroundImage: "url('/About/people3.jpg')",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "cover",
+                  backgroundPosition: "top",
+                }}
               ></div>
               <h3 className="text-black text-lg font-semibold">Mike Johnson</h3>
               <p className={`${textGray} text-sm`}>Head of Operations</p>

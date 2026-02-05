@@ -5,6 +5,7 @@ import type { ViewOrderUser } from "@/models/ViewOrderUser";
 import { formatCurrency } from "@/utils/currency";
 import { COLORS } from "@/data/data";
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 interface OrderDetailModalProps {
   order: ViewOrderUser;
@@ -27,10 +28,10 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ delay: 0.2, duration: 0.3 }}
     >
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="fixed inset-0 bg-[rgba(0,0,0,0.3)] bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg max-w-3xl w-full max-h-[80vh] overflow-y-auto">
           <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
               <button
@@ -77,10 +78,12 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                   >
                     <div className="w-20 h-20 bg-white border border-gray-200 flex-shrink-0 rounded overflow-hidden">
                       {item.imageUrl ? (
-                        <img
+                        <Image
                           src={getFirstImage(item.imageUrl)}
                           alt={item.productName}
                           className="w-full h-full object-cover"
+                          width={200}
+                          height={200}
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-gray-400">

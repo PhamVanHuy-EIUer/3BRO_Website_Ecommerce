@@ -1,5 +1,6 @@
 "use client";
 
+import PageLoading from "@/components/Loading";
 import ProductCard from "@/components/products/ProductsCard";
 import { Product } from "@/models/Product";
 import { productService } from "@/services/product.service";
@@ -24,7 +25,7 @@ const CategoryPage = () => {
       const res = await productService.getProductsByCategory(
         category,
         currentPage,
-        PAGE_SIZE
+        PAGE_SIZE,
       );
       setProducts(res.list ?? []);
       setTotal(res.totalElement ?? 0);
@@ -45,7 +46,7 @@ const CategoryPage = () => {
     <div className="max-w-7xl mx-auto py-8">
       {loading && (
         <div className="flex justify-center mt-4">
-          <Spin />
+          <PageLoading />
         </div>
       )}
 

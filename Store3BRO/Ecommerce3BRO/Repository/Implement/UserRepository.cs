@@ -34,7 +34,6 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             await _context.SaveChangesAsync();
             return userDTO;
-
         }
 
         public async Task<GetUserDTO?> AddNewUserAsync(UserDTO user)
@@ -263,8 +262,7 @@ namespace Ecommerce3BRO.Repository.Implement
            CreatedDate = u.CreatedDate,
            FullName = u.FullName,
            Phone = u.Phone
-       })
-       .ToListAsync();
+       }).ToListAsync();
             return listOfPage;
         }
 

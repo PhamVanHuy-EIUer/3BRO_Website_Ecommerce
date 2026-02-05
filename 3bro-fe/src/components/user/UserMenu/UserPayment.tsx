@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Card,
   Radio,
@@ -30,6 +30,12 @@ import {
   CreditCardOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
+import { useSearchParams } from "next/navigation";
+import { ApiResponse } from "@/models/ApiResponse";
+import { PaymentProduct } from "@/models/PaymentProduct";
+import { paymentService } from "@/services/payment.service";
+import { Discount } from "@/models/Discount";
+import Voucher from "@/components/user/cart/Voucher"; // Import Voucher component
 
 const { Title, Text } = Typography;
 
@@ -48,15 +54,6 @@ interface Product {
   image: string;
   quantity: number;
   price: number;
-}
-
-interface Voucher {
-  code: string;
-  type: "percent" | "shipping" | "fixed";
-  value: number;
-  max?: number;
-  description: string;
-  condition: string;
 }
 
 interface ShippingMethod {
@@ -101,50 +98,6 @@ const fakeAddress: Address = {
   city: "Hồ Chí Minh",
 };
 
-const fakeProducts: Product[] = [
-  {
-    id: 1,
-    name: "Áo Thun Nam Basic 3BRO",
-    image:
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
-    quantity: 2,
-    price: 199000,
-  },
-  {
-    id: 2,
-    name: "Quần Jean Slim Fit",
-    image:
-      "https://images.unsplash.com/photo-1542272604-787c3835535d?w=400&h=400&fit=crop",
-    quantity: 1,
-    price: 450000,
-  },
-];
-
-const vouchers: Voucher[] = [
-  {
-    code: "3BRO10",
-    type: "percent",
-    value: 10,
-    max: 50000,
-    description: "Giảm 10% tối đa 50,000đ",
-    condition: "Đơn hàng từ 300,000đ",
-  },
-  {
-    code: "FREESHIP",
-    type: "shipping",
-    value: 20000,
-    description: "Miễn phí vận chuyển",
-    condition: "Áp dụng cho mọi đơn hàng",
-  },
-  {
-    code: "NEWUSER",
-    type: "fixed",
-    value: 30000,
-    description: "Giảm 30,000đ",
-    condition: "Dành cho khách hàng mới",
-  },
-];
-
 const shippingMethods: ShippingMethod[] = [
   {
     id: "standard",
@@ -167,763 +120,673 @@ const paymentMethods: PaymentMethod[] = [
 ];
 
 const PaymentUser: React.FC = () => {
+  const searchParams = useSearchParams();
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [selectedAddress] = useState<Address>(fakeAddress);
   const [shippingMethod, setShippingMethod] = useState<string>("standard");
   const [paymentMethod, setPaymentMethod] = useState<string>("cod");
-  const [selectedVoucher, setSelectedVoucher] = useState<Voucher | null>(null);
+  const [selectedVoucher, setSelectedVoucher] = useState<Discount>();
   const [voucherModalVisible, setVoucherModalVisible] =
     useState<boolean>(false);
+  const [PaymentProduct, setPaymentProduct] = useState<PaymentProduct | null>(
+    null,
+  );
   const [loading, setLoading] = useState<boolean>(false);
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
+
+  const cartItemIds = searchParams.get("cartItemIds")?.split(",") || [];
+  const discountCode = searchParams.get("voucherCode") || null;
+  const productId = searchParams.get("productId") || "";
+  const rawQuantity = searchParams.get("quantity");
+  const quantity = Number(rawQuantity);
+
+  const getFirstImage = (imageUrl: string | null | undefined) => {
+    if (!imageUrl) return "/blank.jpg";
+
+    // Nếu đã là URL đầy đủ (http hoặc https), trả về trực tiếp
+    if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
+      return imageUrl;
+    }
+
+    // Nếu là đường dẫn tương đối, thêm base URL
+    const baseUrl = "https://localhost:7041";
+    const path = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
+    return `${baseUrl}${path}`;
+  };
+
+  // Fetch payment calculation without discount
+  const fetchPaymentData = async () => {
+    setLoading(true);
+    try {
+      let res: ApiResponse<PaymentProduct>;
+
+      if (cartItemIds.length > 0) {
+        res = await paymentService.calculateForCartItem(cartItemIds);
+      } else if (productId && quantity) {
+        res = await paymentService.calculateForProduct(productId, quantity);
+      } else {
+        setLoading(false);
+        return;
+      }
+
+      if (res.code !== "200" || !res.isSuccess) {
+        message.error(res.message || "Không thể tải thông tin thanh toán");
+        return;
+      }
+
+      setPaymentProduct(res.object);
+
+      // Nếu có voucher từ backend, set luôn
+      if (res.object?.voucher) {
+        setSelectedVoucher(res.object?.voucher);
+      }
+    } catch (err) {
+      console.error("Calculate payment error:", err);
+      message.error("Có lỗi xảy ra khi tải thông tin thanh toán");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch payment calculation with discount
+  const fetchPaymentWithDiscount = async (voucherCode: string) => {
+    if (!cartItemIds.length) return;
+
+    setLoading(true);
+    try {
+      const res: ApiResponse<PaymentProduct> =
+        await paymentService.calculateForCartItemWithDiscount(
+          voucherCode,
+          cartItemIds,
+        );
+
+      if (res.code !== "200" || !res.isSuccess) {
+        message.error(res.message || "Không thể áp dụng voucher");
+        return;
+      }
+
+      setPaymentProduct(res.object);
+
+      if (res.object?.voucher) {
+        setSelectedVoucher(res.object.voucher);
+      }
+    } catch (err) {
+      console.error("Calculate payment with discount error:", err);
+      message.error("Có lỗi xảy ra khi áp dụng voucher");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Nếu có discount code từ URL, fetch với discount
+    if (discountCode && cartItemIds.length > 0) {
+      fetchPaymentWithDiscount(discountCode);
+    } else {
+      fetchPaymentData();
+    }
+  }, []);
 
   // Simulate page loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
     }, 1000);
-
     return () => clearTimeout(timer);
   }, []);
 
-  // Calculate totals
-  const subtotal = fakeProducts.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
-  const shippingFee =
-    shippingMethods.find((m) => m.id === shippingMethod)?.price || 0;
-
-  const calculateDiscount = (): number => {
-    if (!selectedVoucher) return 0;
-
-    if (selectedVoucher.type === "percent") {
-      const discount = subtotal * (selectedVoucher.value / 100);
-      return Math.min(discount, selectedVoucher.max || discount);
-    } else if (selectedVoucher.type === "fixed") {
-      return selectedVoucher.value;
-    } else if (selectedVoucher.type === "shipping") {
-      return Math.min(selectedVoucher.value, shippingFee);
-    }
-    return 0;
-  };
-
-  const discount = calculateDiscount();
-  const finalShippingFee =
-    selectedVoucher?.type === "shipping"
-      ? Math.max(0, shippingFee - discount)
-      : shippingFee;
-  const totalAmount =
-    subtotal +
-    finalShippingFee -
-    (selectedVoucher?.type !== "shipping" ? discount : 0);
-
-  const formatCurrency = (amount: number): string => {
+  // Format currency
+  const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
       currency: "VND",
     }).format(amount);
   };
 
-  const handleSelectVoucher = (voucher: Voucher): void => {
-    setSelectedVoucher(voucher);
+  // Get values from PaymentProduct
+  const subtotal = PaymentProduct?.currentTotalPrice || 0;
+  const shippingFee = PaymentProduct?.shippingFee || 0;
+  const discount = PaymentProduct?.discountPrice || 0;
+  const totalAmount = PaymentProduct?.finalTotalPrice || 0;
+
+  // Handle voucher selection - Re-fetch data with voucher
+  const handleApplyVoucher = async (selectedDiscount: Discount) => {
+    // Kiểm tra giá trị đơn hàng có đủ điều kiện không
+    if (subtotal < selectedDiscount.minOrderAmount) {
+      message.warning(
+        `Đơn hàng tối thiểu ${formatCurrency(selectedDiscount.minOrderAmount)} để áp dụng voucher này`,
+      );
+      return;
+    }
+
+    // Re-fetch payment data với voucher code
+    await fetchPaymentWithDiscount(selectedDiscount.code);
     setVoucherModalVisible(false);
-    message.success(`Đã áp dụng mã "${voucher.code}"`);
+    message.success(`Đã áp dụng voucher: ${selectedDiscount.code}`);
   };
 
-  const handleRemoveVoucher = (): void => {
-    setSelectedVoucher(null);
-    message.info("Đã xóa mã giảm giá");
+  // Handle remove voucher - Re-fetch data without voucher
+  const handleRemoveVoucher = async () => {
+    setSelectedVoucher(undefined);
+    await fetchPaymentData(); // Re-fetch without discount
+    message.info("Đã xóa voucher");
   };
 
-  const handlePayment = (): void => {
-    // Validation
-    if (!selectedAddress) {
-      message.error("Vui lòng chọn địa chỉ giao hàng");
+  // Handle payment
+  const handlePayment = async () => {
+    if (!selectedAddress || !shippingMethod || !paymentMethod) {
+      message.warning("Vui lòng điền đầy đủ thông tin");
       return;
     }
-    if (!shippingMethod) {
-      message.error("Vui lòng chọn phương thức vận chuyển");
-      return;
-    }
-    if (!paymentMethod) {
-      message.error("Vui lòng chọn phương thức thanh toán");
+
+    if (!PaymentProduct) {
+      message.error("Không có thông tin thanh toán");
       return;
     }
 
     setLoading(true);
 
-    // Simulate payment processing
-    setTimeout(() => {
-      const order: Order = {
-        id: `3BRO${Date.now()}`,
-        items: fakeProducts,
-        address: selectedAddress,
-        shipping: shippingMethod,
-        payment: paymentMethod,
-        voucher: selectedVoucher?.code,
-        subtotal,
-        shippingFee: finalShippingFee,
-        discount,
-        total: totalAmount,
-        createdAt: new Date().toISOString(),
-      };
+    try {
+      // Simulate payment processing
+      setTimeout(() => {
+        const productList = PaymentProduct.productList || [];
+        const fakeProducts: Product[] = productList.map((item) => ({
+          id: parseInt(item.productId) || 0,
+          name: item.productName,
+          image: item.imageUrl || "",
+          quantity: item.quantity,
+          price: item.price,
+        }));
 
-      let result: OrderResult;
-      if (paymentMethod === "cod") {
-        result = {
-          status: "pending",
-          message: "Đơn hàng của bạn đã được đặt thành công!",
-          order,
+        const newOrder: Order = {
+          id: `ORDER${Date.now()}`,
+          items: fakeProducts,
+          address: selectedAddress,
+          shipping: shippingMethod,
+          payment: paymentMethod,
+          voucher: selectedVoucher?.code,
+          subtotal,
+          shippingFee,
+          discount,
+          total: totalAmount,
+          createdAt: new Date().toISOString(),
         };
-      } else {
-        // Simulate random payment result for online payments
-        const isSuccess = Math.random() > 0.3; // 70% success rate
-        result = isSuccess
-          ? { status: "paid", message: "Thanh toán thành công!", order }
-          : {
-              status: "failed",
-              message: "Thanh toán thất bại. Vui lòng thử lại.",
-              order,
-            };
-      }
 
-      setOrderResult(result);
+        setOrderResult({
+          status: "paid",
+          message: "Đặt hàng thành công!",
+          order: newOrder,
+        });
+        setLoading(false);
+      }, 2000);
+    } catch (error) {
+      console.error("Payment error:", error);
+      message.error("Có lỗi xảy ra khi đặt hàng");
       setLoading(false);
-    }, 2000);
+    }
   };
 
-  const handleCloseResult = (): void => {
-    setOrderResult(null);
-    // In real app, redirect to order history or home
-  };
-
-  // Page Loading Screen
+  // Loading state
   if (pageLoading) {
     return (
       <div
         style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg, #f5f7fa 0%, #fef5e7 100%)",
           display: "flex",
-          alignItems: "center",
           justifyContent: "center",
-          flexDirection: "column",
-          gap: 24,
+          alignItems: "center",
+          height: "100vh",
         }}
       >
-        <Spin
-          indicator={<LoadingOutlined style={{ fontSize: 48 }} spin />}
-          size="large"
-        />
-        <Text style={{ fontSize: 16, color: "#8c8c8c" }}>Loading Page...</Text>
+        <Spin size="large" />
       </div>
     );
   }
 
+  // Order result view
   if (orderResult) {
     return (
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "linear-gradient(135deg, #f5f7fa 0%, #fef5e7 100%)",
-          padding: "40px 20px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Card
-          style={{
-            maxWidth: 600,
-            width: "100%",
-            borderRadius: 16,
-            boxShadow: "0 8px 32px rgba(0,0,0,0.08)",
-          }}
+      <div style={{ padding: "40px 20px", maxWidth: 800, margin: "0 auto" }}>
+        <Result
+          status={orderResult.status === "paid" ? "success" : "error"}
+          title={orderResult.message}
+          subTitle={`Mã đơn hàng: ${orderResult.order.id}`}
+          extra={[
+            <Button
+              type="primary"
+              key="home"
+              onClick={() => (window.location.href = "/")}
+            >
+              Về trang chủ
+            </Button>,
+            <Button
+              key="orders"
+              onClick={() => (window.location.href = "/orders")}
+            >
+              Xem đơn hàng
+            </Button>,
+          ]}
         >
-          <Result
-            status={orderResult.status === "failed" ? "error" : "success"}
-            title={orderResult.message}
-            icon={
-              orderResult.status === "failed" ? (
-                <CloseCircleOutlined style={{ color: "#ff4d4f" }} />
-              ) : (
-                <CheckCircleOutlined style={{ color: "#52c41a" }} />
-              )
-            }
-            subTitle={
-              <div style={{ textAlign: "left", marginTop: 24 }}>
-                <Text strong style={{ fontSize: 16 }}>
-                  Mã đơn hàng: {orderResult.order.id}
-                </Text>
-                <Divider />
-                <Space
-                  orientation="vertical"
-                  size={8}
-                  style={{ width: "100%" }}
-                >
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Trạng thái:</Text>
-                    <Tag
-                      color={
-                        orderResult.status === "paid"
-                          ? "success"
-                          : orderResult.status === "pending"
-                            ? "processing"
-                            : "error"
-                      }
-                    >
-                      {orderResult.status === "paid"
-                        ? "Đã thanh toán"
-                        : orderResult.status === "pending"
-                          ? "Chờ xác nhận"
-                          : "Thanh toán thất bại"}
-                    </Tag>
-                  </div>
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <Text>Tổng tiền:</Text>
-                    <Text strong style={{ fontSize: 18, color: "#d4380d" }}>
-                      {formatCurrency(orderResult.order.total)}
-                    </Text>
-                  </div>
-                </Space>
+          <Card style={{ marginTop: 24 }}>
+            <Space orientation="vertical" size={12} style={{ width: "100%" }}>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text>Tạm tính:</Text>
+                <Text>{formatCurrency(orderResult.order.subtotal)}</Text>
               </div>
-            }
-            extra={[
-              <Button
-                type="primary"
-                key="home"
-                size="large"
-                onClick={handleCloseResult}
-                style={{
-                  borderRadius: 8,
-                  height: 48,
-                  background:
-                    "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
-                  border: "none",
-                }}
-              >
-                Về trang chủ
-              </Button>,
-            ]}
-          />
-        </Card>
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text>Phí vận chuyển:</Text>
+                <Text>{formatCurrency(orderResult.order.shippingFee)}</Text>
+              </div>
+              {orderResult.order.discount > 0 && (
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Text style={{ color: "#52c41a" }}>
+                    Giảm giá{" "}
+                    {orderResult.order.voucher
+                      ? `(${orderResult.order.voucher})`
+                      : ""}
+                    :
+                  </Text>
+                  <Text strong style={{ color: "#52c41a" }}>
+                    -{formatCurrency(orderResult.order.discount)}
+                  </Text>
+                </div>
+              )}
+              <Divider style={{ margin: "8px 0" }} />
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <Text strong style={{ fontSize: 16 }}>
+                  Tổng cộng:
+                </Text>
+                <Text strong style={{ fontSize: 18, color: "#d4380d" }}>
+                  {formatCurrency(orderResult.order.total)}
+                </Text>
+              </div>
+            </Space>
+          </Card>
+        </Result>
       </div>
     );
   }
 
   return (
     <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(135deg, #f5f7fa 0%, #fef5e7 100%)",
-        padding: "40px 20px",
-      }}
+      style={{ background: "#f5f5f5", minHeight: "100vh", padding: "24px 0" }}
     >
-      {/* Header */}
-      <div style={{ maxWidth: 1200, margin: "0 auto 32px" }}>
-        <Title
-          level={2}
-          style={{
-            margin: 0,
-            background: "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            fontSize: 42,
-            fontWeight: 700,
-          }}
-        >
+      <div style={{ maxWidth: 1400, margin: "0 auto", padding: "0 20px" }}>
+        <Title level={2} style={{ marginBottom: 24, color: "#d4380d" }}>
           Thanh toán
         </Title>
-        <Text type="secondary" style={{ fontSize: 16 }}>
-          Hoàn tất đơn hàng của bạn
-        </Text>
-      </div>
 
-      <Row gutter={[24, 24]} style={{ maxWidth: 1200, margin: "0 auto" }}>
-        {/* Left Column - Checkout Information */}
-        <Col xs={24} lg={14}>
-          <Space orientation="vertical" size={24} style={{ width: "100%" }}>
-            {/* Shipping Address */}
-            <Card
-              title={
-                <Space>
-                  <HomeOutlined style={{ color: "#d4380d" }} />
-                  <Text strong>Địa chỉ giao hàng</Text>
-                </Space>
-              }
-              style={{
-                borderRadius: 12,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-                border: "2px solid #fff4e6",
-              }}
-            >
-              {selectedAddress ? (
-                <div>
-                  <Space orientation="vertical" size={4}>
-                    <Text strong style={{ fontSize: 16 }}>
-                      {selectedAddress.name}
-                    </Text>
-                    <Text type="secondary">{selectedAddress.phone}</Text>
-                    <Text>
-                      {selectedAddress.address}, {selectedAddress.city}
-                    </Text>
+        <Row gutter={[24, 24]}>
+          {/* Left Column */}
+          <Col xs={24} lg={14}>
+            <Space orientation="vertical" size={24} style={{ width: "100%" }}>
+              {/* Address */}
+              <Card
+                title={
+                  <Space>
+                    <HomeOutlined style={{ color: "#d4380d" }} />
+                    <Text strong>Địa chỉ giao hàng</Text>
                   </Space>
-                  <Button
-                    type="link"
-                    style={{ padding: 0, marginTop: 12, color: "#d4380d" }}
-                  >
-                    Thay đổi
-                  </Button>
-                </div>
-              ) : (
-                <Button type="primary">Chọn địa chỉ</Button>
-              )}
-            </Card>
-
-            {/* Shipping Method */}
-            <Card
-              title={
-                <Space>
-                  <CarOutlined style={{ color: "#d4380d" }} />
-                  <Text strong>Phương thức vận chuyển</Text>
-                </Space>
-              }
-              style={{
-                borderRadius: 12,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-                border: "2px solid #fff4e6",
-              }}
-            >
-              <Radio.Group
-                value={shippingMethod}
-                onChange={(e: RadioChangeEvent) =>
-                  setShippingMethod(e.target.value)
                 }
-                style={{ width: "100%" }}
+                style={{
+                  borderRadius: 12,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                  border: "2px solid #fff4e6",
+                }}
               >
-                <Space
-                  orientation="vertical"
-                  size={12}
-                  style={{ width: "100%" }}
-                >
-                  {shippingMethods.map((method) => (
-                    <Radio
-                      key={method.id}
-                      value={method.id}
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        border:
-                          shippingMethod === method.id
-                            ? "2px solid #d4380d"
-                            : "2px solid #f0f0f0",
-                        borderRadius: 8,
-                        background:
-                          shippingMethod === method.id ? "#fff4e6" : "#fff",
-                        transition: "all 0.3s",
-                      }}
-                    >
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          width: "100%",
-                        }}
-                      >
-                        <Space orientation="vertical" size={4}>
-                          <Text strong>{method.name}</Text>
-                          <Text type="secondary" style={{ fontSize: 13 }}>
-                            {method.duration}
-                          </Text>
-                        </Space>
-                        <Text strong style={{ color: "#d4380d" }}>
-                          {formatCurrency(method.price)}
-                        </Text>
-                      </div>
-                    </Radio>
-                  ))}
+                <Space orientation="vertical" size={8}>
+                  <Text strong style={{ fontSize: 16 }}>
+                    {PaymentProduct?.userFullName || selectedAddress.name} |{" "}
+                    {PaymentProduct?.userPhoneNumber || selectedAddress.phone}
+                  </Text>
+                  <Text>
+                    {PaymentProduct?.userAddress || selectedAddress.address}
+                  </Text>
+                  <Text type="secondary">{selectedAddress.city}</Text>
                 </Space>
-              </Radio.Group>
-            </Card>
+              </Card>
 
-            {/* Voucher Section */}
-            <Card
-              title={
-                <Space>
-                  <GiftOutlined style={{ color: "#d4380d" }} />
-                  <Text strong>Mã giảm giá</Text>
-                </Space>
-              }
-              style={{
-                borderRadius: 12,
-                boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-                border: "2px solid #fff4e6",
-              }}
-            >
-              {selectedVoucher ? (
-                <div
-                  style={{
-                    padding: "16px",
-                    background:
-                      "linear-gradient(135deg, #fff4e6 0%, #ffe7ba 100%)",
-                    borderRadius: 8,
-                    border: "2px dashed #d4380d",
-                  }}
+              {/* Shipping Method */}
+              <Card
+                title={
+                  <Space>
+                    <CarOutlined style={{ color: "#d4380d" }} />
+                    <Text strong>Phương thức vận chuyển</Text>
+                  </Space>
+                }
+                style={{
+                  borderRadius: 12,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                  border: "2px solid #fff4e6",
+                }}
+              >
+                <Radio.Group
+                  value={shippingMethod}
+                  onChange={(e: RadioChangeEvent) =>
+                    setShippingMethod(e.target.value)
+                  }
+                  style={{ width: "100%" }}
                 >
                   <Space
                     orientation="vertical"
-                    size={8}
+                    size={12}
                     style={{ width: "100%" }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Space>
-                        <Tag
-                          color="error"
+                    {shippingMethods.map((method) => (
+                      <Radio
+                        key={method.id}
+                        value={method.id}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          border:
+                            shippingMethod === method.id
+                              ? "2px solid #d4380d"
+                              : "2px solid #f0f0f0",
+                          borderRadius: 8,
+                          background:
+                            shippingMethod === method.id ? "#fff4e6" : "#fff",
+                          transition: "all 0.3s",
+                        }}
+                      >
+                        <div
                           style={{
-                            fontSize: 14,
-                            padding: "4px 12px",
-                            fontWeight: 600,
+                            display: "flex",
+                            justifyContent: "space-between",
+                            width: "100%",
                           }}
                         >
-                          {selectedVoucher.code}
-                        </Tag>
-                        <Text strong>{selectedVoucher.description}</Text>
+                          <Space orientation="vertical" size={4}>
+                            <Text strong>{method.name}</Text>
+                            <Text type="secondary" style={{ fontSize: 12 }}>
+                              {method.duration}
+                            </Text>
+                          </Space>
+                          <Text strong style={{ color: "#d4380d" }}>
+                            {formatCurrency(method.price)}
+                          </Text>
+                        </div>
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Card>
+
+              {/* Voucher Section */}
+              <Card
+                title={
+                  <Space>
+                    <GiftOutlined style={{ color: "#d4380d" }} />
+                    <Text strong>Mã giảm giá</Text>
+                  </Space>
+                }
+                style={{
+                  borderRadius: 12,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                  border: "2px solid #fff4e6",
+                }}
+              >
+                {selectedVoucher ? (
+                  <div
+                    style={{
+                      padding: 16,
+                      border: "2px solid #52c41a",
+                      borderRadius: 8,
+                      background: "#f6ffed",
+                    }}
+                  >
+                    <Space
+                      style={{ width: "100%", justifyContent: "space-between" }}
+                    >
+                      <Space orientation="vertical" size={4}>
+                        <Space>
+                          <Tag
+                            color="success"
+                            style={{ fontSize: 14, fontWeight: 600 }}
+                          >
+                            {selectedVoucher.code}
+                          </Tag>
+                          <CheckCircleOutlined style={{ color: "#52c41a" }} />
+                        </Space>
+                        <Text>{selectedVoucher.description}</Text>
+                        <Text type="secondary" style={{ fontSize: 12 }}>
+                          Giảm:{" "}
+                          {selectedVoucher.discountPercent &&
+                          selectedVoucher.discountPercent > 0
+                            ? `${selectedVoucher.discountPercent}%`
+                            : selectedVoucher.discountAmount
+                              ? formatCurrency(selectedVoucher.discountAmount)
+                              : ""}
+                          {selectedVoucher.maxDiscountAmount &&
+                          selectedVoucher.maxDiscountAmount > 0
+                            ? ` (Tối đa ${formatCurrency(selectedVoucher.maxDiscountAmount)})`
+                            : ""}
+                        </Text>
                       </Space>
                       <Button
                         type="text"
                         danger
-                        size="small"
                         onClick={handleRemoveVoucher}
+                        icon={<CloseCircleOutlined />}
+                        loading={loading}
                       >
                         Xóa
                       </Button>
-                    </div>
-                    <Text type="secondary" style={{ fontSize: 13 }}>
-                      Điều kiện: {selectedVoucher.condition}
-                    </Text>
-                  </Space>
-                </div>
-              ) : (
-                <Button
-                  type="dashed"
-                  block
-                  size="large"
-                  onClick={() => setVoucherModalVisible(true)}
-                  style={{
-                    borderRadius: 8,
-                    borderColor: "#d4380d",
-                    color: "#d4380d",
-                    fontWeight: 500,
-                  }}
-                >
-                  Chọn hoặc nhập mã giảm giá
-                </Button>
-              )}
-            </Card>
+                    </Space>
+                  </div>
+                ) : (
+                  <Button
+                    type="dashed"
+                    block
+                    size="large"
+                    onClick={() => setVoucherModalVisible(true)}
+                    icon={<GiftOutlined />}
+                    style={{
+                      height: 56,
+                      borderRadius: 8,
+                      borderColor: "#d4380d",
+                      color: "#d4380d",
+                    }}
+                  >
+                    Chọn mã giảm giá
+                  </Button>
+                )}
+              </Card>
 
-            {/* Payment Method */}
+              {/* Payment Method */}
+              <Card
+                title={
+                  <Space>
+                    <WalletOutlined style={{ color: "#d4380d" }} />
+                    <Text strong>Phương thức thanh toán</Text>
+                  </Space>
+                }
+                style={{
+                  borderRadius: 12,
+                  boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                  border: "2px solid #fff4e6",
+                }}
+              >
+                <Radio.Group
+                  value={paymentMethod}
+                  onChange={(e: RadioChangeEvent) =>
+                    setPaymentMethod(e.target.value)
+                  }
+                  style={{ width: "100%" }}
+                >
+                  <Space
+                    orientation="vertical"
+                    size={12}
+                    style={{ width: "100%" }}
+                  >
+                    {paymentMethods.map((method) => (
+                      <Radio
+                        key={method.id}
+                        value={method.id}
+                        style={{
+                          width: "100%",
+                          padding: "12px",
+                          border:
+                            paymentMethod === method.id
+                              ? "2px solid #d4380d"
+                              : "2px solid #f0f0f0",
+                          borderRadius: 8,
+                          background:
+                            paymentMethod === method.id ? "#fff4e6" : "#fff",
+                          transition: "all 0.3s",
+                        }}
+                      >
+                        <Space>
+                          <span style={{ fontSize: 20, color: "#d4380d" }}>
+                            {method.icon}
+                          </span>
+                          <Text strong>{method.name}</Text>
+                        </Space>
+                      </Radio>
+                    ))}
+                  </Space>
+                </Radio.Group>
+              </Card>
+            </Space>
+          </Col>
+
+          {/* Right Column - Order Summary */}
+          <Col xs={24} lg={10}>
             <Card
               title={
-                <Space>
-                  <CreditCardOutlined style={{ color: "#d4380d" }} />
-                  <Text strong>Phương thức thanh toán</Text>
-                </Space>
+                <Text strong style={{ fontSize: 18 }}>
+                  Đơn hàng của bạn
+                </Text>
               }
               style={{
                 borderRadius: 12,
                 boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
+                position: "sticky",
+                top: 20,
                 border: "2px solid #fff4e6",
               }}
             >
-              <Radio.Group
-                value={paymentMethod}
-                onChange={(e: RadioChangeEvent) =>
-                  setPaymentMethod(e.target.value)
-                }
-                style={{ width: "100%" }}
-              >
-                <Space
-                  orientation="vertical"
-                  size={12}
-                  style={{ width: "100%" }}
-                >
-                  {paymentMethods.map((method) => (
-                    <Radio
-                      key={method.id}
-                      value={method.id}
-                      style={{
-                        width: "100%",
-                        padding: "12px",
-                        border:
-                          paymentMethod === method.id
-                            ? "2px solid #d4380d"
-                            : "2px solid #f0f0f0",
-                        borderRadius: 8,
-                        background:
-                          paymentMethod === method.id ? "#fff4e6" : "#fff",
-                        transition: "all 0.3s",
-                      }}
-                    >
-                      <Space>
-                        <span style={{ fontSize: 20, color: "#d4380d" }}>
-                          {method.icon}
-                        </span>
-                        <Text strong>{method.name}</Text>
-                      </Space>
-                    </Radio>
-                  ))}
-                </Space>
-              </Radio.Group>
-            </Card>
-          </Space>
-        </Col>
+              {/* Product List */}
+              {PaymentProduct?.productList?.map((item) => (
+                <div key={item.productId}>
+                  <Flex gap={16} align="center">
+                    <Image
+                      src={getFirstImage(item.imageUrl)}
+                      alt={item.productName}
+                      width={80}
+                      height={80}
+                      style={{ borderRadius: 8, objectFit: "cover" }}
+                      fallback="/blank.jpg"
+                    />
 
-        {/* Right Column - Order Summary */}
-        <Col xs={24} lg={10}>
-          <Card
-            title={
-              <Text strong style={{ fontSize: 18 }}>
-                Đơn hàng của bạn
-              </Text>
-            }
-            style={{
-              borderRadius: 12,
-              boxShadow: "0 4px 16px rgba(0,0,0,0.06)",
-              position: "sticky",
-              top: 20,
-              border: "2px solid #fff4e6",
-            }}
-          >
-            {/* Product List */}
-            {fakeProducts.map((item: Product) => (
-              <div key={item.id}>
-                <Flex gap={16} align="center">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={80}
-                    height={80}
-                    style={{ borderRadius: 8, objectFit: "cover" }}
-                  />
-
-                  <Flex vertical style={{ flex: 1 }}>
-                    <Text strong>{item.name}</Text>
-
-                    <Space>
-                      <Text type="secondary">x{item.quantity}</Text>
-                      <Text strong style={{ color: "#d4380d" }}>
-                        {formatCurrency(item.price)}
+                    <Flex vertical style={{ flex: 1 }}>
+                      <Text strong>{item.productName}</Text>
+                      <Text type="secondary" style={{ fontSize: 12 }}>
+                        {item.categoryName}
                       </Text>
-                    </Space>
+
+                      <Space>
+                        <Text type="secondary">x{item.quantity}</Text>
+                        <Text strong style={{ color: "#d4380d" }}>
+                          {formatCurrency(item.price)}
+                        </Text>
+                      </Space>
+                    </Flex>
+
+                    <Text strong style={{ color: "#d4380d" }}>
+                      {formatCurrency(item.subTotalPrice)}
+                    </Text>
                   </Flex>
-                </Flex>
 
-                <Divider style={{ margin: "12px 0" }} />
-              </div>
-            ))}
+                  <Divider style={{ margin: "12px 0" }} />
+                </div>
+              ))}
 
-            <Divider style={{ margin: "16px 0" }} />
+              <Divider style={{ margin: "16px 0" }} />
 
-            {/* Order Summary */}
-            <Space orientation="vertical" size={12} style={{ width: "100%" }}>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Text>Tạm tính:</Text>
-                <Text>{formatCurrency(subtotal)}</Text>
-              </div>
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                <Text>Phí vận chuyển:</Text>
-                <Text>{formatCurrency(shippingFee)}</Text>
-              </div>
-              {discount > 0 && (
+              {/* Order Summary */}
+              <Space orientation="vertical" size={12} style={{ width: "100%" }}>
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
-                  <Text style={{ color: "#52c41a" }}>Giảm giá:</Text>
-                  <Text strong style={{ color: "#52c41a" }}>
-                    -{formatCurrency(discount)}
-                  </Text>
+                  <Text>Tạm tính:</Text>
+                  <Text>{formatCurrency(subtotal)}</Text>
                 </div>
-              )}
-              {selectedVoucher?.type === "shipping" &&
-                shippingFee > discount && (
+                <div
+                  style={{ display: "flex", justifyContent: "space-between" }}
+                >
+                  <Text>Phí vận chuyển:</Text>
+                  <Text>{formatCurrency(shippingFee)}</Text>
+                </div>
+                {discount > 0 && (
                   <div
                     style={{ display: "flex", justifyContent: "space-between" }}
                   >
-                    <Text>Phí vận chuyển sau giảm:</Text>
-                    <Text>{formatCurrency(finalShippingFee)}</Text>
+                    <Text style={{ color: "#52c41a" }}>
+                      Giảm giá{" "}
+                      {selectedVoucher ? `(${selectedVoucher.code})` : ""}:
+                    </Text>
+                    <Text strong style={{ color: "#52c41a" }}>
+                      -{formatCurrency(discount)}
+                    </Text>
                   </div>
                 )}
 
-              <Divider style={{ margin: "8px 0" }} />
+                <Divider style={{ margin: "8px 0" }} />
 
-              <div
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "12px",
+                    background:
+                      "linear-gradient(135deg, #fff4e6 0%, #ffe7ba 100%)",
+                    borderRadius: 8,
+                  }}
+                >
+                  <Text strong style={{ fontSize: 18 }}>
+                    Tổng cộng:
+                  </Text>
+                  <Text strong style={{ fontSize: 20, color: "#d4380d" }}>
+                    {formatCurrency(totalAmount)}
+                  </Text>
+                </div>
+              </Space>
+
+              <Button
+                type="primary"
+                size="large"
+                block
+                onClick={handlePayment}
+                loading={loading}
+                disabled={!selectedAddress || !shippingMethod || !paymentMethod}
                 style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "12px",
-                  background:
-                    "linear-gradient(135deg, #fff4e6 0%, #ffe7ba 100%)",
-                  borderRadius: 8,
-                }}
-              >
-                <Text strong style={{ fontSize: 18 }}>
-                  Tổng cộng:
-                </Text>
-                <Text strong style={{ fontSize: 20, color: "#d4380d" }}>
-                  {formatCurrency(totalAmount)}
-                </Text>
-              </div>
-            </Space>
-
-            <Button
-              type="primary"
-              size="large"
-              block
-              onClick={handlePayment}
-              loading={loading}
-              disabled={!selectedAddress || !shippingMethod || !paymentMethod}
-              style={{
-                marginTop: 24,
-                height: 56,
-                fontSize: 16,
-                fontWeight: 600,
-                borderRadius: 12,
-                background: "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
-                border: "none",
-                boxShadow: "0 4px 16px rgba(212, 56, 13, 0.3)",
-                transition: "all 0.3s",
-              }}
-            >
-              {loading ? <Spin /> : "Đặt hàng"}
-            </Button>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Voucher Modal */}
-      <Modal
-        title={
-          <Space>
-            <GiftOutlined
-              style={{
-                color: "#d4380d",
-                fontSize: 20,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            />
-            <Text strong style={{ fontSize: 18 }}>
-              Chọn mã giảm giá
-            </Text>
-          </Space>
-        }
-        open={voucherModalVisible}
-        onCancel={() => setVoucherModalVisible(false)}
-        footer={null}
-        width={600}
-        style={{ borderRadius: 16 }}
-      >
-        <Space orientation="vertical" size={16} style={{ width: "100%" }}>
-          {vouchers.map((voucher: Voucher) => {
-            const isSelected = selectedVoucher?.code === voucher.code;
-
-            return (
-              <Card
-                key={voucher.code}
-                hoverable
-                onClick={() => handleSelectVoucher(voucher)}
-                style={{
-                  width: "100%",
-                  border: isSelected
-                    ? "2px solid #d4380d"
-                    : "2px solid #f0f0f0",
+                  marginTop: 24,
+                  height: 56,
+                  fontSize: 16,
+                  fontWeight: 600,
                   borderRadius: 12,
-                  background: isSelected ? "#fff4e6" : "#fff",
-                  cursor: "pointer",
+                  background:
+                    "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
+                  border: "none",
+                  boxShadow: "0 4px 16px rgba(212, 56, 13, 0.3)",
                   transition: "all 0.3s",
                 }}
               >
-                <Space
-                  orientation="vertical"
-                  size={8}
-                  style={{ width: "100%" }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Tag
-                      color="error"
-                      style={{
-                        fontSize: 14,
-                        padding: "4px 12px",
-                        fontWeight: 600,
-                      }}
-                    >
-                      {voucher.code}
-                    </Tag>
+                {loading ? <Spin /> : "Đặt hàng"}
+              </Button>
+            </Card>
+          </Col>
+        </Row>
+      </div>
 
-                    {isSelected && (
-                      <CheckCircleOutlined
-                        style={{ color: "#52c41a", fontSize: 20 }}
-                      />
-                    )}
-                  </div>
-
-                  <Text strong style={{ fontSize: 16 }}>
-                    {voucher.description}
-                  </Text>
-
-                  <Text type="secondary" style={{ fontSize: 13 }}>
-                    Điều kiện: {voucher.condition}
-                  </Text>
-                </Space>
-              </Card>
-            );
-          })}
-        </Space>
-      </Modal>
-
-      {/* Global Styles */}
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        * {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
-        }
-        
-        .ant-card-head-title {
-          font-weight: 600;
-        }
-        
-        .ant-radio-wrapper:hover {
-          transform: translateY(-2px);
-        }
-        
-        .ant-btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(212, 56, 13, 0.4) !important;
-        }
-        
-        .ant-card:hover {
-          box-shadow: 0 6px 24px rgba(0,0,0,0.08) !important;
-        }
-      `}</style>
+      {/* Voucher Modal - Sử dụng Voucher component */}
+      <Voucher
+        isOpen={voucherModalVisible}
+        onClose={() => setVoucherModalVisible(false)}
+        onApply={handleApplyVoucher}
+      />
     </div>
   );
 };

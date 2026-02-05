@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Modal,
   Input,
@@ -10,7 +10,7 @@ import {
   Empty,
   Spin,
 } from "antd";
-import { GiftOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import { ClockCircleOutlined } from "@ant-design/icons";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Discount } from "@/models/Discount";
 import { discountService } from "@/services/discount.service";
@@ -116,22 +116,20 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
     if (discount.discountAmount > 0) {
       return formatCurrency(discount.discountAmount);
     }
-    return "GIẢM GIÁ";
+    return "DISCOUNT";
   };
 
   return (
     <Modal
       title={
-        <div style={{ fontSize: 18, fontWeight: 600 }}>
-          Chọn Voucher Giảm Giá
-        </div>
+        <div style={{ fontSize: 18, fontWeight: 600 }}>Choose voucher</div>
       }
       open={isOpen}
       onCancel={handleCancel}
       width={700}
       footer={[
         <Button key="back" size="large" onClick={handleCancel}>
-          TRỞ LẠI
+          GO BACK
         </Button>,
         <Button
           key="submit"
@@ -143,7 +141,7 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
             backgroundColor: selectedDiscountId ? "#ee4d2d" : undefined,
           }}
         >
-          ĐỒNG Ý
+          ACCEPT
         </Button>,
       ]}
     >
@@ -157,14 +155,14 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
           onPressEnter={handleApplyCode}
         />
         <Button size="large" type="primary" onClick={handleApplyCode}>
-          ÁP DỤNG
+          APPLY
         </Button>
       </Space.Compact>
 
       {/* Danh sách voucher */}
       <div style={{ marginBottom: 16 }}>
         <h3 style={{ fontSize: 14, fontWeight: 500, marginBottom: 16 }}>
-          Mã Giảm Giá Khả Dụng ({discounts.length})
+          Discount invalid ({discounts.length})
         </h3>
 
         {loading ? (
@@ -251,13 +249,19 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
                               {formatCurrency(item.minOrderAmount)}
                             </div>
                             <div style={{ marginBottom: 4 }}>
-                              • Số lượng còn lại: {item.quantity}
+                              • Number of vouchers: {item.quantity}
                             </div>
+                            {item.maxDiscountAmount > 0 && (
+                              <div style={{ marginBottom: 4 }}>
+                                • Max discount amount:{" "}
+                                {formatCurrency(item.maxDiscountAmount)}
+                              </div>
+                            )}
                             <div
                               style={{ display: "flex", alignItems: "center" }}
                             >
                               <ClockCircleOutlined style={{ marginRight: 4 }} />
-                              HSD: {formatDate(item.startDate)} -{" "}
+                              Expire: {formatDate(item.startDate)} -{" "}
                               {formatDate(item.endDate)}
                             </div>
                           </div>
@@ -265,7 +269,7 @@ export default function Voucher({ isOpen, onClose, onApply }: VoucherProps) {
                           {/* Alert */}
                           {item.minOrderAmount > 0 && (
                             <Alert
-                              message={`Áp dụng cho đơn hàng từ ${formatCurrency(item.minOrderAmount)}`}
+                              title={`Áp dụng cho đơn hàng từ ${formatCurrency(item.minOrderAmount)}`}
                               type="info"
                               showIcon
                               style={{ marginTop: 8, fontSize: 12 }}

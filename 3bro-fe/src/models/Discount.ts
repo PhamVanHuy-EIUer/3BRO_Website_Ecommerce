@@ -1,10 +1,11 @@
 export type Discount = {
-    id?: string;
+    id: string;
     code: string;
     description: string | null;
     discountPercent: number;
     discountAmount: number;
     minOrderAmount: number;
+    maxDiscountAmount?: number;
     startDate: string;
     endDate: string;
     quantity: number;

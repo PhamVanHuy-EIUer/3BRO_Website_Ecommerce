@@ -432,7 +432,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 {
                     UserId = findUser.Id,
                     Latitude = user.Latitude,
-                    Longitude = user.Longitude,
+                    Longitude = user.Longtitude,
                     CreatedDate = DateTime.UtcNow,
                     IsActive = true
                 };
@@ -442,7 +442,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 findUserLocation.CreatedDate = DateTime.Now;
                 findUserLocation.Latitude = user.Latitude;
-                findUserLocation.Longitude = user.Longitude;
+                findUserLocation.Longitude = user.Longtitude;
             }
             try
             {

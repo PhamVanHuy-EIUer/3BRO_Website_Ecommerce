@@ -213,6 +213,7 @@ export default function EditProfile() {
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
     >,
   ) => {
+    e.preventDefault;
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,

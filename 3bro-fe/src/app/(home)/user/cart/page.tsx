@@ -487,7 +487,11 @@ const CartContent = () => {
                           ) {
                             router.push("/user");
                           } else {
-                            router.push("/user/payment");
+                            const cartItemIds = getSelectedCartItemIds();
+                            const voucherCode = appliedVoucher?.code || null;
+                            router.push(
+                              `/user/payment?cartItemIds=${cartItemIds.join(",")}${voucherCode ? `&voucherCode=${voucherCode}` : ""}`,
+                            );
                           }
                         }}
                       >

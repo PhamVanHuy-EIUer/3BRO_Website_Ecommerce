@@ -5,6 +5,7 @@ export type DiscountDTO = {
     discountValue: number;
     isPercent: boolean;
     minOrderAmount: number;
+    maxDiscountAmount?: number;
     startDate: string;
     expiredDate: string;
     quantity: number;

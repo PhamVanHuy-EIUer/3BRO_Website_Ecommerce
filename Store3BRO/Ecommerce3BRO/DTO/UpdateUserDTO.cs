@@ -16,6 +16,6 @@ namespace Ecommerce3BRO.DTO
 
         public Decimal Latitude { get; set; }
         [Required(ErrorMessage = "Longtitude is required")]
-        public Decimal Longitude { get; set; }
+        public Decimal Longtitude { get; set; }
     }
 }

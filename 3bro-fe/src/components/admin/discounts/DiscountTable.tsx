@@ -48,6 +48,7 @@ export default function DiscountManagement() {
     discountValue: 0,
     isPercent: true,
     minOrderAmount: 0,
+    maxDiscountAmount: 0,
     quantity: 100,
     dateRange: null as any,
   });
@@ -89,6 +90,7 @@ export default function DiscountManagement() {
       discountValue: 0,
       isPercent: true,
       minOrderAmount: 0,
+      maxDiscountAmount: 0,
       quantity: 100,
       dateRange: null,
     });
@@ -99,6 +101,14 @@ export default function DiscountManagement() {
     // Validation
     if (!formData.code || !formData.dateRange) {
       message.warning("Please enter all fill");
+      return;
+    }
+
+    // Validation cho maxDiscountAmount khi là phần trăm
+    if (formData.isPercent && formData.maxDiscountAmount <= 0) {
+      message.warning(
+        "Please enter maximum discount amount for percentage discount",
+      );
       return;
     }
 
@@ -114,6 +124,7 @@ export default function DiscountManagement() {
         discountValue: formData.discountValue || 0,
         isPercent: formData.isPercent,
         minOrderAmount: formData.minOrderAmount || 0,
+        maxDiscountAmount: formData.maxDiscountAmount || 0,
         startDate: formData.dateRange[0].toISOString(),
         expiredDate: formData.dateRange[1].endOf("day").toISOString(),
         quantity: formData.quantity || 0,
@@ -221,6 +232,7 @@ export default function DiscountManagement() {
       discountValue: discountValue,
       isPercent: isPercent,
       minOrderAmount: record.minOrderAmount,
+      maxDiscountAmount: record.maxDiscountAmount || 0,
       quantity: record.quantity,
       dateRange: [dayjs(record.startDate), dayjs(record.endDate)],
     });
@@ -268,11 +280,15 @@ export default function DiscountManagement() {
         d.description.toLowerCase().includes(searchText.toLowerCase())),
   );
 
-  // Statistics
+  useEffect(() => {
+    fetchDiscounts();
+  }, []);
+
+  // Calculate statistics
   const totalDiscounts = discounts.length;
   const activeDiscounts = discounts.filter((d) => d.isActive).length;
   const expiredDiscounts = discounts.filter(
-    (d) => new Date(d.endDate) < new Date(),
+    (d) => dayjs(d.endDate).isBefore(dayjs()) || !d.isActive,
   ).length;
 
   // Table columns
@@ -282,40 +298,51 @@ export default function DiscountManagement() {
       dataIndex: "code",
       key: "code",
       width: 120,
+      fixed: "left" as const,
       render: (text: string) => (
-        <strong style={{ color: "#ee4d2d" }}>{text}</strong>
+        <Tag color="blue" style={{ fontSize: 14, fontWeight: 600 }}>
+          {text}
+        </Tag>
       ),
     },
     {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      width: 200,
       ellipsis: true,
     },
     {
-      title: "Discount",
-      key: "discount",
+      title: "Discount value",
+      key: "value",
       width: 150,
-      render: (_: any, record: Discount) => (
-        <Space>
-          {record.discountPercent > 0 && (
-            <Tag color="green" icon={<PercentageOutlined />}>
-              {record.discountPercent}%
-            </Tag>
-          )}
-          {record.discountAmount > 0 && (
-            <Tag color="blue" icon={<DollarOutlined />}>
-              {formatCurrency(record.discountAmount)}
-            </Tag>
-          )}
-        </Space>
+      render: (_: any, record: Discount) =>
+        record.discountPercent > 0 ? (
+          <Tag color="green" icon={<PercentageOutlined />}>
+            {record.discountPercent}%
+          </Tag>
+        ) : (
+          <Tag color="orange" icon={<DollarOutlined />}>
+            {formatCurrency(record.discountAmount)}
+          </Tag>
+        ),
+    },
+    {
+      title: "Max Discount",
+      dataIndex: "maxDiscountAmount",
+      key: "maxDiscountAmount",
+      width: 150,
+      render: (value: number) => (
+        <span style={{ fontWeight: 500 }}>
+          {value > 0 ? formatCurrency(value) : "—"}
+        </span>
       ),
     },
     {
-      title: "Minimum Order",
+      title: "Min Order",
       dataIndex: "minOrderAmount",
       key: "minOrderAmount",
-      width: 130,
+      width: 150,
       render: (value: number) => formatCurrency(value),
     },
     {
@@ -324,125 +351,72 @@ export default function DiscountManagement() {
       key: "quantity",
       width: 100,
       align: "center" as const,
-    },
-    {
-      title: "Time",
-      key: "dateRange",
-      width: 200,
-      render: (_: any, record: Discount) => (
-        <div style={{ fontSize: 12 }}>
-          <div>{formatDate(record.startDate)}</div>
-          <div>{formatDate(record.endDate)}</div>
-        </div>
+      render: (value: number) => (
+        <Tag color={value > 10 ? "success" : "warning"}>{value}</Tag>
       ),
     },
     {
-      title: "Status",
-      key: "status",
+      title: "Start date",
+      dataIndex: "startDate",
+      key: "startDate",
       width: 120,
-      align: "center" as const,
-      render: (_: any, record: Discount) => {
-        const isExpired = new Date(record.endDate) < new Date();
+      render: (date: string) => formatDate(date),
+    },
+    {
+      title: "End date",
+      dataIndex: "endDate",
+      key: "endDate",
+      width: 120,
+      render: (date: string) => {
+        const isExpired = dayjs(date).isBefore(dayjs());
         return (
-          <Space orientation="vertical" size={4}>
-            {record.isActive && !isExpired ? (
-              <Tag color="green">Active</Tag>
-            ) : isExpired ? (
-              <Tag color="red">Expried</Tag>
-            ) : (
-              <Tag color="red">Inactive</Tag>
-            )}
-            <Switch
-              checked={record.isActive}
-              disabled={isExpired || loading}
-              checkedChildren="Active"
-              unCheckedChildren="Inactive"
-              onChange={(checked) => {
-                handleStatusDiscount(record.id!, checked);
-              }}
-            />
-          </Space>
+          <span style={{ color: isExpired ? "#ff4d4f" : "inherit" }}>
+            {formatDate(date)}
+          </span>
         );
       },
     },
     {
+      title: "Status",
+      dataIndex: "isActive",
+      key: "isActive",
+      width: 100,
+      align: "center" as const,
+      render: (isActive: boolean, record: Discount) => (
+        <Switch
+          checked={isActive}
+          onChange={(checked) => handleStatusDiscount(record.id!, checked)}
+          checkedChildren="ON"
+          unCheckedChildren="OFF"
+        />
+      ),
+    },
+    {
       title: "Action",
       key: "action",
-      width: 120,
-      align: "center" as const,
       fixed: "right" as const,
+      width: 120,
       render: (_: any, record: Discount) => (
         <Space>
-          <span
-            onClick={() => handleEdit(record)}
-            className="cursor-pointer px-3 py-2 bg-[#155BFA] justify-center items-center rounded-md"
-          >
-            <EditOutlined className="!text-white" />
-          </span>
-
           <Button
-            style={{ padding: "17px 17px" }}
-            type="primary"
-            danger
-            icon={<DeleteOutlined />}
-            onClick={() => {
-              Modal.confirm({
-                title: (
-                  <>
-                    <p>Are you sure to delete this account?</p>
-                  </>
-                ),
-                content: (
-                  <div>
-                    <p>
-                      <span className="font-semibold">Delete discount</span>{" "}
-                      {record.code}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Code description:</span>{" "}
-                      {record.description}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Discount:</span>{" "}
-                      {record.discountAmount
-                        ? formatCurrency(record.discountAmount)
-                        : `${record.discountPercent}%`}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Minimum Order: </span>{" "}
-                      {record.minOrderAmount}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Quantity:</span>{" "}
-                      {record.quantity}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Time:</span>{" "}
-                      {formatDate(record.startDate)} -{" "}
-                      {formatDate(record.endDate)}
-                    </p>
-                  </div>
-                ),
-                footer: (_, { OkBtn, CancelBtn }) => (
-                  <>
-                    <CancelBtn />
-                    <OkBtn />
-                  </>
-                ),
-                okText: "Delete",
-                cancelText: "Cancel",
-                onOk: () => record.id && handleDelete(record.id),
-              });
-            }}
+            type="link"
+            icon={<EditOutlined />}
+            onClick={() => handleEdit(record)}
+            size="small"
           />
+          <Popconfirm
+            title="Are you sure to delete this discount?"
+            onConfirm={() => handleDelete(record.id!)}
+            okText="Yes"
+            cancelText="No"
+            okButtonProps={{ danger: true }}
+          >
+            <Button type="link" danger icon={<DeleteOutlined />} size="small" />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
-
-  useEffect(() => {
-    fetchDiscounts();
-  }, []);
 
   return (
     <div
@@ -596,57 +570,103 @@ export default function DiscountManagement() {
             />
           </div>
 
-          {/* Discount values */}
+          {/* Discount values and type */}
           <Row gutter={16} style={{ marginBottom: 16 }}>
             <Col span={12}>
               <label
                 style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
               >
-                Sale %
+                Discount Value
               </label>
               <Space.Compact style={{ width: "100%" }}>
                 <InputNumber
-                  min={0}
+                  min={1}
                   max={formData.isPercent ? 100 : undefined}
                   size="large"
                   style={{ width: "100%" }}
                   value={formData.discountValue}
+                  onChange={(value) =>
+                    setFormData({ ...formData, discountValue: value ?? 0 })
+                  }
                   formatter={(value) =>
                     formData.isPercent
-                      ? `${value}%`
+                      ? `${value}`
                       : value
                         ? value.toLocaleString("vi-VN")
                         : ""
                   }
                   parser={(value) =>
-                    formData.isPercent
-                      ? Number(value?.replace("%", ""))
-                      : Number(value?.replace(/,/g, ""))
-                  }
-                  onChange={(value) =>
-                    setFormData({ ...formData, discountValue: value || 0 })
+                    value ? Number(value.replace(/,/g, "").replace("%", "")) : 0
                   }
                 />
+
+                {formData.isPercent && (
+                  <span
+                    style={{
+                      padding: "0 12px",
+                      display: "flex",
+                      alignItems: "center",
+                      border: "1px solid #d9d9d9",
+                      borderLeft: "none",
+                      borderRadius: "0 6px 6px 0",
+                      background: "#fafafa",
+                    }}
+                  >
+                    %
+                  </span>
+                )}
               </Space.Compact>
             </Col>
             <Col span={12}>
-              <div style={{ marginBottom: 16 }}>
-                <label
-                  style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-                >
-                  Type discount
-                </label>
-                <Switch
-                  checked={formData.isPercent}
-                  onChange={(checked) =>
-                    setFormData({ ...formData, isPercent: checked })
-                  }
-                  checkedChildren="%"
-                  unCheckedChildren="VNĐ"
-                />
-              </div>
+              <label
+                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
+              >
+                Type discount
+              </label>
+              <Switch
+                checked={formData.isPercent}
+                onChange={(checked) =>
+                  setFormData({ ...formData, isPercent: checked })
+                }
+                checkedChildren="%"
+                unCheckedChildren="VNĐ"
+              />
             </Col>
           </Row>
+
+          {/* Max Discount Amount - Only show when isPercent */}
+          {formData.isPercent && (
+            <div style={{ marginBottom: 16 }}>
+              <label
+                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
+              >
+                Maximum Discount Amount <span style={{ color: "red" }}>*</span>
+              </label>
+              <Space.Compact style={{ width: "100%" }}>
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  size="large"
+                  placeholder="VD: 100,000"
+                  value={formData.maxDiscountAmount}
+                  formatter={(value?: number) =>
+                    value ? value.toLocaleString("vi-VN") : ""
+                  }
+                  parser={(value?: string) =>
+                    value ? Number(value.replace(/,/g, "")) : 0
+                  }
+                  onChange={(value: number | null) =>
+                    setFormData({ ...formData, maxDiscountAmount: value ?? 0 })
+                  }
+                  addonAfter="VNĐ"
+                />
+              </Space.Compact>
+              <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+                Số tiền giảm tối đa khi dùng phần trăm. VD: Giảm 10% tối đa
+                100,000đ
+              </div>
+            </div>
+          )}
 
           {/* Min order and quantity */}
           <Row gutter={16} style={{ marginBottom: 16 }}>
@@ -656,21 +676,24 @@ export default function DiscountManagement() {
               >
                 Minimum order amount
               </label>
-              <InputNumber
-                min={0}
-                style={{ width: "100%" }}
-                size="large"
-                value={formData.minOrderAmount}
-                formatter={(value?: number) =>
-                  value ? value.toLocaleString("vi-VN") : ""
-                }
-                parser={(value?: string) =>
-                  value ? Number(value.replace(/,/g, "")) : 0
-                }
-                onChange={(value: number | null) =>
-                  setFormData({ ...formData, minOrderAmount: value ?? 0 })
-                }
-              />
+              <Space.Compact style={{ width: "100%" }}>
+                <InputNumber
+                  min={0}
+                  style={{ width: "100%" }}
+                  size="large"
+                  value={formData.minOrderAmount}
+                  formatter={(value?: number) =>
+                    value ? value.toLocaleString("vi-VN") : ""
+                  }
+                  parser={(value?: string) =>
+                    value ? Number(value.replace(/,/g, "")) : 0
+                  }
+                  onChange={(value: number | null) =>
+                    setFormData({ ...formData, minOrderAmount: value ?? 0 })
+                  }
+                  addonAfter="VNĐ"
+                />
+              </Space.Compact>
             </Col>
             <Col span={12}>
               <label
@@ -709,8 +732,6 @@ export default function DiscountManagement() {
               }
             />
           </div>
-
-          {/* Active switch */}
         </div>
       </Modal>
     </div>

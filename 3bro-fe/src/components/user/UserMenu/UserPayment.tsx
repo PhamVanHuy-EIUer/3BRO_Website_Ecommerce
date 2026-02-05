@@ -18,6 +18,7 @@ import {
   Spin,
   RadioChangeEvent,
   Flex,
+  notification,
 } from "antd";
 import {
   HomeOutlined,
@@ -133,7 +134,7 @@ const PaymentUser: React.FC = () => {
   );
   const [loading, setLoading] = useState<boolean>(false);
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
-
+  const [api, contextHolder] = notification.useNotification();
   const cartItemIds = searchParams.get("cartItemIds")?.split(",") || [];
   const discountCode = searchParams.get("voucherCode") || null;
   const productId = searchParams.get("productId") || "";
@@ -170,7 +171,11 @@ const PaymentUser: React.FC = () => {
       }
 
       if (res.code !== "200" || !res.isSuccess) {
-        message.error(res.message || "Không thể tải thông tin thanh toán");
+        api.error({
+          title: res.message || "Không thể tải thông tin thanh toán",
+          placement: "topRight",
+          duration: 2,
+        });
         return;
       }
 
@@ -182,7 +187,11 @@ const PaymentUser: React.FC = () => {
       }
     } catch (err) {
       console.error("Calculate payment error:", err);
-      message.error("Có lỗi xảy ra khi tải thông tin thanh toán");
+      api.error({
+        title: "Không thể tải thông tin thanh toán",
+        placement: "topRight",
+        duration: 2,
+      });
     } finally {
       setLoading(false);
     }
@@ -201,7 +210,11 @@ const PaymentUser: React.FC = () => {
         );
 
       if (res.code !== "200" || !res.isSuccess) {
-        message.error(res.message || "Không thể áp dụng voucher");
+        api.error({
+          title: res.message || "Không thể tải thông tin thanh toán",
+          placement: "topRight",
+          duration: 2,
+        });
         return;
       }
 
@@ -212,7 +225,11 @@ const PaymentUser: React.FC = () => {
       }
     } catch (err) {
       console.error("Calculate payment with discount error:", err);
-      message.error("Có lỗi xảy ra khi áp dụng voucher");
+      api.error({
+        title: "Không thể tải thông tin thanh toán",
+        placement: "topRight",
+        duration: 2,
+      });
     } finally {
       setLoading(false);
     }
@@ -251,43 +268,60 @@ const PaymentUser: React.FC = () => {
 
   // Handle voucher selection - Re-fetch data with voucher
   const handleApplyVoucher = async (selectedDiscount: Discount) => {
-    // Kiểm tra giá trị đơn hàng có đủ điều kiện không
     if (subtotal < selectedDiscount.minOrderAmount) {
-      message.warning(
-        `Đơn hàng tối thiểu ${formatCurrency(selectedDiscount.minOrderAmount)} để áp dụng voucher này`,
-      );
+      api.warning({
+        title: "Không đủ điều kiện",
+        description: `Đơn hàng tối thiểu phải từ ${formatCurrency(selectedDiscount.minOrderAmount)}`,
+        placement: "topRight",
+        duration: 3,
+      });
       return;
     }
 
     // Re-fetch payment data với voucher code
     await fetchPaymentWithDiscount(selectedDiscount.code);
     setVoucherModalVisible(false);
-    message.success(`Đã áp dụng voucher: ${selectedDiscount.code}`);
+    api.success({
+      title: `Thành công! Voucher: ${selectedDiscount.code}`,
+      placement: "topRight",
+      duration: 2,
+    });
   };
 
   // Handle remove voucher - Re-fetch data without voucher
   const handleRemoveVoucher = async () => {
     setSelectedVoucher(undefined);
     await fetchPaymentData(); // Re-fetch without discount
-    message.info("Đã xóa voucher");
+    api.success({
+      title: `Thành công! Xóa voucher`,
+      placement: "topRight",
+      duration: 2,
+    });
   };
 
   // Handle payment
   const handlePayment = async () => {
     if (!selectedAddress || !shippingMethod || !paymentMethod) {
-      message.warning("Vui lòng điền đầy đủ thông tin");
+      api.warning({
+        title: "Vui lồn chọn điều kiện thanh toán",
+        placement: "topRight",
+        duration: 2,
+      });
       return;
     }
 
     if (!PaymentProduct) {
-      message.error("Không có thông tin thanh toán");
+      api.warning({
+        title: "Không tải thông tin thanh toán",
+        placement: "topRight",
+        duration: 2,
+      });
       return;
     }
 
     setLoading(true);
 
     try {
-      // Simulate payment processing
       setTimeout(() => {
         const productList = PaymentProduct.productList || [];
         const fakeProducts: Product[] = productList.map((item) => ({
@@ -321,7 +355,11 @@ const PaymentUser: React.FC = () => {
       }, 2000);
     } catch (error) {
       console.error("Payment error:", error);
-      message.error("Có lỗi xảy ra khi đặt hàng");
+      api.error({
+        title: "Có lỗi xảy ra khi đặt hàng",
+        placement: "topRight",
+        duration: 2,
+      });
       setLoading(false);
     }
   };

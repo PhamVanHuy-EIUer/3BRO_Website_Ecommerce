@@ -12,14 +12,14 @@ namespace Ecommerce3BRO.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : Controller
+    public class PaymentsController : Controller
     {
         private readonly IMomoService _momoService;
         private readonly IOrderRepository _orderRepository;
         private readonly Ecommerce3BROContext _context;
         private readonly IPaymentRepository _paymentService;
 
-        public PaymentController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService)
+        public PaymentsController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService)
         {
             _momoService = momoService;
             _orderRepository = orderRepository;

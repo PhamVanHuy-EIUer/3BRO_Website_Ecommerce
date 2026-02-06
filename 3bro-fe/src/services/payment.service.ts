@@ -19,4 +19,5 @@ export const paymentService = {
             .then(res => res.data);
     },
     calculateForProduct: (productId: string, quantity: number) => axiosClient.get(`/Products/product-discount-directly?productId=${productId}&quantity=${quantity}`).then(res => res.data),
+    getPaidPayment: () => axiosClient.get("/Payment/by-paid").then(res => res.data),
 };

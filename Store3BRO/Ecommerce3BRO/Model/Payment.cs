@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Ecommerce3BRO.Model;
 
 [Table("Payment")]
-public partial class Payment
+public  class Payment
 {
     [Key]
     public Guid Id { get; set; }

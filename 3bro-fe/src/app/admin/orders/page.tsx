@@ -167,7 +167,6 @@ const AdminOrder = () => {
       : `https://localhost:7041${imageUrl}`;
   };
 
-  // Calculate stats
   const stats = [
     {
       label: "Tổng đơn hàng",

@@ -123,10 +123,11 @@ const HomePage = () => {
               {banners.map((img) => (
                 <div key={img.id}>
                   <div className="relative h-96 w-full">
-                    <img
+                    <Image
                       src={img.src}
                       alt=""
                       className="w-full h-full object-cover"
+                      fill
                     />
                   </div>
                 </div>
@@ -268,10 +269,12 @@ const HomePage = () => {
       <div className="max-w-7xl mx-auto px-4 py-16">
         <div className="relative bg-gradient-to-r from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-2xl">
           <div className="absolute inset-0 opacity-20">
-            <img
+            <Image
               src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop"
               alt=""
               className="w-full h-full object-cover"
+              width={1200}
+              height={400}
             />
           </div>
           <div className="relative px-12 py-16 text-white">

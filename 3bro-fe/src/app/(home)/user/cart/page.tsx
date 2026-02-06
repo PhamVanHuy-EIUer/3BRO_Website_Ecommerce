@@ -136,7 +136,8 @@ const CartContent = () => {
       );
       if (res.code === "200" && res.isSuccess) {
         api.success({
-          message: "Xóa các sản phẩm thành công",
+          title: "Success",
+          description: "Delete product successfully",
           placement: "topRight",
           duration: 2,
         });
@@ -152,8 +153,8 @@ const CartContent = () => {
     // Kiểm tra đơn tối thiểu
     if (totalPrice < discount.minOrderAmount) {
       api.warning({
-        message: "Không đủ điều kiện",
-        description: `Đơn hàng tối thiểu phải từ ${formatCurrency(discount.minOrderAmount)}`,
+        title: "Not Eligible",
+        description: `Minimum order amount must be ${formatCurrency(discount.minOrderAmount)}`,
         placement: "topRight",
         duration: 3,
       });
@@ -289,7 +290,7 @@ const CartContent = () => {
         onApply={handleApplyVoucher}
       />
 
-      <Spin spinning={applyingVoucher} tip="Đang áp dụng voucher...">
+      <Spin spinning={applyingVoucher} tip="Applying voucher...">
         <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
           <Modal
             className="p-5"
@@ -394,7 +395,7 @@ const CartContent = () => {
                         <div className="flex flex-col gap-3 min-w-[350px]">
                           <div className="flex justify-between text-base">
                             <span className="text-gray-600">
-                              Tổng tiền hàng:
+                              Original Price:
                             </span>
                             <span className="font-semibold">
                               {formatCurrency(discountData.currentTotalPrice)}
@@ -404,7 +405,7 @@ const CartContent = () => {
                           {discountData.shippingFee > 0 && (
                             <div className="flex justify-between text-base">
                               <span className="text-gray-600">
-                                Phí vận chuyển:
+                                Shipping Fee:
                               </span>
                               <span className="font-semibold">
                                 {formatCurrency(discountData.shippingFee)}
@@ -413,7 +414,7 @@ const CartContent = () => {
                           )}
 
                           <div className="flex justify-between text-base text-red-500">
-                            <span>Giảm giá ({discountData.discountCode}):</span>
+                            <span>Discount ({discountData.discountCode}):</span>
                             <span className="font-semibold">
                               -{formatCurrency(discountData.discountPrice)}
                             </span>
@@ -421,7 +422,7 @@ const CartContent = () => {
 
                           <div className="border-t pt-3 flex justify-between text-lg">
                             <span className="font-bold text-gray-800">
-                              Tổng thanh toán:
+                              Total Payment:
                             </span>
                             <span className="font-bold text-red-600 text-xl">
                               {formatCurrency(discountData.finalTotalPrice)}

@@ -279,7 +279,7 @@ namespace Ecommerce3BRO.Controllers
         public async Task<ApiResponse<string>> UpdateStatusUser([FromQuery]Guid id)
         {
             var response = await _userService.UpdateStatusUserAsync(id);
-            return response
+            return response;
         }
     }
 }

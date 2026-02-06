@@ -105,7 +105,7 @@ const Sidebar = () => {
       await logout();
 
       api.success({
-        message: "Success",
+        title: "Success",
         description: "Logout successfully",
         duration: 2,
       });
@@ -113,7 +113,7 @@ const Sidebar = () => {
       router.push("/login");
     } catch (err) {
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Logout failed",
       });
     }

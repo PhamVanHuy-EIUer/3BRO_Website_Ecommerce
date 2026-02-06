@@ -52,5 +52,6 @@ export const productService = {
             })
             .then(res => res.data);
     },
+    topProductRevenue: (pageSize: number) => axiosClient.get(`/Products/top-product-revenue?pageSize=${pageSize}`).then(res => res.data),
 };
 

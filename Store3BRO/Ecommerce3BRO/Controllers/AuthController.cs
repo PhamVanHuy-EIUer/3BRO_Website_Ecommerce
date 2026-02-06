@@ -62,7 +62,7 @@ namespace Ecommerce3BRO.Controllers
             });
             Response.Cookies.Append("role", roles, new CookieOptions
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)
@@ -194,7 +194,7 @@ namespace Ecommerce3BRO.Controllers
                     });
                     Response.Cookies.Append("role", newRoles, new CookieOptions
                     {
-                        HttpOnly = false,
+                        HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.None,
                         Expires = DateTime.Now.AddMinutes(15)
@@ -255,7 +255,7 @@ namespace Ecommerce3BRO.Controllers
             });
             Response.Cookies.Append("role", roles, new CookieOptions
             {
-                HttpOnly = false,
+                HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
                 Expires = DateTime.Now.AddMinutes(15)

@@ -5,6 +5,7 @@ import type { ViewOrderUser } from "@/models/ViewOrderUser";
 import { motion } from "framer-motion";
 import { formatCurrency } from "@/utils/currency";
 import { COLORS, ORDER_TABS, OrderStatus } from "@/data/data";
+import Image from "next/image";
 
 interface PurchaseOrderContentProps {
   activeTab: OrderStatus;
@@ -115,10 +116,12 @@ const PurchaseOrderContent: React.FC<PurchaseOrderContentProps> = ({
                     <div key={item.orderItemId} className="flex gap-4">
                       <div className="w-16 h-16 bg-gray-100 border border-gray-200 flex-shrink-0 rounded overflow-hidden">
                         {item.imageUrl ? (
-                          <img
+                          <Image
                             src={getFirstImage(item.imageUrl)}
                             alt={item.productName}
-                            className="w-full h-full object-cover"
+                            width={64}
+                            height={64}
+                            loading="lazy"
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">

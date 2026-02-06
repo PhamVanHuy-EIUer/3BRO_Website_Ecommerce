@@ -728,6 +728,18 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<ShowCheckoutDTO>(null, checkoutWithDiscount, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task<ApiResponse<TopProductDTO>> GetTopProducts(int pageSize)
+        {
+            var products = await _context.Product.Where(p => p.Status == 1).OrderByDescending(p => p.OrderDetails.Sum(od => od.Quantity) * p.Price).ThenBy(p => p.ProductName).Take(pageSize).Select(p => new TopProductDTO
+            {
+                productId = p.Id,
+                productName = p.ProductName,
+                totalRevenue = p.OrderDetails.Sum(od => od.Quantity) * p.Price,
+            }).ToListAsync();
+            return new ApiResponse<TopProductDTO>(products, null, "200", "Get products by pages successfully", true, 0, pageSize, 0, 0, null, null, null);
+
+        }
+
         public async Task<ApiResponse<GetProductDTO>> SearchProductByPageAsync(string keyword, int currentPage, int pageSize)
         {
             if (keyword == null)

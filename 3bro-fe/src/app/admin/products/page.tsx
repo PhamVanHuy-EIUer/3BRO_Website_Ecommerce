@@ -33,6 +33,7 @@ import {
   Space,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import Image from "next/image";
 
 export default function ProductAdmin() {
   // State management
@@ -149,10 +150,12 @@ export default function ProductAdmin() {
       key: "imageUrl",
       width: 100,
       render: (imageUrl: string) => (
-        <img
+        <Image
           src={getFirstImage(imageUrl)}
           alt="Product"
           className="w-16 h-16 object-cover rounded-lg shadow-sm"
+          width={100}
+          height={100}
         />
       ),
     },
@@ -671,10 +674,12 @@ export default function ProductAdmin() {
                   <div className="border-2 border-dashed border-slate-300 rounded-xl p-6 hover:border-blue-500 transition-colors">
                     {mainImagePreview ? (
                       <div className="flex items-center gap-4">
-                        <img
+                        <Image
                           src={mainImagePreview}
                           alt="Preview"
                           className="w-32 h-32 object-cover rounded-lg"
+                          width={100}
+                          height={100}
                         />
                         <div className="flex-1">
                           <p className="text-sm text-slate-600 mb-2">
@@ -734,10 +739,12 @@ export default function ProductAdmin() {
                       <div className="grid grid-cols-4 gap-4">
                         {additionalImagePreviews.map((preview, index) => (
                           <div key={index} className="relative group">
-                            <img
+                            <Image
                               src={preview}
                               alt={`Additional ${index}`}
                               className="w-full h-24 object-cover rounded-lg"
+                              width={80}
+                              height={80}
                             />
                             <button
                               onClick={() => removeAdditionalImage(index)}
@@ -898,7 +905,7 @@ export default function ProductAdmin() {
                   </label>
                   <div className="border-2 border-dashed border-slate-300 rounded-xl p-4 hover:border-blue-500 transition-colors">
                     <div className="flex items-center gap-4">
-                      <img
+                      <Image
                         src={
                           editMainImage
                             ? editMainImagePreview
@@ -906,6 +913,8 @@ export default function ProductAdmin() {
                         }
                         alt="Current"
                         className="w-32 h-32 object-cover rounded-lg"
+                        width={128}
+                        height={128}
                       />
                       <label className="flex-1 flex flex-col items-center gap-2 cursor-pointer p-4 border-2 border-dashed border-slate-200 rounded-lg hover:border-blue-400 transition-colors">
                         <Upload size={32} className="text-slate-400" />

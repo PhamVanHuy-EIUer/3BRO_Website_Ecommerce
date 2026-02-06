@@ -396,7 +396,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Quantity = ci.Quantity,
                     CategoryName = ci.Product.Category.CategoryName,
                     ImageUrl = ci.Product.ImageUrl
-                });
+                }).ToList();
                 var showCheckoutWithoutDiscount = new ShowCheckoutDTO
                 {
                     productList = (List<DiscountProductDTO>)productWithoutDiscount,

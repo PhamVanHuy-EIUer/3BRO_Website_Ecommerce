@@ -1,4 +1,5 @@
-﻿using Ecommerce3BRO.Data;
+﻿using Azure.Core;
+using Ecommerce3BRO.Data;
 using Ecommerce3BRO.DTO;
 using Ecommerce3BRO.Helper.Enums;
 using Ecommerce3BRO.Model;
@@ -16,15 +17,34 @@ namespace Ecommerce3BRO.Repository.Implement
         }
         public async Task<ApiResponse<GetPaymentDTO>> AddNewPaymentAsync(Guid orderId)
         {
-            var order = await _context.Order.Include(o=>o.User).FirstOrDefaultAsync(o=>o.Id==orderId);
+            var order = await _context.Order
+          .Include(o => o.User)
+          .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
+          .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
+          .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount).FirstOrDefaultAsync(o => o.Id == orderId);
             if (order == null)
             {
                 return new ApiResponse<GetPaymentDTO>(null, null, "404", "Payment not found", false, 0, 0, 0, 0, null, null, null);
             }
+            var refundPrice = order.OrderDetails
+                  .Where(od => od.IsReturn)
+                  .SelectMany(od => od.Refunds)
+                  .Sum(r => r.RefundAmount);
+            var discountPrice = order.OrderDiscounts
+                   .Where(od => od.IsUsed)
+                   .Sum(od =>
+                       od.Discount.DiscountAmount ??
+                       //(o.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                       (od.Discount.MaxDiscountAmount.HasValue
+                           ? Math.Min(order.TotalAmount * od.Discount.DiscountPercent.Value / 100, od.Discount.MaxDiscountAmount.Value)
+                           : order.TotalAmount * od.Discount.DiscountPercent.Value / 100)
+                   );
+            var total = order.TotalAmount - discountPrice - refundPrice + order.ShippingFee;
+
             var newPayment = new Payment
             {
                 OrderId = orderId,
-                Amount = order.TotalAmount,
+                Amount = total,
                 CreatedDate = DateTime.UtcNow,
                 PaymentMethod = order.PaymentMethod,
                 Status = 0,
@@ -48,7 +68,8 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<GetPaymentDTO>> DeletePaymentAsync(Guid paymentId)
         {
             var findPayment = await _context.Payment.FindAsync(paymentId);
-            if (findPayment == null) {
+            if (findPayment == null)
+            {
                 return new ApiResponse<GetPaymentDTO>(null, null, "404", "Payment not found", false, 0, 0, 0, 0, null, null, null);
             }
             findPayment.Status = 2;
@@ -57,14 +78,32 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<GetPaymentDTO>> GetAllPaymentByPageAsync(int currentPage,int pageSize)
+        public async Task<ApiResponse<GetPaymentDTO>> GetAllPaidPayment()
+        {
+            var payments = await _context.Payment.Include(p => p.Order).ThenInclude(o => o.User).Where(p=>p.Status==1)
+                .OrderByDescending(p => p.CreatedDate)
+               .Select(p => new GetPaymentDTO
+               {
+                   Amount = p.Amount,
+                   CreatedDate = p.CreatedDate,
+                   Id = p.Id,
+                   OrderUserName = p.Order.User.FullName,
+                   PaymentDate = p.PaymentDate,
+                   PaymentMethod = p.PaymentMethod,
+                   Status = ((PaymentStatus)p.Status).ToString(),
+                   TransactionCode = p.TransactionCode
+               }).ToListAsync();
+            return new ApiResponse<GetPaymentDTO>(payments, null, "200", "Get all payment by page successfully", true, 0,0,0,0, null, null, null);
+        }
+
+        public async Task<ApiResponse<GetPaymentDTO>> GetAllPaymentByPageAsync(int currentPage, int pageSize)
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
             var totalItems = _context.Payment.Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            var payments = await _context.Payment.Include(p=>p.Order).ThenInclude(o=>o.User).OrderByDescending(p=>p.CreatedDate).
-                Skip((currentPage-1)*pageSize).Take(pageSize).Select(p=> new GetPaymentDTO
+            var payments = await _context.Payment.Include(p => p.Order).ThenInclude(o => o.User).OrderByDescending(p => p.CreatedDate).
+                Skip((currentPage - 1) * pageSize).Take(pageSize).Select(p => new GetPaymentDTO
                 {
                     Amount = p.Amount,
                     CreatedDate = p.CreatedDate,
@@ -78,7 +117,7 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetPaymentDTO>(payments, null, "200", "Get all payment by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment(Guid paymentId,int status)
+        public async Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment(Guid paymentId, int status)
         {
             var findPayment = await _context.Payment.FindAsync(paymentId);
             if (findPayment == null)

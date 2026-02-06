@@ -4,6 +4,7 @@ using Ecommerce3BRO.Helper.Enums;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Service;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,14 +12,14 @@ namespace Ecommerce3BRO.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentController : Controller
+    public class PaymentsController : Controller
     {
         private readonly IMomoService _momoService;
         private readonly IOrderRepository _orderRepository;
         private readonly Ecommerce3BROContext _context;
         private readonly IPaymentRepository _paymentService;
 
-        public PaymentController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService)
+        public PaymentsController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService)
         {
             _momoService = momoService;
             _orderRepository = orderRepository;
@@ -27,6 +28,7 @@ namespace Ecommerce3BRO.Controllers
         }
 
         // User bấm "Thanh toán MoMo"
+        [Authorize]
         [HttpPost("momo")]
         public async Task<IActionResult> PayWithMomo(MomoCheckoutRequest request)
         {
@@ -106,24 +108,34 @@ namespace Ecommerce3BRO.Controllers
             return Ok();
         }
         [HttpPost]
+        [Authorize]
         public async Task<ApiResponse<GetPaymentDTO>> AddNewPayment([FromQuery] Guid orderId)
         {
             return await _paymentService.AddNewPaymentAsync(orderId);
         }
         [HttpDelete("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetPaymentDTO>> DeletePayment([FromRoute] Guid id)
         {
             return await _paymentService.DeletePaymentAsync(id);
         }
         [HttpPut("{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment([FromRoute] Guid id, [FromQuery] int status)
         {
             return await _paymentService.UpdateStatusPayment(id, status);
         }
         [HttpGet("by-page")]
+        [Authorize]
         public async Task<ApiResponse<GetPaymentDTO>> GetAllPaymentByPage([FromQuery] int curentPage, [FromQuery] int pageSize)
         {
             return await _paymentService.GetAllPaymentByPageAsync(curentPage, pageSize);
+        }
+        [HttpGet("by-paid")]
+        [Authorize]
+        public async Task<ApiResponse<GetPaymentDTO>> GetAllPaidPayment()
+        {
+            return await _paymentService.GetAllPaidPayment();
         }
     }
 }

@@ -28,7 +28,7 @@
                 DateTimeKind.Utc
             );
 
-            var fromDate = startOfCurrentMonth.AddMonths(-5);
+            var fromDate = startOfCurrentMonth.AddMonths(-6);
             return fromDate;
         }
 

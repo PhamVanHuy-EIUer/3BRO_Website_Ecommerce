@@ -13,7 +13,7 @@ namespace Ecommerce3BRO.Repository.Implement
     {
         private readonly Ecommerce3BROContext _context;
         private readonly TakeCurrentTime _time;
-        public PaymentRepository(Ecommerce3BROContext context,TakeCurrentTime time)
+        public PaymentRepository(Ecommerce3BROContext context, TakeCurrentTime time)
         {
             _context = context;
             _time = time;
@@ -140,21 +140,18 @@ namespace Ecommerce3BRO.Repository.Implement
             var result = Enumerable.Range(0, 6)
          .Select(i =>
     {
-        var date = currentTime.AddMonths(-6 + i); // từ 5 tháng trước → hiện tại
-
+        var date = currentTime.AddMonths(-6 + i);
         var sale = listSale.FirstOrDefault(s =>
             s.Year == date.Year && s.Month == ((MonthEnum)date.Month).ToString());
         return new TotalSaleDTO
         {
             Year = date.Year,
             Month = ((MonthEnum)date.Month).ToString(),
-            NumOfProduct = sale?.NumOfProduct ??0,
-            TotalSale = sale?.TotalSale ??0
+            NumOfProduct = sale?.NumOfProduct ?? 0,
+            TotalSale = sale?.TotalSale ?? 0
         };
-    })
-    .ToList();
-
-            return new ApiResponse<TotalSaleDTO>(result, null, "200", "Get all total sales by month successfully", true, 0,0,0,0, null, null, null);
+    }).ToList();
+            return new ApiResponse<TotalSaleDTO>(result, null, "200", "Get all total sales by month successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment(Guid paymentId, int status)

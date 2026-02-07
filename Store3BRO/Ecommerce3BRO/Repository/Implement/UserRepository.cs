@@ -405,7 +405,7 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             findUser.IsActive = !findUser.IsActive;
             await _context.SaveChangesAsync();
-            return new ApiResponse<string>(null, null, "200", "Set user " + findUser.IsActive, true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<string>(null, null, "200", "Set status user:  "  + findUser.IsActive, true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UpdateUserDTO user)

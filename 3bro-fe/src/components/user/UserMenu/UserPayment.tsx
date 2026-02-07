@@ -15,7 +15,6 @@ import {
   Row,
   Col,
   message,
-  Spin,
   RadioChangeEvent,
   Flex,
   notification,
@@ -37,6 +36,8 @@ import { PaymentProduct } from "@/models/PaymentProduct";
 import { paymentService } from "@/services/payment.service";
 import { Discount } from "@/models/Discount";
 import Voucher from "@/components/user/cart/Voucher"; // Import Voucher component
+import PageLoading from "@/components/Loading";
+import LoadingUser from "@/components/LoadingUser";
 
 const { Title, Text } = Typography;
 
@@ -375,7 +376,7 @@ const PaymentUser: React.FC = () => {
           height: "100vh",
         }}
       >
-        <Spin size="large" />
+        <PageLoading />
       </div>
     );
   }
@@ -812,7 +813,7 @@ const PaymentUser: React.FC = () => {
                   transition: "all 0.3s",
                 }}
               >
-                {loading ? <Spin /> : "Place Order"}
+                {loading ? <LoadingUser /> : "Place Order"}
               </Button>
             </Card>
           </Col>

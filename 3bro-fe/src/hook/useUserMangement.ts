@@ -9,7 +9,6 @@ import { useEffect, useEffectEvent, useState } from "react";
 
 export const useUserMangement = (PAGE_SIZE: number) => {
     const [users, setUsers] = useState<User[]>([]);
-    const [categoriesLoading, setCategoriesLoading] = useState(true);
     const [role, setRole] = useState<Role[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -17,12 +16,7 @@ export const useUserMangement = (PAGE_SIZE: number) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [api, contextHolder] = notification.useNotification();
-    const [addModal, setAddModal] = useState(false);
-    const [searchedUser, setSearchedUser] = useState<User[]>([]);
 
-    const [fileList, setFileList] = useState<UploadFile[]>([]);
-    const [imageFile, setImageFile] = useState<File | null>(null);
-    const [previewImage, setPreviewImage] = useState<string>("");
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
@@ -77,6 +71,26 @@ export const useUserMangement = (PAGE_SIZE: number) => {
     // }
 
 
+    const handleUpdateUser = async (userId: string) => {
+        try {
+
+            const res: ApiResponse<string> = await userService.updateStatusByAdmin(userId);
+            if (!res.isSuccess) {
+                api.error({ title: "Error", description: res.message, duration: 2 });
+            }
+            api.success({
+                title: "Success",
+                description: res.message,
+                duration: 2
+            });
+            fetchUsers();
+
+        } catch (err) {
+            api.error({ title: "Error", description: "Failed to update user", duration: 2 });
+        } finally {
+            setSelectedUser(null);
+        }
+    }
     const handleConfirmDelete = async () => {
         if (!selectedUser) return;
 
@@ -105,5 +119,5 @@ export const useUserMangement = (PAGE_SIZE: number) => {
         fetchRoles();
     }, []);
 
-    return { contextHolder, users, page, setPage, total, deleteModal, setDeleteModal, selectedUser, setSelectedUser, handleConfirmDelete }
+    return { contextHolder, users, page, setPage, total, deleteModal, setDeleteModal, selectedUser, setSelectedUser, handleConfirmDelete, handleUpdateUser }
 }

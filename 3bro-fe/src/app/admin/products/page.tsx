@@ -552,9 +552,9 @@ export default function ProductAdmin() {
       {loading ? (
         <PageLoading />
       ) : (
-        <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-50 p-6">
+        <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-50 p-5">
           {/* Header */}
-          <div className="max-w-7xl mx-auto mb-6">
+          <div className=" mx-auto mb-6">
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
@@ -595,7 +595,7 @@ export default function ProductAdmin() {
           </div>
 
           {/* Table */}
-          <div className="max-w-7xl mx-auto">
+          <div className="mx-auto">
             <Card className="rounded-2xl shadow-lg">
               <Table
                 columns={columns}

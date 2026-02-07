@@ -89,7 +89,6 @@ namespace Ecommerce3BRO.Controllers
         {
             if (!_momoService.VerifyIpnSignature(ipn))
                 return BadRequest("Invalid signature");
-
             var order = await _context.Order.FindAsync(ipn.OrderId);
             if (order == null)
                 return NotFound();
@@ -131,11 +130,11 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _paymentService.GetAllPaymentByPageAsync(curentPage, pageSize);
         }
-        [HttpGet("by-paid")]
+        [HttpGet("total-sale")]
         [Authorize]
-        public async Task<ApiResponse<GetPaymentDTO>> GetAllPaidPayment()
+        public async Task<ApiResponse<TotalSaleDTO>> GetAllSaleByMonth()
         {
-            return await _paymentService.GetAllPaidPayment();
+            return await _paymentService.GetAllSalesByMonth();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Ecommerce3BRO.Data;
+using Ecommerce3BRO.Helper;
 using Ecommerce3BRO.Model;
 using Ecommerce3BRO.Repository;
 using Ecommerce3BRO.Repository.Implement;
@@ -38,6 +39,7 @@ builder.Services.AddScoped<ISupportRepository, SupportRepository>();
 builder.Services.AddScoped<IMomoService, MomoService>();
 builder.Services.AddScoped<GoogleAuthService>();
 builder.Services.AddScoped<ShopLocation>();
+builder.Services.AddScoped<TakeCurrentTime>();
 builder.Services.AddHttpClient<IMomoService, MomoService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 

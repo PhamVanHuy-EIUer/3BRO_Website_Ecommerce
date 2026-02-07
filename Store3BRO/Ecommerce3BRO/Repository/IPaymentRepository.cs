@@ -9,6 +9,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse<GetPaymentDTO>> GetAllPaymentByPageAsync(int currentPage,int pageSize);
         Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment(Guid paymentId,int status);
         Task<ApiResponse<GetPaymentDTO>> DeletePaymentAsync(Guid paymentId);
-        Task<ApiResponse<GetPaymentDTO>> GetAllPaidPayment();
+        Task<ApiResponse<TotalSaleDTO>> GetAllSalesByMonth();
     }
 }

@@ -396,6 +396,18 @@ namespace Ecommerce3BRO.Repository.Implement
             return true;
         }
 
+        public async Task<ApiResponse<string>> UpdateStatusUserAsync(Guid id)
+        {
+            var findUser = await _context.User.FirstOrDefaultAsync(u => u.Id.Equals(id));
+            if(findUser == null)
+            {
+                return new ApiResponse<string>(null, null, "404", "Can't find user", false, 0, 0, 0, 0, null, null, null);
+            }
+            findUser.IsActive = !findUser.IsActive;
+            await _context.SaveChangesAsync();
+            return new ApiResponse<string>(null, null, "200", "Set user " + findUser.IsActive, true, 0, 0, 0, 0, null, null, null);
+        }
+
         public async Task<GetUserDTO?> UpdateUserByIdAsync(Guid id, UpdateUserDTO user)
         {
 

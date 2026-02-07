@@ -3,14 +3,15 @@ import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
 import { ChangeEvent, use, useState } from "react";
 import { Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
-import { Image, notification, Rate } from "antd";
+import { notification, Rate } from "antd";
 import { formatCurrency } from "@/utils/currency";
 import { ApiResponse } from "@/models/ApiResponse";
 import { cartService } from "@/services/cart.service";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter } from "next/navigation";
-import { a } from "framer-motion/client";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
+import Image from "next/image";
+import MainImage from "./MainImage";
 
 export default function ProductGallery({
   product,
@@ -106,11 +107,14 @@ export default function ProductGallery({
                       : "border-gray-200 hover:border-gray-300"
                   }`}
                 >
-                  <img
-                    src={getFirstImage(product.imageUrl)}
-                    alt={product.productName}
-                    className="w-full h-full object-cover"
-                  />
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={getFirstImage(product.imageUrl)}
+                      alt={product.productName}
+                      className="w-full h-full object-cover"
+                      fill
+                    />
+                  </div>
                 </button>
 
                 {/* Additional product images */}
@@ -125,32 +129,20 @@ export default function ProductGallery({
                           : "border-gray-200 hover:border-gray-300"
                       }`}
                     >
-                      <img
-                        src={getFirstImage(img.imageUrl)}
-                        alt={`${product.productName} - ${img.id}`}
-                        className="w-full h-full object-cover"
-                      />
+                      <div className="relative w-full h-full">
+                        <Image
+                          src={getFirstImage(img.imageUrl)}
+                          alt={`${product.productName} - ${img.id}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     </button>
                   ))}
               </div>
 
               {/* Main Image - Chỉ ảnh này mới có thể zoom */}
-              <div className="flex-1 bg-linear-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden aspect-square flex items-center justify-center">
-                <Image
-                  src={active}
-                  alt={product.productName}
-                  className="w-full h-full object-cover"
-                  preview={{
-                    cover: (
-                      <div className="flex items-center justify-center text-white text-xl">
-                        <ZoomInOutlined />
-                      </div>
-                    ),
-                  }}
-                  width={500}
-                  height={500}
-                />
-              </div>
+              <MainImage product={product} active={active} />
             </div>
 
             {/* Right - Product Info */}
@@ -184,37 +176,6 @@ export default function ProductGallery({
                   {product.description}
                 </p>
               </div>
-
-              {/* Colors */}
-              {/* <div>
-              <p className="text-lg font-medium mb-3">
-                Colours:{" "}
-                <span className="inline-flex gap-2 ml-2">
-                  <button className="w-6 h-6 rounded-full bg-purple-500 border-2 border-gray-300 hover:border-gray-900 transition-all" />
-                  <button className="w-6 h-6 rounded-full bg-red-500 border-2 border-gray-900 transition-all" />
-                </span>
-              </p>
-            </div> */}
-
-              {/* Sizes */}
-              {/* <div>
-              <p className="text-lg font-medium mb-3">Size:</p>
-              <div className="flex gap-3">
-                {sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`min-w-12 px-4 h-10 rounded border transition-all font-medium ${
-                      selectedSize === size
-                        ? "bg-red-500 text-white border-red-500"
-                        : "bg-white text-gray-900 border-gray-300 hover:border-red-500"
-                    }`}
-                  >
-                    {size}
-                  </button>
-                ))}
-              </div>
-            </div> */}
 
               {/* Stock Warning */}
               {product.stock > 0 && (

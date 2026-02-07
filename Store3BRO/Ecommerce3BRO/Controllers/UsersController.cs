@@ -273,6 +273,14 @@ namespace Ecommerce3BRO.Controllers
             }
             return new ApiResponse<string>(null, null, "200", "Check forget password successfully", false, 0, 0, 0, 0, null, null, null);
         }
+
+        [Authorize(Roles ="Admin")]
+        [HttpPatch("update-status-user-by-admin/{id}")]
+        public async Task<ApiResponse<string>> UpdateStatusUser([FromQuery]Guid id)
+        {
+            var response = await _userService.UpdateStatusUserAsync(id);
+            return response;
+        }
     }
 }
 

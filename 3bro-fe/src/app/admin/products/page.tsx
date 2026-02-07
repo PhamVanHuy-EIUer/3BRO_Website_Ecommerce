@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import { productService } from "@/services/product.service";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
@@ -133,6 +133,18 @@ export default function ProductAdmin() {
     setLoading(false);
   };
 
+  // useEffect(() => {
+  //   if (selectedProduct && showEditModal) {
+  //     setEditProduct({
+  //       productName: selectedProduct.productName,
+  //       description: selectedProduct.description || "",
+  //       price: selectedProduct.price.toString(),
+  //       stock: selectedProduct.stock.toString(),
+  //       categoryId: selectedProduct.categoryId, // 🔥 QUAN TRỌNG
+  //       categoryName: selectedProduct.categoryName ?? "",
+  //     });
+  //   }
+  // }, [selectedProduct, showEditModal]);
   const loadCategories = async () => {
     try {
       const data: ApiResponse<Category> = await categoryService.getCategories();
@@ -294,17 +306,22 @@ export default function ProductAdmin() {
   // Delete product image
   const deleteProductImage = async (imageId: string) => {
     try {
-      await productService.deleteImageProduct(imageId);
+      const res: ApiResponse<any> =
+        await productService.deleteImageProduct(imageId);
       setProductImages((prev) => prev.filter((img) => img.id !== imageId));
-      api.success({
-        title: "Success",
-        description: "Delete image successfully",
-        duration: 2,
-      });
+      if (res.code === "200" && res.isSuccess) {
+        api.success({
+          title: "Success",
+          description: "Delete image successfully",
+          duration: 2,
+        });
+      } else {
+        console.log(res.message);
+      }
     } catch (error) {
       console.error("Error deleting image:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Cannot delete image. Please try again.",
         duration: 2,
       });
@@ -315,7 +332,7 @@ export default function ProductAdmin() {
   const handleAddProduct = async () => {
     if (!mainImage) {
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Please upload a main image.",
         duration: 2,
       });
@@ -329,7 +346,7 @@ export default function ProductAdmin() {
       !newProduct.categoryId
     ) {
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Please fill in all required fields.",
         duration: 2,
       });
@@ -337,24 +354,34 @@ export default function ProductAdmin() {
     }
 
     const formData = new FormData();
-    formData.append("productName", newProduct.productName);
-    formData.append("description", newProduct.description);
-    formData.append("price", newProduct.price);
-    formData.append("stock", newProduct.stock);
-    formData.append("categoryId", newProduct.categoryId);
-    formData.append("mainImage", mainImage);
+    formData.append("ProductName", newProduct.productName);
+    formData.append("Description", newProduct.description);
+    formData.append("Price", newProduct.price);
+    formData.append("Stock", newProduct.stock);
+    formData.append("CategoryId", newProduct.categoryId);
+    formData.append("image", mainImage);
 
     try {
-      const response = await productService.addProduct(formData);
-
+      const response: ApiResponse<Product> =
+        await productService.addProduct(formData);
+      const obj: any = {};
+      formData.forEach((value, key) => {
+        obj[key] = value;
+      });
+      console.log(obj);
+      if (!response.isSuccess) throw new Error(response.message);
       if (additionalImages.length > 0) {
-        await productService.addImagesForProduct(response.id, additionalImages);
+        const resImages: ApiResponse<any> =
+          await productService.addImagesForProduct(
+            response.object?.id ?? "",
+            additionalImages,
+          );
       }
 
       resetAddForm();
       setShowAddModal(false);
       api.success({
-        message: "Success",
+        title: "Success",
         description: "Add product successfully",
         duration: 2,
       });
@@ -362,8 +389,8 @@ export default function ProductAdmin() {
     } catch (error) {
       console.error("Error adding product:", error);
       api.error({
-        message: "Error",
-        description: "Cannot add product. Please try again.",
+        title: "Error",
+        description: `${error}`,
         duration: 2,
       });
     }
@@ -372,10 +399,15 @@ export default function ProductAdmin() {
   // Update product
   const handleUpdateProduct = async () => {
     if (!selectedProduct) return;
-
-    if (!editProduct.productName || !editProduct.price || !editProduct.stock) {
+    console.log(editProduct.categoryId);
+    if (
+      !editProduct.productName ||
+      !editProduct.price ||
+      !editProduct.stock ||
+      !editProduct.categoryId
+    ) {
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Please fill in all required fields.",
         duration: 2,
       });
@@ -383,39 +415,57 @@ export default function ProductAdmin() {
     }
 
     const formData = new FormData();
-    formData.append("productName", editProduct.productName);
-    formData.append("description", editProduct.description);
-    formData.append("price", editProduct.price);
-    formData.append("stock", editProduct.stock);
-    formData.append("categoryId", editProduct.categoryId);
+    formData.append("ProductName", editProduct.productName);
+    formData.append("Description", editProduct.description);
+    formData.append("Price", editProduct.price);
+    formData.append("Stock", editProduct.stock);
+    formData.append("CategoryId", editProduct.categoryId);
 
     if (editMainImage) {
-      formData.append("mainImage", editMainImage);
+      formData.append("image", editMainImage);
     }
 
     try {
-      await productService.updateProduct(selectedProduct.id, formData);
+      const res: ApiResponse<any> = await productService.updateProduct(
+        selectedProduct.id,
+        formData,
+      );
 
       if (newProductImages.length > 0) {
-        await productService.addImagesForProduct(
-          selectedProduct.id,
-          newProductImages,
-        );
+        const resImages: ApiResponse<any> =
+          await productService.addImagesForProduct(
+            selectedProduct.id,
+            newProductImages,
+          );
+        if (resImages.code !== "200" && !resImages.isSuccess) {
+          throw new Error(resImages.message);
+        }
+      }
+
+      if (res.code !== "200" && !res.isSuccess) {
+        api.error({
+          title: "Error",
+          description: res.message,
+          duration: 2,
+        });
+      }
+      if (res.code === "200" && res.isSuccess) {
+        api.success({
+          title: "Success",
+          description: "Update product successfully",
+          duration: 2,
+        });
       }
 
       setShowEditModal(false);
       setSelectedProduct(null);
       resetEditForm();
-      api.success({
-        message: "Success",
-        description: "Update product successfully",
-        duration: 2,
-      });
+
       loadProducts();
     } catch (error) {
       console.error("Error updating product:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Cannot update product. Please try again.",
         duration: 2,
       });
@@ -431,7 +481,7 @@ export default function ProductAdmin() {
       setShowDeleteModal(false);
       setSelectedProduct(null);
       api.success({
-        message: "Success",
+        title: "Success",
         description: "Delete product successfully",
         duration: 2,
       });
@@ -439,7 +489,7 @@ export default function ProductAdmin() {
     } catch (error) {
       console.error("Error deleting product:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Cannot delete product. Please try again.",
         duration: 2,
       });
@@ -455,7 +505,9 @@ export default function ProductAdmin() {
       price: product.price.toString(),
       stock: product.stock.toString(),
       categoryName: product.categoryName || "",
-      categoryId: product.categoryId || "",
+      categoryId:
+        categories.find((c) => c.categoryName === product.categoryName)?.id ||
+        "",
     });
     setEditMainImagePreview(product.imageUrl);
     setEditMainImage(null);
@@ -528,7 +580,7 @@ export default function ProductAdmin() {
                   icon={<Plus size={20} />}
                   onClick={() => setShowAddModal(true)}
                   size="large"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600"
+                  className="bg-linear-to-r from-blue-600 to-indigo-600"
                 >
                   Add Product
                 </Button>
@@ -646,7 +698,7 @@ export default function ProductAdmin() {
                   </label>
                   <Select
                     placeholder="Select category"
-                    value={newProduct.categoryId || undefined}
+                    value={newProduct.categoryId}
                     onChange={(value) =>
                       setNewProduct({ ...newProduct, categoryId: value })
                     }
@@ -875,24 +927,23 @@ export default function ProductAdmin() {
                     placeholder="Select category"
                     value={editProduct.categoryName}
                     onChange={(value) => {
-                      const category = categories.find((c) => c.id === value);
+                      const category = categories.find(
+                        (c) => c.categoryName.toLocaleLowerCase() === value,
+                      );
+
                       setEditProduct({
                         ...editProduct,
-                        categoryId: value,
-                        categoryName: category?.categoryName || "",
+                        categoryId: category?.id || "",
+                        categoryName: value || "",
                       });
                     }}
                     size="large"
                     className="w-full"
-                    showSearch
-                    optionFilterProp="children"
-                    filterOption={(input, option) =>
-                      (option?.label ?? "")
-                        .toLowerCase()
-                        .includes(input.toLowerCase())
-                    }
+                    showSearch={{
+                      optionFilterProp: "label",
+                    }}
                     options={categories.map((cat) => ({
-                      value: cat.id,
+                      value: cat.categoryName,
                       label: cat.categoryName,
                     }))}
                   />

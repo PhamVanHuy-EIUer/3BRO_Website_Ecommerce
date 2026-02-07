@@ -276,7 +276,7 @@ namespace Ecommerce3BRO.Controllers
 
         [Authorize(Roles ="Admin")]
         [HttpPatch("update-status-user-by-admin/{id}")]
-        public async Task<ApiResponse<string>> UpdateStatusUser([FromQuery]Guid id)
+        public async Task<ApiResponse<string>> UpdateStatusUser(Guid id)
         {
             var response = await _userService.UpdateStatusUserAsync(id);
             return response;

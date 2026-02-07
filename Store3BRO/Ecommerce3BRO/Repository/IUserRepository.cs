@@ -21,6 +21,6 @@ namespace Ecommerce3BRO.Repository
         Task<ApiResponse< GetUserWithRole>> GetUserByClaim(Guid id); 
         Task<IEnumerable<GetUserDTO>> GetUserByPageAsync(int currentPage, int pageSize);
         Task<ApiResponse<string>> ChangePasswordAsync(Guid id,ChangePasswordDTO user);
-       
+        Task<ApiResponse<string>> UpdateStatusUserAsync(Guid id);
     }
 }

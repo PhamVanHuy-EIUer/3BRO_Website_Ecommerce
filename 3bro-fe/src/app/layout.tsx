@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Roboto, Poppins } from "next/font/google";
 import "./globals.css";
+import AntdRegistry from "./antd-registy";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistPoppins.variable} antialiased `}>
-        {children}
+        <AntdRegistry>{children}</AntdRegistry>
       </body>
     </html>
   );

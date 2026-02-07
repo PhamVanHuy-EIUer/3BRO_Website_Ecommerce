@@ -392,7 +392,7 @@ const CartContent = () => {
                     {/* Price Summary */}
                     {discountData && (
                       <div className="flex justify-end px-5 py-4 border-b border-gray-300 w-full">
-                        <div className="flex flex-col gap-3 min-w-[350px]">
+                        <div className="flex flex-col gap-3 min-w-87.5">
                           <div className="flex justify-between text-base">
                             <span className="text-gray-600">
                               Original Price:

@@ -9,12 +9,14 @@ import { getAvailableProducts } from "@/app/api/product/ProductApi";
 import { getAllUsers } from "@/app/api/user/UserApi";
 import useOrders from "@/hook/useOrders";
 import { formatCurrency } from "@/utils/currency";
+import { paymentService } from "@/services/payment.service";
 
 const ItemCards = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const { orders } = useOrders();
+  const [totalRevenue, setTotalRevenue] = useState(0);
 
   const fetchUsers = async () => {
     const response = await getAllUsers();
@@ -32,20 +34,26 @@ const ItemCards = () => {
     }
   };
 
+  const fetchRevenue = async () => {
+    const res = await paymentService.totalRevenue();
+    if (res.isSuccess) {
+      setTotalRevenue(res.object);
+    } else {
+      setTotalRevenue(0);
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      await Promise.all([fetchUsers(), fetchProducts()]);
+      await Promise.all([fetchUsers(), fetchProducts(), fetchRevenue()]);
       setLoading(false);
     };
     fetchData();
   }, []);
 
   // Tính toán các metrics
-  const totalRevenue = orders.reduce(
-    (total, order) => total + order.totalPrice,
-    0,
-  );
+
   const totalOrders = orders.length;
   const totalClients = users.length;
   const totalProducts = products.length;

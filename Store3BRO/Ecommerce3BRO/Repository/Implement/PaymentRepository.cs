@@ -154,6 +154,46 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<TotalSaleDTO>(result, null, "200", "Get all total sales by month successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
+        public async Task<ApiResponse<decimal>> GetTotalRevenue()
+        {
+            var payments = await _context.Payment.Where(p => p.Status == 1).ToListAsync();
+            var total = payments.Sum(p => p.Amount);
+            return new ApiResponse<decimal>(null, total, "200", "Get top revenue products successfully", true, 0, 0, 0, 0, null, null, null);
+        }
+
+        public async Task<ApiResponse<TopProductDTO>> TopRevenue(int sizePage)
+        {
+            if (sizePage <= 0) sizePage = 5;
+            
+
+
+            var topProducts = await _context.Payment
+                .Where(p => p.Status == 1) 
+                .Include(p => p.Order)
+                    .ThenInclude(o => o.OrderDetails)
+                        .ThenInclude(od => od.Product)
+                .SelectMany(p => p.Order.OrderDetails)
+                .Where(od => !od.IsReturn) 
+                .GroupBy(od => new
+                {
+                    od.ProductId,
+                    od.Product.ProductName
+                })
+                .Select(g => new TopProductDTO
+                {
+                    productId = g.Key.ProductId,
+                    productName = g.Key.ProductName,
+                    totalRevenue = g.Sum(x => x.Quantity * x.UnitPrice),
+                    
+
+                })
+                .OrderByDescending(x => x.totalRevenue)
+                .Take(sizePage)
+                .ToListAsync();
+
+            return new ApiResponse<TopProductDTO>(topProducts, null, "200", "Get top revenue products successfully", true, 0, 0, 0, topProducts.Count, null, null, null);
+        }
+
         public async Task<ApiResponse<GetPaymentDTO>> UpdateStatusPayment(Guid paymentId, int status)
         {
             var findPayment = await _context.Payment.FindAsync(paymentId);

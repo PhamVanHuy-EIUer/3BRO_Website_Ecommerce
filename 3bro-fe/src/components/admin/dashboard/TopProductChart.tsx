@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { Product } from "@/models/Product";
 import { ApiResponse } from "@/models/ApiResponse";
 import { productService } from "@/services/product.service";
+import { paymentService } from "@/services/payment.service";
 
 interface TopProductProps {
   productName: string;
@@ -49,7 +50,7 @@ const TopProductChart = () => {
   const fetchTopProductRevenue = async () => {
     try {
       const response: ApiResponse<ModalTopProducts> =
-        await productService.topProductRevenue(5);
+        await paymentService.topProductRevenue(5);
       if (!response.isSuccess) {
         console.log(response);
         return;

@@ -178,11 +178,6 @@ namespace Ecommerce3BRO.Controllers
             return await _productService.GetProductByDecendingPrice();
         }
 
-        [HttpGet("top-product-revenue")]
-        public async Task<ApiResponse<TopProductDTO>> GetTopProducts([FromQuery]int pageSize)
-        {
-            return await _productService.GetTopProducts(pageSize);
-        }
 
         //api update product status
         [HttpPut("status{productId}")]

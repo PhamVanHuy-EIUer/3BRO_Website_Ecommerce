@@ -10,7 +10,7 @@ export type PaymentProduct = {
         imageUrl?: string,
         subTotalPrice: number
     }],
-    voucher: Discount,
+    vouchers: Discount[],
     currentTotalPrice: number,
     shippingFee: number,
     discountPrice: number,

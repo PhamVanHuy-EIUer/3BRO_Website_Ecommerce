@@ -4,6 +4,7 @@ import React, { useState, useEffect, use } from "react";
 import { productService } from "@/services/product.service";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
+import { motion } from "framer-motion";
 import {
   Trash2,
   Edit,
@@ -595,24 +596,30 @@ export default function ProductAdmin() {
           </div>
 
           {/* Table */}
-          <div className="mx-auto">
-            <Card className="rounded-2xl shadow-lg">
-              <Table
-                columns={columns}
-                dataSource={filteredProducts}
-                rowKey="id"
-                // loading={loading}
-                pagination={{
-                  pageSize: pageSize,
-                  showSizeChanger: true,
-                  showTotal: (total) => `Total ${total} products`,
-                  pageSizeOptions: ["5", "10", "20", "50", "100"],
-                  onShowSizeChange: (current, size) => setPageSize(size),
-                }}
-                scroll={{ x: 1200 }}
-              />
-            </Card>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="mx-auto">
+              <Card className="rounded-2xl shadow-lg">
+                <Table
+                  columns={columns}
+                  dataSource={filteredProducts}
+                  rowKey="id"
+                  // loading={loading}
+                  pagination={{
+                    pageSize: pageSize,
+                    showSizeChanger: true,
+                    showTotal: (total) => `Total ${total} products`,
+                    pageSizeOptions: ["5", "10", "20", "50", "100"],
+                    onShowSizeChange: (current, size) => setPageSize(size),
+                  }}
+                  scroll={{ x: 1200 }}
+                />
+              </Card>
+            </div>
+          </motion.div>
 
           {/* Add Product Modal */}
           {showAddModal && (

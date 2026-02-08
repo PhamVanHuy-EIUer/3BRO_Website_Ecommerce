@@ -15,15 +15,13 @@ function RecommendProduct({ products }: { products: Product[] }) {
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
-              <div className="flex items-center gap-4 mb-4">
-                <div className="w-5 h-10 bg-red-500 rounded"></div>
-                <span className="text-red-500 font-semibold text-base">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-1 h-8 bg-red-500 rounded-full"></div>
+                <span className="text-red-500 font-semibold">
                   Best Products
                 </span>
               </div>
-              <h2 className="font-bold text-3xl text-neutral-950">
-                Just for you
-              </h2>
+              <h2 className="text-4xl font-bold text-gray-900">Just For You</h2>
             </div>
 
             {/* Navigation Arrows */}

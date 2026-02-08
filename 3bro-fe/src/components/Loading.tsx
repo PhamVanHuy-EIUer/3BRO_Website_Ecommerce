@@ -6,12 +6,14 @@ const PageLoading = () => {
   return (
     <div
       style={{
+        width: "100%",
         minHeight: "100vh",
         background: "linear-gradient(135deg, #f5f7fa 0%, #fef5e7 100%)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "column",
+
         gap: 24,
       }}
     >

@@ -49,7 +49,7 @@ const SingleProduct = () => {
     four: 0,
     five: 0,
   });
-  
+
   // Fetch product
   useEffect(() => {
     if (!id) return;
@@ -94,7 +94,7 @@ const SingleProduct = () => {
 
     const fetchRecommendedProducts = async () => {
       try {
-        const res = await productService.getProducts(1, 4);
+        const res = await productService.topProduct(1, 8);
         if (res?.isSuccess && res.list) {
           setRecommendedProducts(res.list);
         } else {

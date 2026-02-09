@@ -43,12 +43,12 @@ namespace Ecommerce3BRO.Controllers
         //Api add new order with items
         [HttpPost("add-order")]
         [Authorize]
-        public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItems([FromBody] OrderDTO order)
+        public async Task<ApiResponse<GetOrderDTO>> AddNewOrderWithItems([FromBody] OrderDTO order)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
             {
-                return new ApiResponse<OrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetOrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
             return await _orderRepository.AddNewOrderWithItemsAsync(userId, order);

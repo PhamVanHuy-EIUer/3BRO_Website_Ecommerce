@@ -21,18 +21,18 @@ namespace Ecommerce3BRO.Repository.Implement
             _discount = discount;
             _shop = shop;
         }
-        public async Task<ApiResponse<OrderDTO>> AddNewOrderWithItemsAsync(Guid userId, OrderDTO order)
+        public async Task<ApiResponse<GetOrderDTO>> AddNewOrderWithItemsAsync(Guid userId, OrderDTO order)
         {
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
             {
-                return new ApiResponse<OrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetOrderDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var productIds = order.Items.Select(i => i.ProductId).ToList();
             var products = await _context.Product.Where(p => productIds.Contains(p.Id)).ToListAsync();
             if (products.Count != productIds.Count)
             {
-                return new ApiResponse<OrderDTO>(null, null, "400", "Some products not found", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetOrderDTO>(null, null, "400", "Some products not found", false, 0, 0, 0, 0, null, null, null);
             }
             var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l=>l.UserId==findUser.Id&&l.IsActive);
             decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
@@ -55,7 +55,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 var findProduct = await _context.Product.FirstOrDefaultAsync(p => p.Id == item.ProductId);
                 if (findProduct.Stock < item.Quantity)
                 {
-                    return new ApiResponse<OrderDTO>(null, null, "400", $"Product {findProduct.ProductName} is out of stock", false, 0, 0, 0, 0, null, null, null);
+                    return new ApiResponse<GetOrderDTO>(null, null, "400", $"Product {findProduct.ProductName} is out of stock", false, 0, 0, 0, 0, null, null, null);
                 }
                 var orderDetail = new OrderDetail
                 {
@@ -81,7 +81,13 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 await _discount.ApplyDiscountToOrder(newOrder.Id, (Guid)order.DiscountId);
             }
-            return new ApiResponse<OrderDTO>(null, order, "200", "Order created successfully", true, 0, 0, 0, 0, "Pending", null, null);
+            var dto = new GetOrderDTO
+            {
+                Id = newOrder.Id,
+                PaymentMethod = newOrder.PaymentMethod,
+                ShippingAddress = newOrder.ShippingAddress
+            };
+            return new ApiResponse<GetOrderDTO>(null, dto, "200", "Order created successfully", true, 0, 0, 0, 0, "Pending", null, null);
         }
 
         public async Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrderByAdminAsync()

@@ -6,7 +6,6 @@ namespace Ecommerce3BRO.DTO
     public class OrderDTO
     {
         [Required(ErrorMessage ="Address is required")]
-
         public string ShippingAddress { get; set; }
         [StringLength(50)]
         [RegularExpression("^(Transfer|Cash)$",

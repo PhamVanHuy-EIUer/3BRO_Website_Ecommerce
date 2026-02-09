@@ -373,7 +373,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 UserId = id,
                 Code = code,
                 CreatedDate = DateTime.Now,
-                ExpireDate = DateTime.Now.AddMinutes(5),
+                ExpireDate = DateTime.Now.AddMinutes(1),
                 IsUsed = false
             };
             await _context.ActivationCode.AddAsync(activationCode);

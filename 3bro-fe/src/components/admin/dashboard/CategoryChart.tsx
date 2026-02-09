@@ -118,7 +118,7 @@ const CategoryChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="h-[450px] bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+      className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -154,7 +154,7 @@ const CategoryChart = () => {
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[350px]">
+      <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

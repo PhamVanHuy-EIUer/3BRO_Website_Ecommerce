@@ -168,9 +168,11 @@ namespace Ecommerce3BRO.Repository.Implement
                 UserId = findUser.Id,
                 Code = code,
                 CreatedDate = findUser.CreatedDate,
-                ExpireDate = DateTime.UtcNow.AddMinutes(5),
+                ExpireDate = DateTime.UtcNow.AddMinutes(1),
                 IsUsed = false
             };
+            var findActiveCodes = await _context.ActivationCode.Where(a => a.UserId == findUser.Id).ToListAsync();
+            _context.ActivationCode.RemoveRange(findActiveCodes);
             await _context.ActivationCode.AddAsync(newCode);
             await _context.SaveChangesAsync();
             await _emailService.SendEmailAsync(findUser.Email, code);
@@ -311,7 +313,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     UserId = findUser.Id,
                     Code = code,
                     CreatedDate = findUser.CreatedDate,
-                    ExpireDate = DateTime.UtcNow.AddMinutes(5),
+                    ExpireDate = DateTime.UtcNow.AddMinutes(1),
                     IsUsed = false
                 };
                 await _context.ActivationCode.AddAsync(newCode);
@@ -334,7 +336,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 UserId = newUser.Id,
                 Code = code,
                 CreatedDate = newUser.CreatedDate,
-                ExpireDate = DateTime.UtcNow.AddMinutes(5),
+                ExpireDate = DateTime.UtcNow.AddMinutes(1),
                 IsUsed = false
             };
             await _context.ActivationCode.AddAsync(activationCode);
@@ -371,7 +373,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 UserId = id,
                 Code = code,
                 CreatedDate = DateTime.Now,
-                ExpireDate = DateTime.Now.AddMinutes(5),
+                ExpireDate = DateTime.Now.AddMinutes(1),
                 IsUsed = false
             };
             await _context.ActivationCode.AddAsync(activationCode);

@@ -53,7 +53,8 @@ export const productService = {
             .then(res => res.data);
     },
 
-    productInRangePrice: (minPrice: number, maxPrice: number) => axiosClient.get(`/Products/product-in-range-price?minPrice=${minPrice}&maxPrice=${maxPrice}`).then(res => res.data),
-    productOrderAscend: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/product-order-ascend?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
+    productInRangePrice: (minPrice: number, maxPrice: number, currentPage: number, pageSize: number) => axiosClient.get(`/Products/price-range?minPrice=${minPrice}&maxPrice=${maxPrice}&currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
+    productOrderAscend: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/ascending-cost?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
+    productOrderDescend: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/descending-cost?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
 };
 

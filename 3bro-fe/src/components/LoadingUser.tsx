@@ -12,7 +12,7 @@ const LoadingUser: React.FC = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 1100,
+        zIndex: 1000,
       }}
     >
       <Spin indicator={<LoadingOutlined spin />} size="large" />

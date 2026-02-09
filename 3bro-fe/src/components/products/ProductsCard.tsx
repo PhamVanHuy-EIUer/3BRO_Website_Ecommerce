@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
   };
 
   return (
-    <div className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-xl transition-all duration-300">
+    <div className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-xl transition-all duration-300 w-full">
       {/* Image Container */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
         {/* Action Icons */}

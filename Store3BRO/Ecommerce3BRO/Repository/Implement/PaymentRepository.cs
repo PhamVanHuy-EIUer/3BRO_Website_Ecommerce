@@ -202,6 +202,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 return new ApiResponse<GetPaymentDTO>(null, null, "404", "Payment not found", false, 0, 0, 0, 0, null, null, null);
             }
             findPayment.Status = 1;
+            findPayment.PaymentDate = DateTime.UtcNow;
             await _context.SaveChangesAsync();
             return new ApiResponse<GetPaymentDTO>(null, null, "200", "Update payment successfully", true, 0, 0, 0, 0, null, null, null);
 

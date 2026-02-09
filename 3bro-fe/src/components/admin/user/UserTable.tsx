@@ -1,12 +1,14 @@
 "use client";
 import { useUserMangement } from "@/hook/useUserMangement";
 import { User } from "@/models/User";
-import { Avatar, Space, Table, Tag } from "antd";
+import { Avatar, Space, Table, Tag, Switch, Tooltip } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { motion } from "framer-motion";
 import { DeleteUserModal } from "./DeleteUserModal";
-import { Search } from "lucide-react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { useState } from "react";
+import { ApiResponse } from "@/models/ApiResponse";
+import { userService } from "@/services/user.service";
 
 const UserTable = () => {
   const PAGE_SIZE = 8;
@@ -21,7 +23,13 @@ const UserTable = () => {
     selectedUser,
     setSelectedUser,
     handleConfirmDelete,
+    handleUpdateUser,
   } = useUserMangement(PAGE_SIZE);
+
+  const [loadingStatus, setLoadingStatus] = useState<Record<string, boolean>>(
+    {},
+  );
+
   const column: ColumnsType<User> = [
     {
       title: "FullName",
@@ -55,10 +63,16 @@ const UserTable = () => {
       title: "Status",
       dataIndex: "isActive",
       key: "isActive",
-      render: (value: boolean) => (
-        <Tag color={value ? "green" : "red"}>
-          {value ? "Active" : "Inactive"}
-        </Tag>
+      render: (value: boolean, record: User) => (
+        <Tooltip title={value ? "Click to deactivate" : "Click to activate"}>
+          <Switch
+            checked={value}
+            loading={loadingStatus[record.id]}
+            onChange={() => handleUpdateUser(record.id)}
+            checkedChildren="Active"
+            unCheckedChildren="Inactive"
+          />
+        </Tooltip>
       ),
     },
     {
@@ -66,12 +80,12 @@ const UserTable = () => {
       key: "action",
       render: (_, record: User) => (
         <Space size="middle">
-          <span
+          {/* <span
             className="px-3 py-2 bg-blue-500 text-white rounded cursor-pointer hover:bg-blue-600 transition-colors"
             // onClick={() => handleUpdateClick(record)}
           >
             <EditOutlined />
-          </span>
+          </span> */}
 
           <span
             className="px-3 py-2 bg-red-500 text-white rounded cursor-pointer hover:bg-red-600 transition-colors"
@@ -86,22 +100,29 @@ const UserTable = () => {
       ),
     },
   ];
+
   return (
     <>
       {contextHolder}
       <div>
+        <div className="mx-auto mb-6">
+          <div className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div>
+                <h1 className="text-3xl font-bold bg-linear-to-r bg-clip-text text-black">
+                  User Management
+                </h1>
+                <p className="text-slate-600 mt-1">Total {total} users</p>
+              </div>
+            </div>
+          </div>
+        </div>
         <motion.div
-          className="relative h-auto bg-[#f5f5f5] p-5 rounded-xl flex-1"
+          className="relative h-auto bg-[#ffffff] shadow-lg p-5 rounded-xl flex-1"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-            <h2 className="text-lg md:text-xl font-semibold text-gray-950">
-              User List
-            </h2>
-          </div>
-
           <Table<User>
             dataSource={users}
             columns={column}

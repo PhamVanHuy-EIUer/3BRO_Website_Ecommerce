@@ -20,7 +20,6 @@ import { Avatar } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 import { DiscountIcon, OrderIcon } from "@/data/icon";
 import { useAuth } from "@/context/AuthContext";
-import { log } from "console";
 
 const menuItems = [
   { id: 1, name: "Dashboard", icon: House, href: "/admin" },
@@ -67,10 +66,12 @@ const SideBar = () => {
                   <ShoppingBag className="text-white" size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-lg text-gray-900">
-                    3Bro Admin
+                  <h2 className="font-bold text-lg text-gray-900 capitalize">
+                    3Bro Adminitrator
                   </h2>
-                  <p className="text-xs text-gray-500">Management Portal</p>
+                  <p className="text-xs text-gray-500">
+                    Adminitrator Management
+                  </p>
                 </div>
               </div>
             )}

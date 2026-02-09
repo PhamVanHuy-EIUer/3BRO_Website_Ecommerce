@@ -176,22 +176,19 @@ const AdminOrder = () => {
     },
     {
       label: "Chờ xác nhận",
-      value: orders.filter((o) => parseInt(o.status) === OrderStatus.Pending)
-        .length,
+      value: orders.filter((o) => o.status === "Pending").length,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
     },
     {
       label: "Hoàn thành",
-      value: orders.filter((o) => parseInt(o.status) === OrderStatus.Completed)
-        .length,
+      value: orders.filter((o) => o.status === "Completed").length,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
       label: "Đã hủy",
-      value: orders.filter((o) => parseInt(o.status) === OrderStatus.Cancelled)
-        .length,
+      value: orders.filter((o) => o.status === "Cancelled").length,
       color: "text-red-600",
       bgColor: "bg-red-50",
     },
@@ -312,7 +309,7 @@ const AdminOrder = () => {
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-[1600px] mx-auto">
         {/* Header */}
-        <div className="max-w-7xl mx-auto mb-6">
+        <div className="mx-auto mb-6">
           <div className="bg-white rounded-2xl shadow-lg p-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
@@ -329,18 +326,9 @@ const AdminOrder = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8"
+          transition={{ duration: 0.5 }}
+          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8"
         >
-          {/* Title with Icon */}
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-              <ShoppingOutlined className="text-xl text-blue-600" />
-            </div>
-            <h2 className="text-xl font-semibold text-gray-900">
-              Quản lý Đơn hàng
-            </h2>
-          </div>
-
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {stats.map((stat, index) => (
@@ -376,12 +364,12 @@ const AdminOrder = () => {
               size="large"
               className="w-full sm:w-64"
             >
-              <Option value="all">Tất cả trạng thái</Option>
-              <Option value="0">Chờ xác nhận</Option>
-              <Option value="1">Đã xác nhận</Option>
-              <Option value="2">Đang giao</Option>
-              <Option value="3">Hoàn thành</Option>
-              <Option value="4">Đã hủy</Option>
+              <Option value="all">All Orders</Option>
+              <Option value="Pending">Pending</Option>
+              <Option value="Confirmed">Confirmed</Option>
+              <Option value="Shipping">Shipping</Option>
+              <Option value="Completed">Completed</Option>
+              <Option value="Cancelled">Cancelled</Option>
             </Select>
           </div>
 

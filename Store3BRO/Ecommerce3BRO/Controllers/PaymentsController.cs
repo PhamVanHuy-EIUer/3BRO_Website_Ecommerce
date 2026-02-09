@@ -136,5 +136,19 @@ namespace Ecommerce3BRO.Controllers
         {
             return await _paymentService.GetAllSalesByMonth();
         }
+
+        [HttpGet("top-product-revenue")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ApiResponse<TopProductDTO>> GetTopProducts([FromQuery] int pageSize)
+        {
+            return await _paymentService.TopRevenue(pageSize);
+        }
+
+        [HttpGet("total-revenue")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ApiResponse<decimal>> GetTotalRevenue()
+        {
+            return await _paymentService.GetTotalRevenue();
+        }
     }
 }

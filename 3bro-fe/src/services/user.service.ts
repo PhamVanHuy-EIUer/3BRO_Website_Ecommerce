@@ -15,4 +15,5 @@ export const userService = {
     forgetPassword: (email: string) => axiosClient.post(`/Users/forget-password?email=${email}`),
     updateForForgetPassword: (email: string, password: string, activationCodeCode: string) => axiosClient.post(`/Users/update-pass`, { email, password, activationCodeCode }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
     updateProfileByUser: (updateProfile: UpdateProfile) => axiosClient.put(`/Users/by-user`, updateProfile, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    updateStatusByAdmin: (id: string) => axiosClient.patch(`/Users/update-status-user-by-admin/${id}`).then(res => res.data),
 };

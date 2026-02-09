@@ -22,7 +22,6 @@ import {
   EditOutlined,
   DeleteOutlined,
   SearchOutlined,
-  GiftOutlined,
   PercentageOutlined,
   DollarOutlined,
 } from "@ant-design/icons";
@@ -31,6 +30,7 @@ import { discountService } from "@/services/discount.service";
 import { Discount } from "@/models/Discount";
 import { ApiResponse } from "@/models/ApiResponse";
 import { DiscountDTO } from "@/models/DiscountDTO";
+import { motion } from "framer-motion";
 
 const { RangePicker } = DatePicker;
 
@@ -419,321 +419,365 @@ export default function DiscountManagement() {
   ];
 
   return (
-    <div
-      style={{
-        padding: 24,
-        background: "#f0f2f5",
-        minHeight: "100vh",
-        width: "100%",
-        borderRadius: 10,
-      }}
-    >
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 600, margin: 0 }}>
-          <GiftOutlined style={{ marginRight: 8 }} />
-          Discount Management
-        </h1>
-      </div>
-
-      {/* Statistics */}
-      <Row gutter={16} style={{ marginBottom: 24 }}>
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Total discount"
-              value={totalDiscounts}
-              styles={{
-                content: { color: "#3f8600" },
-              }}
-            />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card>
-            <Statistic title="In use" value={activeDiscounts} />
-          </Card>
-        </Col>
-
-        <Col span={8}>
-          <Card>
-            <Statistic
-              title="Expired"
-              value={expiredDiscounts}
-              styles={{
-                content: { color: "#cf1322" },
-              }}
-            />
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Action bar */}
-      <Card style={{ marginBottom: 16 }}>
-        <Row gutter={16} align="middle">
-          <Col flex="auto">
-            <Input
-              placeholder="Tìm kiếm theo mã hoặc mô tả..."
-              prefix={<SearchOutlined />}
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              size="large"
-              style={{ maxWidth: 400 }}
-            />
-          </Col>
-          <Col>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="large"
-              onClick={() => {
-                setEditingDiscount(null);
-                resetForm();
-                setIsModalOpen(true);
-              }}
-              style={{ backgroundColor: "#ee4d2d" }}
-            >
-              Create Discount
-            </Button>
-          </Col>
-        </Row>
-      </Card>
-
-      {/* Table */}
-      <Card>
-        <Table
-          columns={columns}
-          dataSource={filteredDiscounts}
-          rowKey="id"
-          loading={loading}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showTotal: (total) => `Tổng ${total} discount`,
-          }}
-          scroll={{ x: 1200 }}
-        />
-      </Card>
-
-      {/* Create/Edit Modal */}
-      <Modal
-        className="!z-15"
-        title={editingDiscount ? "Update Discount" : "Create new Discount"}
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false);
-          resetForm();
-          setEditingDiscount(null);
-        }}
-        onOk={handleSubmit}
-        okText={editingDiscount ? "Update" : "Create"}
-        cancelText="Cancel"
-        width={700}
-        confirmLoading={loading}
-        okButtonProps={{ style: { backgroundColor: "#ee4d2d" } }}
-      >
-        <div style={{ padding: "20px 0" }}>
-          {/* Code */}
-          <div style={{ marginBottom: 16 }}>
-            <label
-              style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-            >
-              Discount Code<span style={{ color: "red" }}>*</span>
-            </label>
-            <Input
-              placeholder="VD: SALE10, FREESHIP"
-              size="large"
-              value={formData.code}
-              onChange={(e) =>
-                setFormData({ ...formData, code: e.target.value.toUpperCase() })
-              }
-              style={{ textTransform: "uppercase" }}
-            />
-          </div>
-
-          {/* Description */}
-          <div style={{ marginBottom: 16 }}>
-            <label
-              style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-            >
-              Description
-            </label>
-            <Input.TextArea
-              placeholder="Discount details"
-              rows={3}
-              size="large"
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-            />
-          </div>
-
-          {/* Discount values and type */}
-          <Row gutter={16} style={{ marginBottom: 16 }}>
-            <Col span={12}>
-              <label
-                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-              >
-                Discount Value
-              </label>
-              <Space.Compact style={{ width: "100%" }}>
-                <InputNumber
-                  min={1}
-                  max={formData.isPercent ? 100 : undefined}
-                  size="large"
-                  style={{ width: "100%" }}
-                  value={formData.discountValue}
-                  onChange={(value) =>
-                    setFormData({ ...formData, discountValue: value ?? 0 })
-                  }
-                  formatter={(value) =>
-                    formData.isPercent
-                      ? `${value}`
-                      : value
-                        ? value.toLocaleString("vi-VN")
-                        : ""
-                  }
-                  parser={(value) =>
-                    value ? Number(value.replace(/,/g, "").replace("%", "")) : 0
-                  }
-                />
-
-                {formData.isPercent && (
-                  <span
-                    style={{
-                      padding: "0 12px",
-                      display: "flex",
-                      alignItems: "center",
-                      border: "1px solid #d9d9d9",
-                      borderLeft: "none",
-                      borderRadius: "0 6px 6px 0",
-                      background: "#fafafa",
-                    }}
-                  >
-                    %
-                  </span>
-                )}
-              </Space.Compact>
-            </Col>
-            <Col span={12}>
-              <label
-                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-              >
-                Type discount
-              </label>
-              <Switch
-                checked={formData.isPercent}
-                onChange={(checked) =>
-                  setFormData({ ...formData, isPercent: checked })
-                }
-                checkedChildren="%"
-                unCheckedChildren="VNĐ"
-              />
-            </Col>
-          </Row>
-
-          {/* Max Discount Amount - Only show when isPercent */}
-          {formData.isPercent && (
-            <div style={{ marginBottom: 16 }}>
-              <label
-                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-              >
-                Maximum Discount Amount <span style={{ color: "red" }}>*</span>
-              </label>
-              <Space.Compact style={{ width: "100%" }}>
-                <InputNumber
-                  min={0}
-                  style={{ width: "100%" }}
-                  size="large"
-                  placeholder="VD: 100,000"
-                  value={formData.maxDiscountAmount}
-                  formatter={(value?: number) =>
-                    value ? value.toLocaleString("vi-VN") : ""
-                  }
-                  parser={(value?: string) =>
-                    value ? Number(value.replace(/,/g, "")) : 0
-                  }
-                  onChange={(value: number | null) =>
-                    setFormData({ ...formData, maxDiscountAmount: value ?? 0 })
-                  }
-                  addonAfter="VNĐ"
-                />
-              </Space.Compact>
-              <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
-                Số tiền giảm tối đa khi dùng phần trăm. VD: Giảm 10% tối đa
-                100,000đ
-              </div>
+    <>
+      <div className="mx-auto mb-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+              <h1 className="text-3xl font-bold bg-linear-to-r bg-clip-text text-black">
+                Discount Management
+              </h1>
+              <p className="text-slate-600 mt-1">
+                Total {discounts.length} discounts
+              </p>
             </div>
-          )}
-
-          {/* Min order and quantity */}
-          <Row gutter={16} style={{ marginBottom: 16 }}>
-            <Col span={12}>
-              <label
-                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-              >
-                Minimum order amount
-              </label>
-              <Space.Compact style={{ width: "100%" }}>
-                <InputNumber
-                  min={0}
-                  style={{ width: "100%" }}
-                  size="large"
-                  value={formData.minOrderAmount}
-                  formatter={(value?: number) =>
-                    value ? value.toLocaleString("vi-VN") : ""
-                  }
-                  parser={(value?: string) =>
-                    value ? Number(value.replace(/,/g, "")) : 0
-                  }
-                  onChange={(value: number | null) =>
-                    setFormData({ ...formData, minOrderAmount: value ?? 0 })
-                  }
-                  addonAfter="VNĐ"
-                />
-              </Space.Compact>
-            </Col>
-            <Col span={12}>
-              <label
-                style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-              >
-                Number discounts <span style={{ color: "red" }}>*</span>
-              </label>
-              <InputNumber
-                min={1}
-                style={{ width: "100%" }}
-                size="large"
-                placeholder="100"
-                value={formData.quantity}
-                onChange={(value) =>
-                  setFormData({ ...formData, quantity: value || 100 })
-                }
-              />
-            </Col>
-          </Row>
-
-          {/* Date range */}
-          <div style={{ marginBottom: 16 }}>
-            <label
-              style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
-            >
-              Thời gian áp dụng <span style={{ color: "red" }}>*</span>
-            </label>
-            <RangePicker
-              style={{ width: "100%" }}
-              size="large"
-              format="DD/MM/YYYY"
-              placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
-              value={formData.dateRange}
-              onChange={(dates) =>
-                setFormData({ ...formData, dateRange: dates })
-              }
-            />
           </div>
         </div>
-      </Modal>
-    </div>
+      </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div
+          className="bg-transparent py-5"
+          style={{
+            // background: "#ffffff",
+            minHeight: "100vh",
+            width: "100%",
+            borderRadius: 10,
+          }}
+        >
+          {/* Statistics */}
+          <Row gutter={16} style={{ marginBottom: 24 }}>
+            <Col span={8}>
+              <Card className="shadow-lg border-2! hover:transform hover:-translate-y-1.75 hover:duration-500">
+                <Statistic
+                  title="Total discount"
+                  value={totalDiscounts}
+                  styles={{
+                    content: { color: "#3f8600" },
+                  }}
+                />
+              </Card>
+            </Col>
+
+            <Col span={8}>
+              <Card className="shadow-lg border-2! hover:transform hover:-translate-y-1.75 hover:duration-500">
+                <Statistic title="In use" value={activeDiscounts} />
+              </Card>
+            </Col>
+
+            <Col span={8}>
+              <Card className="shadow-lg border-2! hover:transform hover:-translate-y-1.75 hover:duration-500">
+                <Statistic
+                  title="Expired"
+                  value={expiredDiscounts}
+                  styles={{
+                    content: { color: "#cf1322" },
+                  }}
+                />
+              </Card>
+            </Col>
+          </Row>
+
+          {/* Action bar */}
+          <Card style={{ marginBottom: 16 }} className="shadow-xl">
+            <Row gutter={16} align="middle">
+              <Col flex="auto">
+                <Input
+                  placeholder="Tìm kiếm theo mã hoặc mô tả..."
+                  prefix={<SearchOutlined />}
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  size="large"
+                  style={{ maxWidth: 400 }}
+                />
+              </Col>
+              <Col>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  onClick={() => {
+                    setEditingDiscount(null);
+                    resetForm();
+                    setIsModalOpen(true);
+                  }}
+                  style={{ backgroundColor: "#ee4d2d" }}
+                >
+                  Create Discount
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+
+          {/* Table */}
+
+          <Card className="shadow-xl">
+            <Table
+              columns={columns}
+              dataSource={filteredDiscounts}
+              rowKey="id"
+              loading={loading}
+              pagination={{
+                pageSize: 10,
+                showSizeChanger: true,
+                showTotal: (total) => `Tổng ${total} discount`,
+              }}
+              scroll={{ x: 1200 }}
+            />
+          </Card>
+
+          {/* Create/Edit Modal */}
+          <Modal
+            className="!z-15"
+            title={editingDiscount ? "Update Discount" : "Create new Discount"}
+            open={isModalOpen}
+            onCancel={() => {
+              setIsModalOpen(false);
+              resetForm();
+              setEditingDiscount(null);
+            }}
+            onOk={handleSubmit}
+            okText={editingDiscount ? "Update" : "Create"}
+            cancelText="Cancel"
+            width={700}
+            confirmLoading={loading}
+            okButtonProps={{ style: { backgroundColor: "#ee4d2d" } }}
+          >
+            <div style={{ padding: "20px 0" }}>
+              {/* Code */}
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
+                >
+                  Discount Code<span style={{ color: "red" }}>*</span>
+                </label>
+                <Input
+                  placeholder="VD: SALE10, FREESHIP"
+                  size="large"
+                  value={formData.code}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      code: e.target.value.toString(),
+                    })
+                  }
+                  // style={{ textTransform: "capitalize" }}
+                />
+              </div>
+
+              {/* Description */}
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
+                >
+                  Description
+                </label>
+                <Input.TextArea
+                  placeholder="Discount details"
+                  rows={3}
+                  size="large"
+                  value={formData.description}
+                  onChange={(e) =>
+                    setFormData({ ...formData, description: e.target.value })
+                  }
+                />
+              </div>
+
+              {/* Discount values and type */}
+              <Row gutter={16} style={{ marginBottom: 16 }}>
+                <Col span={12}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Discount Value
+                  </label>
+                  <Space.Compact style={{ width: "100%" }}>
+                    <InputNumber
+                      min={1}
+                      max={formData.isPercent ? 100 : undefined}
+                      size="large"
+                      style={{ width: "100%" }}
+                      value={formData.discountValue}
+                      onChange={(value) =>
+                        setFormData({ ...formData, discountValue: value ?? 0 })
+                      }
+                      formatter={(value) =>
+                        formData.isPercent
+                          ? `${value}`
+                          : value
+                            ? value.toLocaleString("vi-VN")
+                            : ""
+                      }
+                      parser={(value) =>
+                        value
+                          ? Number(value.replace(/,/g, "").replace("%", ""))
+                          : 0
+                      }
+                    />
+
+                    {formData.isPercent && (
+                      <span
+                        style={{
+                          padding: "0 12px",
+                          display: "flex",
+                          alignItems: "center",
+                          border: "1px solid #d9d9d9",
+                          borderLeft: "none",
+                          borderRadius: "0 6px 6px 0",
+                          background: "#fafafa",
+                        }}
+                      >
+                        %
+                      </span>
+                    )}
+                  </Space.Compact>
+                </Col>
+                <Col span={12}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Type discount
+                  </label>
+                  <Switch
+                    checked={formData.isPercent}
+                    onChange={(checked) =>
+                      setFormData({ ...formData, isPercent: checked })
+                    }
+                    checkedChildren="%"
+                    unCheckedChildren="VNĐ"
+                  />
+                </Col>
+              </Row>
+
+              {/* Max Discount Amount - Only show when isPercent */}
+              {formData.isPercent && (
+                <div style={{ marginBottom: 16 }}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Maximum Discount Amount{" "}
+                    <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <Space.Compact style={{ width: "100%" }}>
+                    <InputNumber
+                      min={0}
+                      style={{ width: "50%" }}
+                      size="large"
+                      placeholder="VD: 100,000"
+                      value={formData.maxDiscountAmount}
+                      formatter={(value?: number) =>
+                        value ? value.toLocaleString("vi-VN") : ""
+                      }
+                      parser={(value?: string) =>
+                        value ? Number(value.replace(/,/g, "")) : 0
+                      }
+                      onChange={(value: number | null) =>
+                        setFormData({
+                          ...formData,
+                          maxDiscountAmount: value ?? 0,
+                        })
+                      }
+                      suffix="VNĐ"
+                    />
+                  </Space.Compact>
+                  <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
+                    Số tiền giảm tối đa khi dùng phần trăm. VD: Giảm 10% tối đa
+                    100,000đ
+                  </div>
+                </div>
+              )}
+
+              {/* Min order and quantity */}
+              <Row gutter={16} style={{ marginBottom: 16 }}>
+                <Col span={12}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Minimum order amount
+                  </label>
+                  <Space.Compact style={{ width: "100%" }}>
+                    <InputNumber
+                      min={0}
+                      style={{ width: "100%" }}
+                      size="large"
+                      value={formData.minOrderAmount}
+                      formatter={(value?: number) =>
+                        value ? value.toLocaleString("vi-VN") : ""
+                      }
+                      parser={(value?: string) =>
+                        value ? Number(value.replace(/,/g, "")) : 0
+                      }
+                      onChange={(value: number | null) =>
+                        setFormData({ ...formData, minOrderAmount: value ?? 0 })
+                      }
+                      addonAfter="VNĐ"
+                    />
+                  </Space.Compact>
+                </Col>
+                <Col span={12}>
+                  <label
+                    style={{
+                      display: "block",
+                      marginBottom: 8,
+                      fontWeight: 500,
+                    }}
+                  >
+                    Number discounts <span style={{ color: "red" }}>*</span>
+                  </label>
+                  <InputNumber
+                    min={1}
+                    style={{ width: "100%" }}
+                    size="large"
+                    placeholder="100"
+                    value={formData.quantity}
+                    onChange={(value) =>
+                      setFormData({ ...formData, quantity: value || 100 })
+                    }
+                  />
+                </Col>
+              </Row>
+
+              {/* Date range */}
+              <div style={{ marginBottom: 16 }}>
+                <label
+                  style={{ display: "block", marginBottom: 8, fontWeight: 500 }}
+                >
+                  Thời gian áp dụng <span style={{ color: "red" }}>*</span>
+                </label>
+                <RangePicker
+                  style={{ width: "100%" }}
+                  size="large"
+                  format="DD/MM/YYYY"
+                  placeholder={["Ngày bắt đầu", "Ngày kết thúc"]}
+                  value={formData.dateRange}
+                  onChange={(dates) =>
+                    setFormData({ ...formData, dateRange: dates })
+                  }
+                />
+              </div>
+            </div>
+          </Modal>
+        </div>
+      </motion.div>
+    </>
   );
 }

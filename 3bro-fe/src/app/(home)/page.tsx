@@ -244,7 +244,7 @@ const HomePage = () => {
                 { breakpoint: 640, settings: { slidesToShow: 1 } },
               ]}
             >
-              {products.map((product) => (
+              {topProducts.map((product) => (
                 <div key={product.id} className="px-2">
                   <ProductCard product={product} />
                 </div>

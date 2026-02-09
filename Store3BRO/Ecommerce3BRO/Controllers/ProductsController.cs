@@ -161,21 +161,21 @@ namespace Ecommerce3BRO.Controllers
     
         //api get products by price range
         [HttpGet("price-range")]
-        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice)
+        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice, [FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByPriceRange(minPrice, maxPrice);
+            return await _productService.GetProductByPriceRange(minPrice, maxPrice,currentPage,pageSize);
         }
         [HttpGet("ascending-cost")]
         
-        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
+        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByAscendingPrice();
+            return await _productService.GetProductByAscendingPrice(currentPage,pageSize);
         }
 
         [HttpGet("descending-cost")]
-        public async Task<ApiResponse<GetProductDTO>> GetProductDescendingPrice()
+        public async Task<ApiResponse<GetProductDTO>> GetProductDescendingPrice([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByDecendingPrice();
+            return await _productService.GetProductByDecendingPrice(currentPage,pageSize);
         }
 
 

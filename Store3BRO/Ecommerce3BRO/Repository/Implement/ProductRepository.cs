@@ -198,11 +198,15 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetOrderProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice()
+        public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice(int currentPage,int pageSize)
         {
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product.Where(p => p.Status == 1)
                  .Include(p => p.Category)
-                 .OrderBy(p => p.Price).ThenBy(p => p.ProductName)
+                 .OrderBy(p => p.Price).ThenBy(p => p.ProductName).Skip((currentPage - 1) * pageSize).Take(pageSize)
                  .Select(p => new GetProductDTO
                  {
                      Id = p.Id,
@@ -216,7 +220,7 @@ namespace Ecommerce3BRO.Repository.Implement
                      Rating = (int)Math.Ceiling(p.Reviews.Average(p => p.Rating)),
                      TotalReviews = p.Reviews.Count()
                  }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true, currentPage,pageSize,totalPages,totalItems, null, null, null);
         }
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByCategoryByPageAsync(Guid categoryId, int currentPage, int pageSize)
@@ -278,11 +282,15 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by category successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> GetProductByDecendingPrice()
+        public async Task<ApiResponse<GetProductDTO>> GetProductByDecendingPrice(int currentPage,int pageSize)
         {
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product.Where(p => p.Status == 1)
                 .Include(p => p.Category)
-                .OrderByDescending(p => p.Price).ThenByDescending(p => p.ProductName)
+                .OrderByDescending(p => p.Price).ThenByDescending(p => p.ProductName).Skip((currentPage - 1) * pageSize).Take(pageSize)
                 .Select(p => new GetProductDTO
                 {
                     Id = p.Id,
@@ -296,7 +304,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Rating = (int)Math.Ceiling(p.Reviews.Average(p => p.Rating)),
                     TotalReviews = p.Reviews.Count()
                 }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by ascending price successfully", true,currentPage,pageSize,totalPages,totalItems, null, null, null);
         }
 
         public async Task<ApiResponse<GetProductDTO>> GetProductByIdAsync(Guid id)
@@ -354,11 +362,15 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by pages successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange(decimal minPrice, decimal maxPrice)
+        public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange(decimal minPrice, decimal maxPrice,int currentPage,int pageSize)
         {
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product
-                .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status != 0)
-                .Include(p => p.Category)
+                .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1)
+                .Include(p => p.Category).Skip((currentPage-1)*pageSize).Take(pageSize).OrderBy(p=>p.Price)
                 .Select(p => new GetProductDTO
                 {
                     Id = p.Id,
@@ -372,7 +384,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     Rating = (int)Math.Ceiling(p.Reviews.Average(p => p.Rating)),
                     TotalReviews = p.Reviews.Count()
                 }).ToListAsync();
-            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by price range successfully", true, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by price range successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartItemListId(List<Guid> cartItemId, Guid userId)

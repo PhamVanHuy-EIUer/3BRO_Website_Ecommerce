@@ -144,7 +144,7 @@ function LoginPage() {
                 </button>
 
                 <Link
-                  href="/forgot-password"
+                  href="/forget-password"
                   className="text-red-500 hover:text-red-600 text-sm"
                 >
                   Forget Password?

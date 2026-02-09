@@ -17,13 +17,13 @@ import { ProductsInCategory } from "@/models/ProductsInCategory";
 
 // Bảng màu gradient đẹp hơn
 const COLORS = [
-  "#3b82f6", // Blue
-  "#8b5cf6", // Purple
-  "#ec4899", // Pink
-  "#f59e0b", // Amber
-  "#10b981", // Emerald
-  "#6366f1", // Indigo
-  "#14b8a6", // Teal
+  "#3b82f6",
+  "#8b5cf6",
+  "#ec4899",
+  "#f59e0b",
+  "#10b981",
+  "#6366f1",
+  "#14b8a6",
 ];
 
 // Type cho chart data
@@ -118,7 +118,7 @@ const CategoryChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="h-[450px] bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+      className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
@@ -154,7 +154,7 @@ const CategoryChart = () => {
       </div>
 
       {/* Chart */}
-      <div className="w-full h-[350px]">
+      <div className="w-full h-80">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

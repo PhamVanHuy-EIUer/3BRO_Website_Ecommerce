@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\paymentscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -13,10 +25,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\ipaymentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\ipaymentrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\iproductrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -31,20 +39,12 @@
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\productscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\helper\\enums\\paymentenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\helper\\enums\\paymentenum.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\implement\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\repository\\implement\\discountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|solutionrelative:ecommerce3bro\\controllers\\userscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{2A7AE706-B6F3-4DE4-BB2D-D4BBAFFB7EDC}|Ecommerce3BRO\\Ecommerce3BRO.csproj|e:\\projectb\\3bro_website_ecommerce\\store3bro\\ecommerce3bro\\repository\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -154,7 +154,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 8,
+          "SelectedChildIndex": 13,
           "Children": [
             {
               "$type": "Bookmark",
@@ -186,7 +186,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "PaymentRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\PaymentRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\PaymentRepository.cs",
@@ -194,25 +194,24 @@
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\PaymentRepository.cs",
               "ViewState": "AgIAAJUAAACAAAAAAAAmwKAAAAB5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-08T15:18:13.237Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T15:18:13.237Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 3,
               "Title": "PaymentsController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\PaymentsController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\PaymentsController.cs",
               "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\PaymentsController.cs",
               "RelativeToolTip": "Ecommerce3BRO\\Controllers\\PaymentsController.cs",
-              "ViewState": "AgIAAHkAAAAAAAAAAAAcwJoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAHkAAAAAAAAAAAAcwJIAAAAiAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-02-08T15:18:07.566Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "DiscountRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\DiscountRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\DiscountRepository.cs",
@@ -224,7 +223,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 8,
               "Title": "ProductsController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\ProductsController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
@@ -232,8 +231,7 @@
               "RelativeToolTip": "Ecommerce3BRO\\Controllers\\ProductsController.cs",
               "ViewState": "AgIAAKkAAAAAmJmZmRkmwLMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T04:54:49.098Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-25T04:54:49.098Z"
             },
             {
               "$type": "Document",
@@ -249,32 +247,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 1,
               "Title": "UserRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
               "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\UserRepository.cs",
-              "ViewState": "AgIAAH4BAABOZmZmZoYxwJcBAABQAAAAAAAAAA==",
+              "ViewState": "AgIAAFQAAAAADgAAAMAgwJcBAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-01-24T13:57:34.671Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 0,
               "Title": "UsersController.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Controllers\\UsersController.cs",
-              "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs",
-              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\UsersController.cs",
-              "ViewState": "AgIAAPkAAAAAQDMzM7MUwBYBAABAAAAAAAAAAA==",
+              "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Controllers\\UsersController.cs*",
+              "RelativeToolTip": "Ecommerce3BRO\\Controllers\\UsersController.cs*",
+              "ViewState": "AgIAAPMAAABAAgAAAEAvwBEBAABoAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T13:58:03.712Z"
+              "WhenOpened": "2026-01-24T13:58:03.712Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 2,
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\appsettings.json",
@@ -287,7 +286,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 6,
               "Title": "IProductRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IProductRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
@@ -295,12 +294,11 @@
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\IProductRepository.cs",
               "ViewState": "AgIAAAcAAAAAAAAAAAAUwBoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-25T03:53:29.036Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-25T03:53:29.036Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "ProductRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
@@ -308,12 +306,11 @@
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\ProductRepository.cs",
               "ViewState": "AgIAAKECAAAAOzMzM7MdwPUCAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-01-24T12:57:02.825Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-01-24T12:57:02.825Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "IPaymentRepository.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Repository\\IPaymentRepository.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Repository\\IPaymentRepository.cs",
@@ -321,8 +318,7 @@
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\IPaymentRepository.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-08T15:48:54.057Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T15:48:54.057Z"
             },
             {
               "$type": "Document",
@@ -338,7 +334,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "PaymentEnum.cs",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\Helper\\Enums\\PaymentEnum.cs",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\Helper\\Enums\\PaymentEnum.cs",
@@ -346,8 +342,7 @@
               "RelativeToolTip": "Ecommerce3BRO\\Helper\\Enums\\PaymentEnum.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-08T07:28:09.673Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-08T07:28:09.673Z"
             },
             {
               "$type": "Document",

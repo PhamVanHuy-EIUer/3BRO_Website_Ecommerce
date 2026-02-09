@@ -106,7 +106,7 @@ const TopProductChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="h-[420px] bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
+      className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100"
     >
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -131,41 +131,42 @@ const TopProductChart = () => {
           </svg>
         </div>
       </div>
-
-      <ResponsiveContainer width="100%" height="85%">
-        <BarChart
-          data={products}
-          margin={{ top: 10, right: 10, left: 10, bottom: 30 }}
-        >
-          <CartesianGrid
-            strokeDasharray="3 3"
-            stroke="#f0f0f0"
-            vertical={false}
-          />
-          <XAxis
-            dataKey="productName"
-            tick={<CustomXAxisTick />}
-            interval={0}
-            axisLine={{ stroke: "#e5e7eb" }}
-            tickLine={false}
-          />
-          <YAxis
-            tickFormatter={formatVND}
-            tick={{ fontSize: 11, fill: "#666" }}
-            axisLine={false}
-            tickLine={false}
-          />
-          <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f9fafb" }} />
-          <Bar dataKey="totalRevenue" radius={[8, 8, 0, 0]} maxBarSize={60}>
-            {products?.map((entry, index) => (
-              <Cell
-                key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
-              />
-            ))}
-          </Bar>
-        </BarChart>
-      </ResponsiveContainer>
+      <div className="h-80">
+        <ResponsiveContainer width="100%" height="100%">
+          <BarChart
+            data={products}
+            margin={{ top: 10, right: 10, left: 10, bottom: 30 }}
+          >
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="#f0f0f0"
+              vertical={false}
+            />
+            <XAxis
+              dataKey="productName"
+              tick={<CustomXAxisTick />}
+              interval={0}
+              axisLine={{ stroke: "#e5e7eb" }}
+              tickLine={false}
+            />
+            <YAxis
+              tickFormatter={formatVND}
+              tick={{ fontSize: 11, fill: "#666" }}
+              axisLine={false}
+              tickLine={false}
+            />
+            <Tooltip content={<CustomTooltip />} cursor={{ fill: "#f9fafb" }} />
+            <Bar dataKey="totalRevenue" radius={[8, 8, 0, 0]} maxBarSize={60}>
+              {products?.map((entry, index) => (
+                <Cell
+                  key={`cell-${index}`}
+                  fill={COLORS[index % COLORS.length]}
+                />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </motion.div>
   );
 };

@@ -21,4 +21,5 @@ export const paymentService = {
     calculateForProduct: (productId: string, quantity: number) => axiosClient.get(`/Products/product-discount-directly?productId=${productId}&quantity=${quantity}`).then(res => res.data),
     topProductRevenue: (pageSize: number) => axiosClient.get(`/Payments/top-product-revenue?pageSize=${pageSize}`).then(res => res.data),
     totalRevenue: () => axiosClient.get(`/Payments/total-revenue`).then(res => res.data),
+    monthlyRevenue: () => axiosClient.get(`/Payments/total-sale`).then(res => res.data),
 };

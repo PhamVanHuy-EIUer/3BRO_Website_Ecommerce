@@ -171,6 +171,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 ExpireDate = DateTime.UtcNow.AddMinutes(5),
                 IsUsed = false
             };
+            var findActiveCodes = await _context.ActivationCode.Where(a => a.UserId == findUser.Id).ToListAsync();
+            _context.ActivationCode.RemoveRange(findActiveCodes);
             await _context.ActivationCode.AddAsync(newCode);
             await _context.SaveChangesAsync();
             await _emailService.SendEmailAsync(findUser.Email, code);

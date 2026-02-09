@@ -120,6 +120,8 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 await _image.RemoveImageFromProductAsync(e.Id);
             }
+            var findCartItem = await _context.CartItem.Where(ci => ci.ProductId == find.Id).ToListAsync();
+            _context.CartItem.RemoveRange(findCartItem);
             await _context.SaveChangesAsync();
             return new ApiResponse<GetProductDTO>(null, null, "200", "Delete product successfully", true, 0, 0, 0, 0, null, null, null);
         }

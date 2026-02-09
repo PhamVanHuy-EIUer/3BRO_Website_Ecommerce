@@ -17,13 +17,13 @@ import { ProductsInCategory } from "@/models/ProductsInCategory";
 
 // Bảng màu gradient đẹp hơn
 const COLORS = [
-  "#3b82f6", // Blue
-  "#8b5cf6", // Purple
-  "#ec4899", // Pink
-  "#f59e0b", // Amber
-  "#10b981", // Emerald
-  "#6366f1", // Indigo
-  "#14b8a6", // Teal
+  "#3b82f6",
+  "#8b5cf6",
+  "#ec4899",
+  "#f59e0b",
+  "#10b981",
+  "#6366f1",
+  "#14b8a6",
 ];
 
 // Type cho chart data

@@ -271,7 +271,7 @@ namespace Ecommerce3BRO.Controllers
             {
                 return new ApiResponse<string>(null, null, "404", "ActivationCode is wrong", false, 0, 0, 0, 0, null, null, null);
             }
-            return new ApiResponse<string>(null, null, "200", "Check forget password successfully", false, 0, 0, 0, 0, null, null, null);
+            return new ApiResponse<string>(null, null, "200", "Check forget password successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         [Authorize(Roles ="Admin")]

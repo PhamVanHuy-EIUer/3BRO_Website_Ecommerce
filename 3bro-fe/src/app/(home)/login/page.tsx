@@ -95,7 +95,7 @@ function LoginPage() {
           </div>
 
           {/* Right Side */}
-          <div className="w-full md:w-1/3 p-12">
+          <div className="w-full md:w-1/2 p-12">
             <h2 className="text-3xl font-semibold text-gray-800 mb-8">
               Log in
             </h2>
@@ -138,7 +138,7 @@ function LoginPage() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-2 rounded transition-colors disabled:opacity-50"
+                  className="bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-2 rounded transition-colors disabled:opacity-50 min-w-35"
                 >
                   {loading ? "Logging in..." : "Log in"}
                 </button>

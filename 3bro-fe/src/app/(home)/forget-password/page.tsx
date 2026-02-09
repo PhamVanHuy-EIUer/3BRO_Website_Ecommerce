@@ -184,8 +184,8 @@ function ForgetPasswordPage() {
   return (
     <>
       {contextHolder}
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-6xl w-full">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 ">
+        <div className="flex bg-white rounded-lg shadow-lg overflow-hidden max-w-6xl w-full min-h-[50vh]">
           {/* Left Side */}
           <div className="w-2/3 p-12 items-center justify-center hidden md:flex">
             <div className="relative w-full h-full">
@@ -201,165 +201,173 @@ function ForgetPasswordPage() {
           </div>
 
           {/* Right Side */}
-          <div className="w-full md:w-1/3 p-12">
+          <div className="w-full md:w-1/3 p-12  flex items-center">
             {!emailSent && (
               <>
-                <Link
-                  href="/login"
-                  className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Login
-                </Link>
-
-                <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-                  Forget Password
-                </h2>
-
-                <p className="text-gray-600 mb-8">
-                  {emailSent
-                    ? "We've sent a reset code to your email. Please check your inbox."
-                    : "Enter your email address and we'll send you a code to reset your password."}
-                </p>
-
-                <form onSubmit={handleSendCode} className="space-y-6">
-                  <div className="relative">
-                    <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="email"
-                      placeholder="Email Address"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full pl-8 pr-0 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
-                    />
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                <div className="flex-col">
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center text-gray-600 hover:text-gray-800 mb-6 transition-colors"
                   >
-                    {loading ? "Sending..." : "Send Reset Code"}
-                  </button>
-                </form>
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back to Login
+                  </Link>
 
-                <div className="mt-8 text-center">
-                  <p className="text-sm text-gray-600">
-                    Remember your password?{" "}
-                    <Link
-                      href="/login"
-                      className="text-red-500 hover:text-red-600 font-medium"
-                    >
-                      Log in
-                    </Link>
+                  <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+                    Forget Password
+                  </h2>
+
+                  <p className="text-gray-600 mb-8">
+                    {emailSent
+                      ? "We've sent a reset code to your email. Please check your inbox."
+                      : "Enter your email address and we'll send you a code to reset your password."}
                   </p>
+
+                  <form onSubmit={handleSendCode} className="space-y-6">
+                    <div className="relative">
+                      <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type="email"
+                        placeholder="Email Address"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full pl-8 pr-0 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {loading ? "Sending..." : "Send Reset Code"}
+                    </button>
+                  </form>
+
+                  <div className="mt-8 text-center">
+                    <p className="text-sm text-gray-600">
+                      Remember your password?{" "}
+                      <Link
+                        href="/login"
+                        className="text-red-500 hover:text-red-600 font-medium"
+                      >
+                        Log in
+                      </Link>
+                    </p>
+                  </div>
                 </div>
               </>
             )}
             {emailSent && !isConfirmActive && (
               <>
-                <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-                  Enter Reset Code
-                </h2>
+                <div className="block">
+                  <div className="flex flex-col justify-center">
+                    <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+                      Enter Reset Code
+                    </h2>
 
-                <p className="text-gray-600 mb-8">
-                  We've sent a reset code to your email. Please check your
-                  inbox.
-                </p>
+                    <p className="text-gray-600 mb-8">
+                      We've sent a reset code to your email. Please check your
+                      inbox.
+                    </p>
 
-                <form onSubmit={handleConfirmCode} className="space-y-6">
-                  <div className="relative">
-                    <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={8}
-                      placeholder="Enter reset code"
-                      value={code}
-                      onChange={(e) =>
-                        setCode(e.target.value.replace(/\D/g, ""))
-                      }
-                      className="w-full pl-8 pr-0 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none"
-                    />
+                    <form onSubmit={handleConfirmCode} className="space-y-6">
+                      <div className="relative">
+                        <Mail className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          maxLength={8}
+                          placeholder="Enter reset code"
+                          value={code}
+                          onChange={(e) =>
+                            setCode(e.target.value.replace(/\D/g, ""))
+                          }
+                          className="w-full pl-8 pr-0 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {loading ? "Sending..." : "Confirm Code"}
+                      </button>
+                    </form>
                   </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? "Sending..." : "Confirm Code"}
-                  </button>
-                </form>
+                </div>
               </>
             )}
             {emailSent && isConfirmActive && !isConfirmPassword && (
               <>
-                <h2 className="text-3xl font-semibold text-gray-800 mb-4">
-                  Enter New Password
-                </h2>
+                <div className="flex flex-col justify-center">
+                  <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+                    Enter New Password
+                  </h2>
 
-                <p className="text-gray-600 mb-8">
-                  Please enter your new password.
-                </p>
+                  <p className="text-gray-600 mb-8">
+                    Please enter your new password.
+                  </p>
 
-                <form onSubmit={handleResetPassword} className="space-y-6">
-                  {/* Password Field */}
-                  <div className="relative">
-                    <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full pl-8 pr-10 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
-                    />
+                  <form onSubmit={handleResetPassword} className="space-y-6">
+                    {/* Password Field */}
+                    <div className="relative">
+                      <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="w-full pl-8 pr-10 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+
+                    {/* Confirm Password Field */}
+                    <div className="relative">
+                      <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm Password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="w-full pl-8 pr-10 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </button>
+                    </div>
+
                     <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                      type="submit"
+                      disabled={loading}
+                      className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {showPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
+                      {loading ? "Sending..." : "Reset Password"}
                     </button>
-                  </div>
-
-                  {/* Confirm Password Field */}
-                  <div className="relative">
-                    <Lock className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <input
-                      type={showConfirmPassword ? "text" : "password"}
-                      placeholder="Confirm Password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full pl-8 pr-10 py-2 border-b-2 border-gray-300 focus:border-blue-500 outline-none text-gray-700 placeholder-gray-400"
-                    />
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setShowConfirmPassword(!showConfirmPassword)
-                      }
-                      className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="w-5 h-5" />
-                      ) : (
-                        <Eye className="w-5 h-5" />
-                      )}
-                    </button>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-3 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {loading ? "Sending..." : "Reset Password"}
-                  </button>
-                </form>
+                  </form>
+                </div>
               </>
             )}
           </div>

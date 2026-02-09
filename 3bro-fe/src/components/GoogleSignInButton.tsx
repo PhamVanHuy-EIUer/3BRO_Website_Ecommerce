@@ -66,7 +66,7 @@ export default function GoogleSignInButton({
           theme: "outline",
           size: "large",
           text: "signup_with",
-          width: 320,
+          width: "100%",
           logo_alignment: "left",
         });
 
@@ -94,5 +94,5 @@ export default function GoogleSignInButton({
     };
   }, [onSuccess, onError]);
 
-  return <div ref={buttonRef} id="google-signin-button" />;
+  return <div ref={buttonRef} id="google-signin-button" className="w-full" />;
 }

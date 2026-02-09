@@ -10,6 +10,8 @@ import { notification } from "antd";
 import { ApiResponse } from "@/models/ApiResponse";
 import { User } from "@/models/User";
 import { userService } from "@/services/user.service";
+import GoogleSignInButton from "@/components/GoogleSignInButton";
+import { useAuth } from "@/context/AuthContext";
 
 function CreateAccountPage() {
   const router = useRouter();
@@ -17,6 +19,7 @@ function CreateAccountPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { loginWithGoogle, user } = useAuth();
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,13 +76,30 @@ function CreateAccountPage() {
     }
   };
 
-  const handleGoogleSignUp = () => {
-    notification.info({
-      message: "Coming soon",
-      description: "Google Sign Up is not implemented yet",
-    });
+  const handleGoogleSuccess = async (credential: string) => {
+    try {
+      setLoading(true);
+
+      const result = await loginWithGoogle(credential);
+
+      if (result === "SETUP_PASSWORD") return;
+
+      const isAdmin = user?.roleList?.includes("Admin") ?? false;
+
+      router.replace(isAdmin ? "/admin" : "/");
+    } catch (err) {
+      console.error("Google login error:", err);
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const handleGoogleError = () => {
+    notification.error({
+      title: "Login with Google error",
+      description: "Login failed",
+    });
+  };
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="flex bg-white rounded-2xl shadow-xl overflow-hidden max-w-6xl w-full">
@@ -143,16 +163,11 @@ function CreateAccountPage() {
             </div>
           </form>
 
-          <div className="mt-6">
-            <button
-              onClick={handleGoogleSignUp}
-              className="w-full flex items-center justify-center gap-3 border-2 border-gray-300 hover:border-gray-400 rounded-md py-2.5 transition-colors bg-white"
-            >
-              <GoogleIcon />
-              <span className="text-gray-700 font-medium">
-                Sign up with Google
-              </span>
-            </button>
+          <div className="mt-6 flex justify-center">
+            <GoogleSignInButton
+              onSuccess={handleGoogleSuccess}
+              onError={handleGoogleError}
+            />
           </div>
 
           <div className="mt-6 text-center">

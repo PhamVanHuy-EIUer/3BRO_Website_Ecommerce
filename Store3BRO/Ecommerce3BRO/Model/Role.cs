@@ -17,7 +17,6 @@ public partial class Role
     public string? Description { get; set; }
 
     public DateTime? CreatedDate { get; set; }
-
     
     public ICollection<UserRole> UserRoles { get; set; }
 }

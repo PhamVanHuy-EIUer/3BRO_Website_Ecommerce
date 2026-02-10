@@ -164,16 +164,16 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<TopProductDTO>> TopRevenue(int sizePage)
         {
             if (sizePage <= 0) sizePage = 5;
-            
+
 
 
             var topProducts = await _context.Payment
-                .Where(p => p.Status == 1) 
+                .Where(p => p.Status == 1)
                 .Include(p => p.Order)
                     .ThenInclude(o => o.OrderDetails)
                         .ThenInclude(od => od.Product)
                 .SelectMany(p => p.Order.OrderDetails)
-                .Where(od => !od.IsReturn) 
+                .Where(od => !od.IsReturn)
                 .GroupBy(od => new
                 {
                     od.ProductId,
@@ -184,7 +184,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     productId = g.Key.ProductId,
                     productName = g.Key.ProductName,
                     totalRevenue = g.Sum(x => x.Quantity * x.UnitPrice),
-                    
+
 
                 })
                 .OrderByDescending(x => x.totalRevenue)
@@ -201,12 +201,15 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetPaymentDTO>(null, null, "404", "Payment not found", false, 0, 0, 0, 0, null, null, null);
             }
-            findPayment.Status = 1;
-            findPayment.PaymentDate = DateTime.UtcNow;
+            findPayment.Status = status;
+            if (status == 1)
+            {
+                findPayment.PaymentDate = DateTime.UtcNow;
+            }
             await _context.SaveChangesAsync();
             return new ApiResponse<GetPaymentDTO>(null, null, "200", "Update payment successfully", true, 0, 0, 0, 0, null, null, null);
 
-        }
 
+        }
     }
 }

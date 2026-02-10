@@ -9,8 +9,8 @@ namespace Ecommerce3BRO.Model
 
         [Column(TypeName = "decimal(9,6)")]
         public decimal Latitude { get; set; }
-        [Column(TypeName = "decimal(9,6)")]
 
+        [Column(TypeName = "decimal(9,6)")]
         public decimal Longitude { get; set; }
         public bool IsActive { get; set; }
         public DateTime? CreatedDate { get; set; }

@@ -56,7 +56,7 @@ namespace Ecommerce3BRO.Controllers
 
         //Api remove order 
         [HttpDelete("remove-order/{orderId}")]
-        [Authorize]
+        [Authorize(Roles ="User")]
         public async Task<ApiResponse<Order>> RemoveOrder([FromRoute] Guid orderId)
         {
             return await _orderRepository.RemoveOrderAsync(orderId);

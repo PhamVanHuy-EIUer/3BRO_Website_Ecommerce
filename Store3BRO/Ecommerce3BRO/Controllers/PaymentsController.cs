@@ -18,13 +18,15 @@ namespace Ecommerce3BRO.Controllers
         private readonly IOrderRepository _orderRepository;
         private readonly Ecommerce3BROContext _context;
         private readonly IPaymentRepository _paymentService;
+        private readonly IOrderRepository _orderService;
 
-        public PaymentsController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService)
+        public PaymentsController(IMomoService momoService, IOrderRepository orderRepository, Ecommerce3BROContext context, IPaymentRepository paymentService, IOrderRepository orderService)
         {
             _momoService = momoService;
             _orderRepository = orderRepository;
             _context = context;
             _paymentService = paymentService;
+            _orderService = orderService;
         }
 
         // User bấm "Thanh toán MoMo"
@@ -102,6 +104,7 @@ namespace Ecommerce3BRO.Controllers
                 }
                 findPayment.Status = 1;
                 findPayment.PaymentDate = DateTime.UtcNow;
+                await _orderService.UpdateOrderStatus(order.Id, 2);
                 await _context.SaveChangesAsync();
             }
             return Ok();

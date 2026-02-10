@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Ecommerce3BRO.DTO
 {
@@ -13,6 +14,7 @@ namespace Ecommerce3BRO.DTO
         [StringLength(255)]
         public string? Address { get; set; }
         [Required(ErrorMessage = "Latitude is required")]
+        
 
         public Decimal Latitude { get; set; }
         [Required(ErrorMessage = "Longtitude is required")]

@@ -11,4 +11,5 @@ export interface Product {
     createdDate?: string;
     updatedDate?: string;
     rating?: number;
+    totalReviews?: number;
 }

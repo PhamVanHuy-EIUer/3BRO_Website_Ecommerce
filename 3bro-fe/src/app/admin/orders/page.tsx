@@ -238,15 +238,13 @@ const AdminOrder = () => {
       width: 250,
     },
     {
-      title: "Số tiền",
+      title: "Số lượng",
       dataIndex: "amount",
       key: "amount",
       width: 150,
       align: "right",
       render: (amount: number) => (
-        <span className="font-semibold text-gray-900">
-          {formatCurrency(amount)}
-        </span>
+        <span className="font-semibold text-gray-900">{amount}</span>
       ),
     },
     {
@@ -349,7 +347,7 @@ const AdminOrder = () => {
 
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            <Search
+            {/* <Search
               placeholder="Tìm kiếm theo mã đơn, tên khách hàng hoặc sản phẩm..."
               prefix={<SearchOutlined />}
               value={searchTerm}
@@ -357,12 +355,12 @@ const AdminOrder = () => {
               className="flex-1"
               size="large"
               allowClear
-            />
+            /> */}
             <Select
               value={statusFilter}
               onChange={setStatusFilter}
               size="large"
-              className="w-full sm:w-64"
+              className="w-full sm:w-64 justify-end"
             >
               <Option value="all">All Orders</Option>
               <Option value="Pending">Pending</Option>
@@ -442,11 +440,11 @@ const AdminOrder = () => {
                 <div className="flex items-center gap-2 mb-2">
                   <ShoppingOutlined className="text-purple-600" />
                   <p className="text-sm text-gray-600 font-medium">
-                    Số tiền sản phẩm
+                    Số lượng sản phẩm
                   </p>
                 </div>
                 <p className="font-bold text-gray-900 text-lg">
-                  {formatCurrency(selectedOrder.amount)}
+                  {selectedOrder.amount}
                 </p>
               </div>
 

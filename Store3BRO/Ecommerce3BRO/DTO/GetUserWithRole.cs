@@ -26,6 +26,8 @@ namespace Ecommerce3BRO.DTO
         public bool IsActive { get; set; }
 
         public DateTime? CreatedDate { get; set; }
+        public decimal? Latitude { get; set; }
+        public decimal? Longtitude { get; set; }
         public List<string?> RoleList { get; set; }
     }
 }

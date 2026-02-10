@@ -6,9 +6,11 @@ import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/currency";
 import { Rate, Tooltip } from "antd";
+import { useRouter } from "next/navigation";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
+  const router = useRouter();
 
   const getFirstImage = (imageUrl?: string) => {
     if (!imageUrl) return "/blank.jpg";
@@ -18,8 +20,19 @@ const ProductCard = ({ product }: { product: Product }) => {
       : `https://localhost:7041${imageUrl}`;
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Chỉ navigate khi click vào card chính, không phải buttons
+    const target = e.target as HTMLElement;
+    if (!target.closest("button")) {
+      router.push(`/product/${product.id}`);
+    }
+  };
+
   return (
-    <div className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-xl transition-all duration-300 w-full">
+    <div
+      onClick={handleCardClick}
+      className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-lg transition-all duration-300 w-full cursor-pointer shadow-md"
+    >
       {/* Image Container */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
         {/* Action Icons */}
@@ -27,7 +40,6 @@ const ProductCard = ({ product }: { product: Product }) => {
           <button
             type="button"
             onClick={(e) => {
-              e.preventDefault();
               e.stopPropagation();
               setIsFavorite((prev) => !prev);
             }}
@@ -40,32 +52,35 @@ const ProductCard = ({ product }: { product: Product }) => {
             <Heart className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
           </button>
 
-          <Link
-            href={`/product/${product.id}`}
-            onClick={(e) => e.stopPropagation()}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/product/${product.id}`);
+            }}
             className="bg-white p-2 rounded-full shadow-md hover:bg-blue-50 hover:text-blue-600 transition-colors"
           >
             <Eye className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
 
         {/* Product Image */}
-        <Link href={`/product/${product.id}`} className="block w-full h-full">
+        <div className="block w-full h-full">
           <Image
             src={getFirstImage(product.imageUrl)}
             alt={product.productName}
             fill
             unoptimized
-            className="object-contain p-6 group-hover:scale-105 transition-transform duration-500"
+            priority
+            className="object-contain group-hover:scale-105 transition-transform duration-500 "
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 33vw, 25vw"
           />
-        </Link>
+        </div>
 
         {/* Add to Cart */}
         <button
           type="button"
           onClick={(e) => {
-            e.preventDefault();
             e.stopPropagation();
             console.log("Add to cart:", product.id);
           }}
@@ -80,10 +95,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       </div>
 
       {/* Product Info */}
-      <Link
-        href={`/product/${product.id}`}
-        className="p-4 flex-1 flex flex-col"
-      >
+      <div className="p-4 flex-1 flex flex-col">
         {/* Title */}
         <Tooltip title={product.productName}>
           <h3
@@ -104,7 +116,7 @@ const ProductCard = ({ product }: { product: Product }) => {
             <Rate disabled value={product.rating ?? 0} />
           </div>
         </div>
-      </Link>
+      </div>
     </div>
   );
 };

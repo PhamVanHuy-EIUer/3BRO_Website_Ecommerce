@@ -30,8 +30,6 @@ const LeafletMap = dynamic(
 );
 
 export default function EditProfile() {
-  const [latitude, setLatitude] = useState(10.8231);
-  const [longtitude, setLongtitude] = useState(106.6297);
   const [address, setAddress] = useState("");
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   //   const [locationError, setLocationError] = useState("");
@@ -39,6 +37,8 @@ export default function EditProfile() {
   const { user, refreshAuth, authorized } = useAuth();
   const [loading, setLoading] = useState(false);
   const { bgRed } = COLORS;
+  const [latitude, setLatitude] = useState(user?.latitude || 10.8231);
+  const [longtitude, setLongtitude] = useState(user?.longtitude || 106.6297);
   // Form states
   const [formData, setFormData] = useState({
     fullName: "",

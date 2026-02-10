@@ -7,4 +7,6 @@ export interface User {
     isActive: boolean;
     createdDate?: string; // ISO string
     roleList?: string[];     // từ JWT hoặc API riêng
+    longtitude?: number;
+    latitude?: number;
 }

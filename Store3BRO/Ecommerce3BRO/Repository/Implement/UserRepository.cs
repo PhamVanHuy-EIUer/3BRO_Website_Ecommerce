@@ -208,6 +208,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetUserWithRole>(null, null, "404", "User not found", false, 0, 0, 0, 0, null, null, null);
             }
+            var location = await _context.UserLocation.FirstOrDefaultAsync(u => u.UserId == id);
             var roles = await _context.UserRole
                 .Where(ur => ur.UserId == findUser.Id)
                 .Include(ur => ur.Role)
@@ -222,6 +223,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 FullName = findUser.FullName,
                 IsActive = findUser.IsActive,
                 Phone = findUser.Phone,
+                Latitude = location.Latitude,
+                Longtitude = location.Longitude,
                 RoleList = roles
             };
             return new ApiResponse<GetUserWithRole>(null, getUserDTO, "200", "Success", true, 0, 0, 0, 0, null, null, null);

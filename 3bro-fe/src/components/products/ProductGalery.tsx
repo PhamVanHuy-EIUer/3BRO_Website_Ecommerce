@@ -160,7 +160,9 @@ export default function ProductGallery({
                       defaultValue={product.rating == null ? 0 : product.rating}
                     />
                   </div>
-                  <span className="text-sm text-gray-500">(150 Reviews)</span>
+                  <span className="text-sm text-gray-500">
+                    ({product.totalReviews || 0} Reviews)
+                  </span>
                   <span className={`text-sm font-medium ${stockColor}`}>
                     | {stockStatus}
                   </span>

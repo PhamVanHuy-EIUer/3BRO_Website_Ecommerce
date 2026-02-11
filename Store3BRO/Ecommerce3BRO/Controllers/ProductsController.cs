@@ -114,9 +114,9 @@ namespace Ecommerce3BRO.Controllers
         }
 
         //api get products with auto discount when user checkout on 1 product in web
-        [HttpGet("product-autodisccount-directly")]
+        [HttpPost("product-autodisccount-directly")]
         [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByIdAsync([FromQuery] Guid productId, [FromQuery] int quantity)
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByIdAsync([FromBody] List<PreviewOderDTO> dtos)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
@@ -124,13 +124,13 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithAutoDiscountById(productId, quantity, userId);
+            return await _productService.GetProductWithAutoDiscountById(dtos, userId);
         }
 
         //api get products with discount code when user checkout on 1 product in web
-        [HttpGet("product-disccount-directly")]
+        [HttpPost("product-disccount-directly")]
         [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountById([FromQuery] Guid productId, [FromQuery] int quantity, [FromQuery] string discountCode)
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountById([FromBody] List<PreviewOderDTO> dtos, [FromQuery] string discountCode)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
@@ -138,65 +138,39 @@ namespace Ecommerce3BRO.Controllers
                 return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithDiscountById(productId, quantity, userId, discountCode);
+            return await _productService.GetProductWithDiscountById(dtos, userId, discountCode);
         }
 
-        //api get products with discount code when user checkout on 1 product in cart
-        [HttpPost("product-discount-cartitem")]
-        [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountByCartItemId([FromBody] CheckoutCartItemRequestDTO request)
-        {
-            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null || !Guid.TryParse(findUser.Value, out var userId))
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
 
-            return await _productService.GetProductWithDiscountByCartItemId(
-                request,
-                userId
-                
-            );
-        }
-    
+
+
         //api get products by price range
         [HttpGet("price-range")]
         public async Task<ApiResponse<GetProductDTO>> GetProductByPriceRange([FromQuery] decimal minPrice, [FromQuery] decimal maxPrice, [FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByPriceRange(minPrice, maxPrice,currentPage,pageSize);
+            return await _productService.GetProductByPriceRange(minPrice, maxPrice, currentPage, pageSize);
         }
         [HttpGet("ascending-cost")]
-        
+
         public async Task<ApiResponse<GetProductDTO>> GetProductByAscendingPrice([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByAscendingPrice(currentPage,pageSize);
+            return await _productService.GetProductByAscendingPrice(currentPage, pageSize);
         }
 
         [HttpGet("descending-cost")]
         public async Task<ApiResponse<GetProductDTO>> GetProductDescendingPrice([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
-            return await _productService.GetProductByDecendingPrice(currentPage,pageSize);
+            return await _productService.GetProductByDecendingPrice(currentPage, pageSize);
         }
 
 
         //api update product status
         [HttpPut("status{productId}")]
-        [Authorize(Roles ="Admin")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetProductDTO>> UpdateProductStatus([FromRoute] Guid productId, [FromQuery] int status)
         {
             return await _productService.UpdateProductStatus(productId, status);
         }
-        [HttpPost("item-list")]
-        [Authorize]
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartIemList([FromQuery]List<Guid> cartItemId)
-        {
-            var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var userId = Guid.Parse(findUser.Value);
-            return await _productService.GetProductWithAutoDiscountByCartItemListId(cartItemId,userId);
-        }
     }
+       
 }

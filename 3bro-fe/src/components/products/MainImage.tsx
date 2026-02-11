@@ -12,7 +12,7 @@ const MainImage = ({ product, active }: Props) => {
       <Image
         src={active}
         alt={product.productName}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-cover !bg-transparent"
         preview={{
           cover: (
             <div className="flex items-center justify-center text-white text-xl">
@@ -21,7 +21,7 @@ const MainImage = ({ product, active }: Props) => {
           ),
         }}
         width={500}
-        height={500}
+        height={650}
       />
     </div>
   );

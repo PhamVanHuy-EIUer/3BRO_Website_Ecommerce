@@ -30,9 +30,11 @@ export const categories = [
 ];
 export const banners = [
     { id: 1, src: "/Carousel/Carousel 1.png" },
-    { id: 2, src: "/Carousel/Carousel 1.png" },
-    { id: 3, src: "/Carousel/Carousel 1.png" },
-    { id: 4, src: "/Carousel/Carousel 1.png" },
+    { id: 2, src: "/Carousel/carosel_pic.png" },
+    { id: 3, src: "/Carousel/carosel_pic1.png" },
+    { id: 4, src: "/Carousel/carosel_pic2.png" },
+    { id: 5, src: "/Carousel/carosel_pic3.png" },
+    { id: 6, src: "/Carousel/carosel_pic4.png" },
 ];
 
 export const discount = [

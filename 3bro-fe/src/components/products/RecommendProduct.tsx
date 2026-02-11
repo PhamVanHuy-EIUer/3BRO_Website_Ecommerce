@@ -10,7 +10,7 @@ function RecommendProduct({ products }: { products: Product[] }) {
   const bestSellingCarouselRef = React.useRef<any>(null);
   return (
     <div>
-      <div className="py-12 bg-white">
+      <div className="py-12 bg-transparent">
         <div className="container mx-auto px-4">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">

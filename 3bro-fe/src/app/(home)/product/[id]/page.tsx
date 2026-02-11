@@ -193,24 +193,26 @@ const SingleProduct = () => {
   if (!product) return <NotFound />;
 
   return (
-    <div className="w-[90vw] mx-auto py-10">
-      {contextHolder}
-      <ProductGallery product={product} imageProduct={imageProduct} />
+    <div className="bg-[linear-gradient(135deg,#f5f7fa_0%,#fef5e7_100%)]">
+      <div className="w-[90vw] mx-auto py-10">
+        {contextHolder}
+        <ProductGallery product={product} imageProduct={imageProduct} />
 
-      <div id="review-section" className="mt-16">
-        <ReviewPage
-          data={productReview}
-          averageRating={product.rating}
-          rating={rating}
-          productID={id}
-          reviewCount={reviewCount}
-          currentPage={currentPage}
-          totalPages={totalPage}
-          onPageChange={handlePageChange}
-        />
-      </div>
-      <div className="mt-16">
-        <RecommendProduct products={recommendedProducts} />
+        <div id="review-section" className="mt-16">
+          <ReviewPage
+            data={productReview}
+            averageRating={product.rating}
+            rating={rating}
+            productID={id}
+            reviewCount={reviewCount}
+            currentPage={currentPage}
+            totalPages={totalPage}
+            onPageChange={handlePageChange}
+          />
+        </div>
+        <div className="mt-16">
+          <RecommendProduct products={recommendedProducts} />
+        </div>
       </div>
     </div>
   );

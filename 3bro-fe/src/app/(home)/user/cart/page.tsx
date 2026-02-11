@@ -290,7 +290,7 @@ const CartContent = () => {
         onApply={handleApplyVoucher}
       />
 
-      <Spin spinning={applyingVoucher} tip="Applying voucher...">
+      <Spin spinning={applyingVoucher} description="Applying voucher...">
         <div className="flex justify-center flex-col py-20 bg-[#f5f5f5]">
           <Modal
             className="p-5"

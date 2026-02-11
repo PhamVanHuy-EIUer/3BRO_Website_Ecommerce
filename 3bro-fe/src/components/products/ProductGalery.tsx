@@ -134,7 +134,7 @@ export default function ProductGallery({
                           src={getFirstImage(img.imageUrl)}
                           alt={`${product.productName} - ${img.id}`}
                           fill
-                          className="object-cover"
+                          className="object-cover bg-white"
                         />
                       </div>
                     </button>

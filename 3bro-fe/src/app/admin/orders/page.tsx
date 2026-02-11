@@ -36,27 +36,27 @@ enum OrderStatus {
 
 const statusConfig = {
   [OrderStatus.Pending]: {
-    label: "Chờ xác nhận",
+    label: "Pending",
     color: "warning",
     icon: <ClockCircleOutlined />,
   },
   [OrderStatus.Confirmed]: {
-    label: "Đã xác nhận",
+    label: "Confirmed",
     color: "processing",
     icon: <BankOutlined />,
   },
   [OrderStatus.Shipping]: {
-    label: "Đang giao",
+    label: "Shipping",
     color: "purple",
     icon: <TruckOutlined />,
   },
   [OrderStatus.Completed]: {
-    label: "Hoàn thành",
+    label: "Completed",
     color: "success",
     icon: <CheckCircleOutlined />,
   },
   [OrderStatus.Cancelled]: {
-    label: "Đã hủy",
+    label: "Cancelled",
     color: "error",
     icon: <CloseCircleOutlined />,
   },
@@ -134,12 +134,12 @@ const AdminOrder = () => {
 
       setEditingStatus(false);
       Modal.success({
-        content: "Cập nhật trạng thái thành công!",
+        content: "Status updated successfully!",
       });
     } catch (error) {
       console.error("Error updating status:", error);
       Modal.error({
-        content: "Có lỗi xảy ra khi cập nhật trạng thái!",
+        content: "An error occurred while updating status!",
       });
     } finally {
       setUpdatingStatus(false);
@@ -169,25 +169,25 @@ const AdminOrder = () => {
 
   const stats = [
     {
-      label: "Tổng đơn hàng",
+      label: "Total Orders",
       value: orders.length,
       color: "text-blue-600",
       bgColor: "bg-blue-50",
     },
     {
-      label: "Chờ xác nhận",
+      label: "Pending",
       value: orders.filter((o) => o.status === "Pending").length,
       color: "text-amber-600",
       bgColor: "bg-amber-50",
     },
     {
-      label: "Hoàn thành",
+      label: "Completed",
       value: orders.filter((o) => o.status === "Completed").length,
       color: "text-green-600",
       bgColor: "bg-green-50",
     },
     {
-      label: "Đã hủy",
+      label: "Cancelled",
       value: orders.filter((o) => o.status === "Cancelled").length,
       color: "text-red-600",
       bgColor: "bg-red-50",
@@ -208,7 +208,7 @@ const AdminOrder = () => {
   // Table columns
   const columns: ColumnsType<Order> = [
     {
-      title: "Mã đơn",
+      title: "Order ID",
       dataIndex: "orderId",
       key: "orderId",
       width: 150,
@@ -219,7 +219,7 @@ const AdminOrder = () => {
       ),
     },
     {
-      title: "Khách hàng",
+      title: "Customer",
       dataIndex: "customerName",
       key: "customerName",
       width: 200,
@@ -231,14 +231,14 @@ const AdminOrder = () => {
       ),
     },
     {
-      title: "Sản phẩm",
+      title: "Products",
       dataIndex: "productNames",
       key: "productNames",
       ellipsis: true,
       width: 250,
     },
     {
-      title: "Số lượng",
+      title: "Quantity",
       dataIndex: "amount",
       key: "amount",
       width: 150,
@@ -248,7 +248,7 @@ const AdminOrder = () => {
       ),
     },
     {
-      title: "Hoàn trả",
+      title: "Refund",
       dataIndex: "refundPrice",
       key: "refundPrice",
       width: 150,
@@ -260,7 +260,7 @@ const AdminOrder = () => {
       ),
     },
     {
-      title: "Tổng tiền",
+      title: "Total Amount",
       dataIndex: "netRevenue",
       key: "netRevenue",
       width: 150,
@@ -272,7 +272,7 @@ const AdminOrder = () => {
       ),
     },
     {
-      title: "Trạng thái",
+      title: "Status",
       dataIndex: "status",
       key: "status",
       width: 150,
@@ -287,7 +287,7 @@ const AdminOrder = () => {
       },
     },
     {
-      title: "Thao tác",
+      title: "Actions",
       key: "action",
       width: 120,
       fixed: "right",
@@ -297,7 +297,7 @@ const AdminOrder = () => {
           icon={<EyeOutlined />}
           onClick={() => handleViewDetail(record)}
         >
-          Xem
+          View
         </Button>
       ),
     },
@@ -348,7 +348,7 @@ const AdminOrder = () => {
           {/* Search and Filter */}
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             {/* <Search
-              placeholder="Tìm kiếm theo mã đơn, tên khách hàng hoặc sản phẩm..."
+              placeholder="Search by Order ID, Customer Name or Product..."
               prefix={<SearchOutlined />}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -360,7 +360,7 @@ const AdminOrder = () => {
               value={statusFilter}
               onChange={setStatusFilter}
               size="large"
-              className="w-full sm:w-64 justify-end"
+              className="w-full sm:w-64"
             >
               <Option value="all">All Orders</Option>
               <Option value="Pending">Pending</Option>
@@ -381,7 +381,7 @@ const AdminOrder = () => {
               pagination={{
                 pageSize: 10,
                 showSizeChanger: true,
-                showTotal: (total) => `Tổng ${total} đơn hàng`,
+                showTotal: (total) => `Total ${total} orders`,
               }}
               scroll={{ x: 1200 }}
             />
@@ -397,7 +397,7 @@ const AdminOrder = () => {
               <BankOutlined className="text-blue-600" />
             </div>
             <div>
-              <div className="text-lg font-bold">Chi tiết đơn hàng</div>
+              <div className="text-lg font-bold">Order Details</div>
               <div className="text-sm text-gray-500 font-mono">
                 #{selectedOrder?.orderId.slice(0, 8)}
               </div>
@@ -417,9 +417,7 @@ const AdminOrder = () => {
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <UserOutlined className="text-blue-600" />
-                  <p className="text-sm text-gray-600 font-medium">
-                    Khách hàng
-                  </p>
+                  <p className="text-sm text-gray-600 font-medium">Customer</p>
                 </div>
                 <p className="font-bold text-gray-900 text-lg">
                   {selectedOrder.customerName}
@@ -429,7 +427,7 @@ const AdminOrder = () => {
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <DollarOutlined className="text-green-600" />
-                  <p className="text-sm text-gray-600 font-medium">Tổng tiền</p>
+                  <p className="text-sm text-gray-600 font-medium">Total</p>
                 </div>
                 <p className="font-bold text-green-600 text-xl">
                   {formatCurrency(selectedOrder.netRevenue)}
@@ -439,9 +437,7 @@ const AdminOrder = () => {
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <ShoppingOutlined className="text-purple-600" />
-                  <p className="text-sm text-gray-600 font-medium">
-                    Số lượng sản phẩm
-                  </p>
+                  <p className="text-sm text-gray-600 font-medium">Quantity</p>
                 </div>
                 <p className="font-bold text-gray-900 text-lg">
                   {selectedOrder.amount}
@@ -451,7 +447,7 @@ const AdminOrder = () => {
               <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                 <div className="flex items-center gap-2 mb-2">
                   <CloseCircleOutlined className="text-red-600" />
-                  <p className="text-sm text-gray-600 font-medium">Hoàn trả</p>
+                  <p className="text-sm text-gray-600 font-medium">Refund</p>
                 </div>
                 <p className="font-bold text-red-600 text-lg">
                   {formatCurrency(selectedOrder.refundPrice)}
@@ -464,7 +460,7 @@ const AdminOrder = () => {
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 text-lg flex items-center gap-2">
                   <ClockCircleOutlined className="text-blue-600" />
-                  Trạng thái đơn hàng
+                  Order Status
                 </h3>
                 {!editingStatus && (
                   <Button
@@ -472,7 +468,7 @@ const AdminOrder = () => {
                     icon={<EditOutlined />}
                     onClick={() => setEditingStatus(true)}
                   >
-                    Chỉnh sửa
+                    Edit
                   </Button>
                 )}
               </div>
@@ -539,7 +535,7 @@ const AdminOrder = () => {
                       size="large"
                       className="bg-green-600 hover:bg-green-700"
                     >
-                      Lưu thay đổi
+                      Save Changes
                     </Button>
                     <Button
                       onClick={() => {
@@ -548,7 +544,7 @@ const AdminOrder = () => {
                       }}
                       size="large"
                     >
-                      Hủy
+                      Cancel
                     </Button>
                   </Space>
                 </div>
@@ -559,14 +555,14 @@ const AdminOrder = () => {
             <div>
               <h3 className="font-bold mb-4 text-gray-900 text-lg flex items-center gap-2">
                 <BankOutlined className="text-blue-600" />
-                Sản phẩm trong đơn hàng
+                Products in Order
               </h3>
 
               {loadingDetail ? (
                 <div className="text-center py-12 bg-gray-50 rounded-xl">
                   <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-600 border-t-transparent mx-auto"></div>
                   <p className="mt-4 text-gray-600 font-medium">
-                    Đang tải chi tiết...
+                    Loading details...
                   </p>
                 </div>
               ) : (
@@ -575,7 +571,7 @@ const AdminOrder = () => {
                     <div className="text-center py-12 bg-gray-50 rounded-xl">
                       <BankOutlined className="text-5xl text-gray-400 mb-3" />
                       <p className="text-gray-500 font-medium">
-                        Không có sản phẩm
+                        No products found
                       </p>
                     </div>
                   ) : (
@@ -595,19 +591,19 @@ const AdminOrder = () => {
                           </h4>
                           <div className="flex flex-col gap-1">
                             <p className="text-sm text-gray-600">
-                              Đơn giá:{" "}
+                              Unit Price:{" "}
                               <span className="font-semibold text-gray-900">
                                 {formatCurrency(item.price)}
                               </span>
                             </p>
                             <p className="text-sm font-bold text-blue-600">
-                              Tổng: {formatCurrency(item.totalPrice)}
+                              Total: {formatCurrency(item.totalPrice)}
                             </p>
                           </div>
                         </div>
                         {item.isReturn && (
                           <Tag color="error" className="h-fit">
-                            Đã hoàn trả
+                            Returned
                           </Tag>
                         )}
                       </div>

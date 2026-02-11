@@ -39,6 +39,8 @@ import Voucher from "@/components/user/cart/Voucher"; // Import Voucher componen
 import PageLoading from "@/components/Loading";
 import LoadingUser from "@/components/LoadingUser";
 import { Trash2 } from "lucide-react";
+import { CreateOrderDTO } from "@/models/CreateOrderDTO";
+import { Cart } from "@/models/Cart";
 
 const { Title, Text } = Typography;
 
@@ -76,7 +78,6 @@ interface Order {
   id: string;
   items: Product[];
   address: Address;
-  // shipping: string;
   payment: string;
   voucher?: string;
   subtotal: number;
@@ -86,6 +87,12 @@ interface Order {
   createdAt: string;
 }
 
+interface OrderCreate {
+  id: string;
+  paymentMethod: string;
+  shippingAddress: string;
+}
+
 interface OrderResult {
   status: "pending" | "paid" | "failed";
   message: string;
@@ -93,29 +100,29 @@ interface OrderResult {
 }
 
 // Fake Data
-const fakeAddress: Address = {
-  id: 1,
-  name: "",
-  phone: "",
-  address: "",
-  city: "",
-};
+// const fakeAddress: Address = {
+//   id: 1,
+//   name: "",
+//   phone: "",
+//   address: "",
+//   city: "",
+// };
 
 const paymentMethods: PaymentMethod[] = [
   {
-    id: "COD",
+    id: "Cash",
     name: "Cash on Delivery (COD)",
     icon: <WalletOutlined />,
   },
-  { id: "momo", name: "Momo", icon: <CreditCardOutlined /> },
+  { id: "Transfer", name: "Momo", icon: <CreditCardOutlined /> },
   // { id: "ewallet", name: "E-Wallet", icon: <WalletOutlined /> },
 ];
 
 const PaymentUser: React.FC = () => {
   const searchParams = useSearchParams();
   const [pageLoading, setPageLoading] = useState<boolean>(true);
-  const [selectedAddress] = useState<Address>(fakeAddress);
-  const [paymentMethod, setPaymentMethod] = useState<string>("cod");
+  const [selectedAddress] = useState<Address>();
+  const [paymentMethod, setPaymentMethod] = useState<string>("Cash");
   const [selectedVoucher, setSelectedVoucher] = useState<Discount>();
   const [voucherModalVisible, setVoucherModalVisible] =
     useState<boolean>(false);
@@ -130,7 +137,6 @@ const PaymentUser: React.FC = () => {
   const productId = searchParams.get("productId") || "";
   const rawQuantity = searchParams.get("quantity");
   const quantity = Number(rawQuantity);
-
   const getFirstImage = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return "/blank.jpg";
 
@@ -507,13 +513,14 @@ const PaymentUser: React.FC = () => {
                 >
                   <Space orientation="vertical" size={8}>
                     <Text strong style={{ fontSize: 16 }}>
-                      {PaymentProduct?.userFullName || selectedAddress.name} |{" "}
-                      {PaymentProduct?.userPhoneNumber || selectedAddress.phone}
+                      {PaymentProduct?.userFullName || selectedAddress?.name} |{" "}
+                      {PaymentProduct?.userPhoneNumber ||
+                        selectedAddress?.phone}
                     </Text>
                     <Text>
-                      {PaymentProduct?.userAddress || selectedAddress.address}
+                      {PaymentProduct?.userAddress || selectedAddress?.address}
                     </Text>
-                    <Text type="secondary">{selectedAddress.city}</Text>
+                    <Text type="secondary">{selectedAddress?.city}</Text>
                   </Space>
                 </Card>
 

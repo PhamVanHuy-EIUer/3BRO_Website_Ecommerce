@@ -368,7 +368,7 @@ namespace Ecommerce3BRO.Repository.Implement
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalItems = _context.Product.Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1).Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1)

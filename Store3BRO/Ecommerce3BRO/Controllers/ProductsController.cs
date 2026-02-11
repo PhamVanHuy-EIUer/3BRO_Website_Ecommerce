@@ -114,7 +114,7 @@ namespace Ecommerce3BRO.Controllers
         }
 
         //api get products with auto discount when user checkout on 1 product in web
-        [HttpPost("product-autodisccount-directly")]
+        [HttpPost("product-autodiscount-directly")]
         [Authorize]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithAutoDiscountByIdAsync([FromBody] List<PreviewOderDTO> dtos)
         {
@@ -128,7 +128,7 @@ namespace Ecommerce3BRO.Controllers
         }
 
         //api get products with discount code when user checkout on 1 product in web
-        [HttpPost("product-disccount-directly")]
+        [HttpPost("product-discount-directly")]
         [Authorize]
         public async Task<ApiResponse<ShowCheckoutDTO>> GetProductsWithDiscountById([FromBody] List<PreviewOderDTO> dtos, [FromQuery] string discountCode)
         {

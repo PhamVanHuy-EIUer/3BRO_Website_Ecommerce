@@ -17,7 +17,7 @@ namespace Ecommerce3BRO.Repository.Implement
         private readonly IProductImageRepository _image;
         private readonly IDiscountRepository _discount;
         private readonly ShopLocation _shop;
-        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env, IHttpContextAccessor _http, IProductImageRepository image, IDiscountRepository discount, ShopLocation shopLocation)
+        public ProductRepository(Ecommerce3BROContext context, IWebHostEnvironment env, IProductImageRepository image, IDiscountRepository discount, ShopLocation shopLocation)
         {
             _context = context;
             _env = env;

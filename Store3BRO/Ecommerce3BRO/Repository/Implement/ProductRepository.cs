@@ -368,7 +368,7 @@ namespace Ecommerce3BRO.Repository.Implement
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Product.Where(p => p.Status == 1).Count();
+            var totalItems = _context.Product.Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1).Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var products = await _context.Product
                 .Where(p => p.Price >= minPrice && p.Price <= maxPrice && p.Status == 1)
@@ -389,7 +389,9 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetProductDTO>(products, null, "200", "Get products by price range successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountByCartItemListId(List<Guid> cartItemId, Guid userId)
+      
+
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountById(List<PreviewOderDTO> dtos, Guid userId, string discountCode)
         {
             var findUser = await _context.User.FindAsync(userId);
             if (findUser == null)
@@ -398,43 +400,133 @@ namespace Ecommerce3BRO.Repository.Implement
             }
             var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
             decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
-            var findCartItems = await _context.CartItem.Include(ci => ci.Cart).Include(ci => ci.Product).ThenInclude(p => p.Category).Where(ci => cartItemId.Contains(ci.Id) && ci.Cart.UserId == userId).ToListAsync();
-            Console.WriteLine(findCartItems.Count);
-            if (!findCartItems.Any())
+            var productIds = dtos.Select(d => d.ProductId).ToList();
+            var findProducts = await _context.Product.Include(p => p.Category).Where(p => productIds.Contains(p.Id)).ToListAsync();
+            if (!findProducts.Any())
             {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Products not found", false, 0, 0, 0, 0, null, null, null);
             }
             decimal totalPrice = 0;
 
             var productList = new List<DiscountProductDTO>();
-            foreach (var item in findCartItems)
+            foreach (var item in dtos)
             {
-                totalPrice += item.Product.Price * item.Quantity;
+                var findProduct = findProducts.FirstOrDefault(p => p.Id == item.ProductId);
+                totalPrice += findProduct.Price * item.Quantity;
                 productList.Add(new DiscountProductDTO
                 {
                     ProductId = item.ProductId,
-                    ProductName = item.Product.ProductName,
-                    Price = item.Product.Price,
+                    ProductName = findProduct.ProductName,
+                    Price = findProduct.Price,
                     Quantity = item.Quantity,
-                    CategoryName = item.Product.Category.CategoryName,
-                    ImageUrl = item.Product.ImageUrl
+                    CategoryName = findProduct.Category.CategoryName,
+                    ImageUrl = findProduct.ImageUrl
+                });
+            }
+            if (string.IsNullOrWhiteSpace(discountCode))
+            {
+                var checkout = new ShowCheckoutDTO
+                {
+                    productList = productList,
+                    Vouchers = await _discount.GetDiscountByUser(totalPrice),
+                    CurrentTotalPrice = totalPrice,
+                    DiscountPrice = 0,
+                    ShippingFee = shippingFee,
+                    FinalTotalPrice = totalPrice + shippingFee,
+                    DiscountCode = null,
+                    UserAddress = findUser.Address,
+                    UserFullName = findUser.FullName,
+                    UserPhoneNumber = findUser.Phone,
+                };
+                return new ApiResponse<ShowCheckoutDTO>(null, checkout, "200", "Get product successfully", true, 0, 0, 0, 0, null, null, null);
+            }
+            else
+            {
+                decimal discountPrice = 0;
+
+                var findDiscount = await _context.Discount
+                    .FirstOrDefaultAsync(d => d.Code == discountCode && d.IsActive);
+
+                if (findDiscount == null)
+                {
+                    return new ApiResponse<ShowCheckoutDTO>(
+                        null, null, "404", "Discount not found", false,
+                        0, 0, 0, 0, null, null, null
+                    );
+                }
+
+                if (findDiscount.DiscountPercent.HasValue)
+                {
+                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value / 100m;
+
+                    if (findDiscount.MaxDiscountAmount.HasValue)
+                    {
+                        discountPrice = Math.Min(discountPrice, findDiscount.MaxDiscountAmount.Value);
+                    }
+                }
+                else if (findDiscount.DiscountAmount.HasValue)
+                {
+                    discountPrice = findDiscount.DiscountAmount.Value;
+                }
+
+                discountPrice = Math.Min(discountPrice, totalPrice);
+
+                var checkout = new ShowCheckoutDTO
+                {
+                    productList = productList,
+                    Vouchers = await _discount.GetDiscountByUser(totalPrice),
+                    CurrentTotalPrice = totalPrice,
+                    DiscountPrice = discountPrice,
+                    ShippingFee = shippingFee,
+                    FinalTotalPrice = totalPrice - discountPrice + shippingFee,
+                    DiscountCode = findDiscount.Code,
+                    UserAddress = findUser.Address,
+                    UserFullName = findUser.FullName,
+                    UserPhoneNumber = findUser.Phone,
+                };
+                return new ApiResponse<ShowCheckoutDTO>(null, checkout, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
+            }
+        }
+
+        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountById(List<PreviewOderDTO> dtos, Guid userId)
+        {
+            var findUser = await _context.User.FindAsync(userId);
+            if (findUser == null)
+            {
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+            }
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
+            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
+            var productIds = dtos.Select(d => d.ProductId).ToList();
+            var findProducts = await _context.Product.Include(p => p.Category).Where(p => productIds.Contains(p.Id)).ToListAsync();
+            if (!findProducts.Any())
+            {
+                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Products not found", false, 0, 0, 0, 0, null, null, null);
+            }
+            decimal totalPrice = 0;
+
+            var productList = new List<DiscountProductDTO>();
+            foreach (var item in dtos)
+            {
+                var findProduct = findProducts.FirstOrDefault(p => p.Id == item.ProductId);
+                totalPrice += findProduct.Price * item.Quantity;
+                productList.Add(new DiscountProductDTO
+                {
+                    ProductId = item.ProductId,
+                    ProductName = findProduct.ProductName,
+                    Price = findProduct.Price,
+                    Quantity = item.Quantity,
+                    CategoryName = findProduct.Category.CategoryName,
+                    ImageUrl = findProduct.ImageUrl
                 });
             }
             var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice && d.IsActive).ToListAsync();
             if (!validDiscounts.Any())
             {
-                var productWithoutDiscount = findCartItems.Select(ci => new DiscountProductDTO
-                {
-                    ProductId = ci.Product.Id,
-                    ProductName = ci.Product.ProductName,
-                    Price = ci.Product.Price,
-                    Quantity = ci.Quantity,
-                    CategoryName = ci.Product.Category.CategoryName,
-                    ImageUrl = ci.Product.ImageUrl
-                }).ToList();
+
                 var showCheckoutWithoutDiscount = new ShowCheckoutDTO
                 {
-                    productList = (List<DiscountProductDTO>)productWithoutDiscount,
+                    productList = productList,
                     Vouchers = null,
                     UserPhoneNumber = findUser.Phone,
                     UserFullName = findUser.FullName,
@@ -496,278 +588,6 @@ namespace Ecommerce3BRO.Repository.Implement
             };
             return new ApiResponse<ShowCheckoutDTO>(null, checkoutWithDiscount, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
 
-
-        }
-
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithAutoDiscountById(Guid productId, int quantity, Guid userId)
-        {
-            var findUser = await _context.User.FindAsync(userId);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
-            if (findProduct == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Product not found", false, 0, 0, 0, 0, null, null, null);
-            }
-            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
-            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
-            decimal totalPrice = findProduct.Price * quantity + shippingFee;
-            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice && d.IsActive).ToListAsync();
-            if (!validDiscounts.Any())
-            {
-                var productWithoutDiscount = new DiscountProductDTO
-                {
-                    ProductId = findProduct.Id,
-                    ProductName = findProduct.ProductName,
-                    Price = findProduct.Price,
-                    Quantity = quantity,
-                    CategoryName = findProduct.Category.CategoryName,
-                    ImageUrl = findProduct.ImageUrl,
-
-                };
-                var showCheckoutWithoutDiscount = new ShowCheckoutDTO
-                {
-                    Vouchers = null,
-                    UserPhoneNumber = findUser.Phone,
-                    UserFullName = findUser.FullName,
-                    UserAddress = findUser.Address,
-                    CurrentTotalPrice = totalPrice,
-                    DiscountCode = null,
-                    DiscountPrice = 0,
-                    FinalTotalPrice = totalPrice + shippingFee,
-                    ShippingFee = shippingFee
-                };
-                showCheckoutWithoutDiscount.productList.Add(productWithoutDiscount);
-                return new ApiResponse<ShowCheckoutDTO>(null, showCheckoutWithoutDiscount, "200", "Get product with auto discount successfully", true, 0, 0, 0, 0, null, null, null);
-            }
-            decimal maxDiscount = 0;
-            string discountCode = null;
-
-            foreach (var d in validDiscounts)
-            {
-                decimal discountValue = 0;
-
-                //if (d.DiscountPercent.HasValue)
-                //    discountValue = totalPrice * d.DiscountPercent.Value / 100;
-
-                if (d.DiscountPercent.HasValue)
-                {
-                    decimal calculatedValue = totalPrice * d.DiscountPercent.Value / 100;
-
-                    if (d.MaxDiscountAmount.HasValue)
-                    {
-                        // Lấy min giữa (giá trị tính theo %) và (mức trần)
-                        discountValue = Math.Min(calculatedValue, d.MaxDiscountAmount.Value);
-                    }
-                    else
-                    {
-                        discountValue = calculatedValue;
-                    }
-                }
-
-                if (d.DiscountAmount.HasValue)
-                    discountValue = Math.Max(discountValue, d.DiscountAmount.Value);
-
-                discountValue = Math.Min(discountValue, totalPrice);
-
-                if (discountValue > maxDiscount)
-                {
-                    maxDiscount = discountValue;
-                    discountCode = d.Code;
-                }
-            }
-
-            var productWithDiscount = new DiscountProductDTO
-            {
-                ProductId = findProduct.Id,
-                ProductName = findProduct.ProductName,
-                Price = findProduct.Price,
-                Quantity = quantity,
-                CategoryName = findProduct.Category.CategoryName,
-                ImageUrl = findProduct.ImageUrl
-            };
-            var showCheckoutWithDiscount = new ShowCheckoutDTO
-            {
-                Vouchers = await _discount.GetDiscountByUser(totalPrice),
-                DiscountPrice = maxDiscount,
-                ShippingFee = shippingFee,
-                CurrentTotalPrice = totalPrice,
-                FinalTotalPrice = totalPrice - maxDiscount + shippingFee,
-                DiscountCode = discountCode,
-                UserAddress = findUser.Address,
-                UserFullName = findUser.FullName,
-                UserPhoneNumber = findUser.Phone
-            };
-            showCheckoutWithDiscount.productList.Add(productWithDiscount);
-            return new ApiResponse<ShowCheckoutDTO>(null, showCheckoutWithDiscount, "200", "Get product with auto discount successfully", true, 0, 0, 0, 0, null, null, null);
-        }
-
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountByCartItemId(CheckoutCartItemRequestDTO request, Guid userId)
-        {
-            var findUser = await _context.User.FindAsync(userId);
-            if (findUser == null)
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
-            }
-            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
-            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
-            var findCartItems = await _context.CartItem.Include(ci => ci.Cart).Include(ci => ci.Product).ThenInclude(p => p.Category).Where(ci => request.CartItemIds.Contains(ci.Id) && ci.Cart.UserId == userId).ToListAsync();
-            Console.WriteLine(findCartItems.Count);
-            if (!findCartItems.Any())
-            {
-                return new ApiResponse<ShowCheckoutDTO>(null, null, "404", "Cart item not found", false, 0, 0, 0, 0, null, null, null);
-            }
-            decimal totalPrice = 0;
-
-            var productList = new List<DiscountProductDTO>();
-            foreach (var item in findCartItems)
-            {
-                totalPrice += item.Product.Price * item.Quantity;
-                productList.Add(new DiscountProductDTO
-                {
-                    ProductId = item.ProductId,
-                    ProductName = item.Product.ProductName,
-                    Price = item.Product.Price,
-                    Quantity = item.Quantity,
-                    CategoryName = item.Product.Category.CategoryName,
-                    ImageUrl = item.Product.ImageUrl
-                });
-            }
-            if (string.IsNullOrWhiteSpace(request.DiscountCode))
-            {
-                var checkout = new ShowCheckoutDTO
-                {
-                    productList = productList,
-                    Vouchers = await _discount.GetDiscountByUser(totalPrice),
-                    CurrentTotalPrice = totalPrice,
-                    DiscountPrice = 0,
-                    ShippingFee = shippingFee,
-                    FinalTotalPrice = totalPrice + shippingFee,
-                    DiscountCode = null,
-                    UserAddress = findUser.Address,
-                    UserFullName = findUser.FullName,
-                    UserPhoneNumber = findUser.Phone,
-                };
-                return new ApiResponse<ShowCheckoutDTO>(null, checkout, "200", "Get product successfully", true, 0, 0, 0, 0, null, null, null);
-            }
-            else
-            {
-                decimal discountPrice = 0;
-
-                var findDiscount = await _context.Discount
-                    .FirstOrDefaultAsync(d => d.Code == request.DiscountCode && d.IsActive);
-
-                if (findDiscount == null)
-                {
-                    return new ApiResponse<ShowCheckoutDTO>(
-                        null, null, "404", "Discount not found", false,
-                        0, 0, 0, 0, null, null, null
-                    );
-                }
-
-                if (findDiscount.DiscountPercent.HasValue)
-                {
-                    discountPrice = totalPrice * findDiscount.DiscountPercent.Value / 100m;
-
-                    if (findDiscount.MaxDiscountAmount.HasValue)
-                    {
-                        discountPrice = Math.Min(discountPrice, findDiscount.MaxDiscountAmount.Value);
-                    }
-                }
-                else if (findDiscount.DiscountAmount.HasValue)
-                {
-                    discountPrice = findDiscount.DiscountAmount.Value;
-                }
-
-                discountPrice = Math.Min(discountPrice, totalPrice);
-
-                var checkout = new ShowCheckoutDTO
-                {
-                    productList = productList,
-                    Vouchers = await _discount.GetDiscountByUser(totalPrice),
-                    CurrentTotalPrice = totalPrice,
-                    DiscountPrice = discountPrice,
-                    ShippingFee = shippingFee,
-                    FinalTotalPrice = totalPrice - discountPrice + shippingFee,
-                    DiscountCode = findDiscount.Code,
-                    UserAddress = findUser.Address,
-                    UserFullName = findUser.FullName,
-                    UserPhoneNumber = findUser.Phone,
-                };
-                return new ApiResponse<ShowCheckoutDTO>(null, checkout, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
-            }
-        }
-
-        public async Task<ApiResponse<ShowCheckoutDTO>> GetProductWithDiscountById(Guid productId, int quantity, Guid userId, string discountCode)
-        {
-            var findUser = await _context.User.FindAsync(userId);
-            var findDiscount = await _context.Discount.FirstOrDefaultAsync(d => d.Code == discountCode);
-            var findProduct = await _context.Product.Include(p => p.Category).FirstOrDefaultAsync(p => p.Id == productId);
-            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
-            decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
-            var productWithDiscount = new DiscountProductDTO
-            {
-                ProductId = findProduct.Id,
-                ProductName = findProduct.ProductName,
-                Price = findProduct.Price,
-                Quantity = quantity,
-                CategoryName = findProduct.Category.CategoryName,
-                ImageUrl = findProduct.ImageUrl
-            };
-            decimal totalPrice = findProduct.Price * quantity + shippingFee;
-            decimal discountPrice = 0;
-
-            if (findDiscount != null)
-            {
-                //if (findDiscount.DiscountPercent.HasValue)
-                //{
-                //    discountPrice = totalPrice * findDiscount.DiscountPercent.Value / 100;
-                //}
-                //if (findDiscount.DiscountAmount.HasValue)
-                //{
-                //    discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
-                //}
-                //discountPrice = Math.Min(discountPrice, totalPrice);
-
-                //
-                if (findDiscount.DiscountPercent.HasValue)
-                {
-                    decimal calculatedValue = totalPrice * findDiscount.DiscountPercent.Value / 100m;
-
-                    if (findDiscount.MaxDiscountAmount.HasValue)
-                    {
-                        discountPrice = Math.Min(calculatedValue, findDiscount.MaxDiscountAmount.Value);
-                    }
-                    else
-                    {
-                        discountPrice = calculatedValue;
-                    }
-                }
-
-                if (findDiscount.DiscountAmount.HasValue)
-                {
-                    discountPrice = Math.Max(discountPrice, findDiscount.DiscountAmount.Value);
-                }
-
-                discountPrice = Math.Min(discountPrice, totalPrice); //
-            }
-
-            var checkoutWithDiscount = new ShowCheckoutDTO
-            {
-                Vouchers = await _discount.GetDiscountByUser(totalPrice),
-                DiscountPrice = discountPrice,
-                ShippingFee = shippingFee,
-                CurrentTotalPrice = totalPrice,
-                FinalTotalPrice = totalPrice - discountPrice + shippingFee,
-                DiscountCode = discountCode,
-                UserAddress = findUser.Address,
-                UserFullName = findUser.FullName,
-                UserPhoneNumber = findUser.Phone
-            };
-            checkoutWithDiscount.productList.Add(productWithDiscount);
-            return new ApiResponse<ShowCheckoutDTO>(null, checkoutWithDiscount, "200", "Get product with discount successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
 

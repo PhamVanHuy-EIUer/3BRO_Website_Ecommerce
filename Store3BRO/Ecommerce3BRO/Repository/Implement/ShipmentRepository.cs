@@ -10,9 +10,11 @@ namespace Ecommerce3BRO.Repository.Implement
     public class ShipmentRepository : IShipmentRepository
     {
         private readonly Ecommerce3BROContext _context;
-        public ShipmentRepository(Ecommerce3BROContext context)
+        private readonly IOrderRepository _orderRepository;
+        public ShipmentRepository(Ecommerce3BROContext context, IOrderRepository orderRepository)
         {
             _context = context;
+            _orderRepository = orderRepository;
         }
         public async Task<ApiResponse<ShipmentDTO>> AddNewShipmentAsync(ShipmentDTO shipmentDTO)
         {
@@ -32,7 +34,8 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<ShipmentDTO>> DeleteShipmentByIdAsync(Guid shipmentId)
         {
             var findShipment = await _context.Shipment.FindAsync(shipmentId);
-            if (findShipment == null) {
+            if (findShipment == null)
+            {
                 return new ApiResponse<ShipmentDTO>(null, null, "404", "Shipment not found", false, 0, 0, 0, 0, null, null, null);
             }
             _context.Shipment.Remove(findShipment);
@@ -46,16 +49,16 @@ namespace Ecommerce3BRO.Repository.Implement
             if (pageSize <= 0) pageSize = 10;
             var totalItems = _context.Shipment.Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-            var shipments = await _context.Shipment.OrderByDescending(s=>s.CreatedDate)
-                .Skip((currentPage-1)*pageSize).Take(pageSize).Select(s=> new GetShipmentDTO
+            var shipments = await _context.Shipment.OrderByDescending(s => s.CreatedDate)
+                .Skip((currentPage - 1) * pageSize).Take(pageSize).Select(s => new GetShipmentDTO
                 {
-                       DeliveryDate = s.DeliveryDate,
-                       Id = s.Id,
-                       OrderId = s.OrderId,
-                       ShipDate = s.ShipDate,
-                       ShipperName = s.ShipperName,
-                        Status = ((ShipmentStatus)s.Status).ToString(),
-                        TrackingNumber = s.TrackingNumber
+                    DeliveryDate = s.DeliveryDate,
+                    Id = s.Id,
+                    OrderId = s.OrderId,
+                    ShipDate = s.ShipDate,
+                    ShipperName = s.ShipperName,
+                    Status = ((ShipmentStatus)s.Status).ToString(),
+                    TrackingNumber = s.TrackingNumber
                 }).ToListAsync();
             return new ApiResponse<GetShipmentDTO>(shipments, null, "200", "Get all shipments by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
 
@@ -63,15 +66,15 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<GetShipmentDTO>> GetShipmentByStatusAsync(int status)
         {
-            var shipments = await _context.Shipment.Where(s => s.Status == status).Select(s=> new GetShipmentDTO
+            var shipments = await _context.Shipment.Where(s => s.Status == status).Select(s => new GetShipmentDTO
             {
-                 DeliveryDate =s.DeliveryDate,
-                 Id = s.Id,
-                 OrderId = s.OrderId,
-                 ShipDate =s.ShipDate,
-                 ShipperName = s.ShipperName,
-                 Status = ((ShipmentStatus)s.Status).ToString(),
-                 TrackingNumber = s.TrackingNumber
+                DeliveryDate = s.DeliveryDate,
+                Id = s.Id,
+                OrderId = s.OrderId,
+                ShipDate = s.ShipDate,
+                ShipperName = s.ShipperName,
+                Status = ((ShipmentStatus)s.Status).ToString(),
+                TrackingNumber = s.TrackingNumber
             }).ToListAsync();
             return new ApiResponse<GetShipmentDTO>(shipments, null, "200", "Get all shipments by status successfully", true, 0, 0, 0, 0, null, null, null);
 
@@ -105,6 +108,10 @@ namespace Ecommerce3BRO.Repository.Implement
                 Status = ((ShipmentStatus)findShipment.Status).ToString(),
                 TrackingNumber = findShipment.TrackingNumber
             };
+            if (findShipment.Status == 2)
+            {
+                await _orderRepository.UpdateOrderStatus(findShipment.OrderId, 3);
+            }
             await _context.SaveChangesAsync();
             return new ApiResponse<GetShipmentDTO>(null, getShipment, "200", "Update shipment successfully", true, 0, 0, 0, 0, null, null, null);
 

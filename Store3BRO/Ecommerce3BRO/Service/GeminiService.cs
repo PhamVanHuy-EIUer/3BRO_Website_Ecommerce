@@ -17,8 +17,26 @@ public class GeminiService
 
     public async Task<string> AskGemini(string message)
     {
+        string projectContext = @"
+        Bạn là trợ lý ảo cho website 'MyStore.NET'.
+        Thông tin dự án:
+        - Đây là web bán những thiết bị điện tử .
+        - Giờ làm việc: 8h - 17h.
+        - Hotline: 0364663858.
+        - Chính sách đổi trả: Trong vòng 7 ngày nếu lỗi nhà sản xuất.
+        - Sản phẩm nổi bật: Laptop, Điện thoại, Tai nghe.
+        - Trong tầm giá 10 triệu, có các sản phẩm như: Điện thoại Xiaomi Redmi Note 11, Tai nghe Bluetooth Anker Soundcore Life P2.
+        Hãy trả lời ngắn gọn, lịch sự và hỗ trợ khách hàng mua hàng.
+    ";
         var requestBody = new
         {
+            system_instruction = new
+            {
+                parts = new[]
+            {
+                new { text = projectContext }
+            }
+            },
             contents = new[]
             {
             new

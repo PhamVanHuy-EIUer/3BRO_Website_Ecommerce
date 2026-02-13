@@ -42,8 +42,9 @@ builder.Services.AddScoped<ShopLocation>();
 builder.Services.AddScoped<TakeCurrentTime>();
 builder.Services.AddHttpClient<IMomoService, MomoService>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
-
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
 builder.Services.Configure<MomoOptionModel>(builder.Configuration.GetSection("Momo"));
+builder.Services.AddHttpClient<GeminiService>();
 builder.Services.AddDbContext<Ecommerce3BROContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection")));
 builder.Services.AddSwaggerGen(c =>
 {
@@ -114,6 +115,7 @@ builder.Services.AddCors(options =>
             .WithOrigins(
                 "http://localhost:3000",
                 "http://localhost:7041",
+                 "http://localhost:5500",
                 "https://localhost:7041"  // Nếu dùng HTTPS
             )
             .AllowAnyHeader()

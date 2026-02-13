@@ -79,6 +79,27 @@ export default function ProductGallery({
     }
   };
 
+  const handleBuyNow = () => {
+    if (!authorized) return router.push("/login");
+
+    // Create checkout payload with ViewPrice format
+    const payload = {
+      items: [
+        {
+          productId: product.id,
+          quantity: numberProducts,
+        },
+      ],
+      voucherCode: null, // No voucher selected, server will auto-apply
+    };
+
+    // Save to sessionStorage
+    sessionStorage.setItem("checkout_data", JSON.stringify(payload));
+
+    // Navigate to payment page
+    router.push("/user/payment");
+  };
+
   return (
     <>
       {contextHolder}
@@ -228,6 +249,7 @@ export default function ProductGallery({
                   <button
                     className="px-12 h-11 bg-red-500 text-white rounded font-semibold hover:bg-red-600 transition-colors disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed"
                     disabled={!isInStock}
+                    onClick={handleBuyNow}
                   >
                     Buy Now
                   </button>

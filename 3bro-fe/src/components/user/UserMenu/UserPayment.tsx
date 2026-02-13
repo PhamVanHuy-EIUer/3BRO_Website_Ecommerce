@@ -18,6 +18,7 @@ import {
   RadioChangeEvent,
   Flex,
   notification,
+  QRCode,
 } from "antd";
 import {
   HomeOutlined,
@@ -30,7 +31,6 @@ import {
   CreditCardOutlined,
   LoadingOutlined,
 } from "@ant-design/icons";
-import { useSearchParams } from "next/navigation";
 import { ApiResponse } from "@/models/ApiResponse";
 import { PaymentProduct } from "@/models/PaymentProduct";
 import { paymentService } from "@/services/payment.service";
@@ -39,8 +39,10 @@ import Voucher from "@/components/user/cart/Voucher"; // Import Voucher componen
 import PageLoading from "@/components/Loading";
 import LoadingUser from "@/components/LoadingUser";
 import { Trash2 } from "lucide-react";
+import { ViewPrice } from "@/models/ViewPrice";
+import { orderService } from "@/services/order.service";
 import { CreateOrderDTO } from "@/models/CreateOrderDTO";
-import { Cart } from "@/models/Cart";
+import { Payment } from "@/models/Payment";
 
 const { Title, Text } = Typography;
 
@@ -119,7 +121,7 @@ const paymentMethods: PaymentMethod[] = [
 ];
 
 const PaymentUser: React.FC = () => {
-  const searchParams = useSearchParams();
+  const [checkoutData, setCheckoutData] = useState<any>(null);
   const [pageLoading, setPageLoading] = useState<boolean>(true);
   const [selectedAddress] = useState<Address>();
   const [paymentMethod, setPaymentMethod] = useState<string>("Cash");
@@ -132,11 +134,39 @@ const PaymentUser: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
   const [api, contextHolder] = notification.useNotification();
-  const cartItemIds = searchParams.get("cartItemIds")?.split(",") || [];
-  const discountCode = searchParams.get("voucherCode") || null;
-  const productId = searchParams.get("productId") || "";
-  const rawQuantity = searchParams.get("quantity");
-  const quantity = Number(rawQuantity);
+  const [createdOrderId, setCreatedOrderId] = useState<string>("");
+  const [momoPayUrl, setMomoPayUrl] = useState<string>("");
+  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
+
+  useEffect(() => {
+    const data = sessionStorage.getItem("checkout_data");
+
+    if (!data) {
+      api.error({
+        title: "Error",
+        description: "Checkout data not found",
+        placement: "topRight",
+        duration: 2,
+      });
+      return;
+    }
+
+    const parsed = JSON.parse(data);
+    setCheckoutData(parsed);
+
+    // Transform items to ViewPrice format (only productId and quantity)
+    const viewPriceItems: ViewPrice[] = parsed.items.map((item: any) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    }));
+
+    if (parsed.voucherCode) {
+      fetchPaymentWithDiscount(parsed.voucherCode, viewPriceItems);
+    } else {
+      fetchPaymentData(viewPriceItems);
+    }
+  }, []);
+
   const getFirstImage = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return "/blank.jpg";
 
@@ -151,24 +181,16 @@ const PaymentUser: React.FC = () => {
     return `${baseUrl}${path}`;
   };
 
-  // Fetch payment calculation without discount
-  const fetchPaymentData = async () => {
+  const fetchPaymentData = async (items: ViewPrice[]) => {
     setLoading(true);
     try {
-      let res: ApiResponse<PaymentProduct>;
-
-      if (cartItemIds.length > 0) {
-        res = await paymentService.calculateForCartItem(cartItemIds);
-      } else if (productId && quantity) {
-        res = await paymentService.calculateForProduct(productId, quantity);
-      } else {
-        setLoading(false);
-        return;
-      }
+      const res: ApiResponse<PaymentProduct> =
+        await paymentService.calculateProductPayment(items);
 
       if (res.code !== "200" || !res.isSuccess) {
         api.error({
-          title: res.message || "Unable to load payment information",
+          title: "Error",
+          description: res.message,
           placement: "topRight",
           duration: 2,
         });
@@ -176,19 +198,20 @@ const PaymentUser: React.FC = () => {
       }
 
       setPaymentProduct(res.object);
-      console.log(res.object);
-      // Kiểm tra và set selectedVoucher nếu có discountCode trong response
-      const vouchers: Discount[] = res.object?.vouchers ?? [];
 
-      const matchedVoucher = vouchers.find(
-        (v) => v.code.toLowerCase() === res.object?.discountCode?.toLowerCase(),
-      );
-
-      setSelectedVoucher(matchedVoucher);
+      // Auto-apply voucher if server returned a discount code
+      if (res.object && res.object.discountCode && res.object.vouchers) {
+        const autoAppliedVoucher = res.object.vouchers.find(
+          (voucher) => voucher.code === res.object!.discountCode,
+        );
+        if (autoAppliedVoucher) {
+          setSelectedVoucher(autoAppliedVoucher);
+        }
+      }
     } catch (err) {
-      console.error("Calculate payment error:", err);
       api.error({
-        title: "Unable to load payment information",
+        title: "Error",
+        description: "Unable to load payment information",
         placement: "topRight",
         duration: 2,
       });
@@ -198,28 +221,23 @@ const PaymentUser: React.FC = () => {
   };
 
   // Fetch payment calculation with discount
-  const fetchPaymentWithDiscount = async (voucherCode: string) => {
-    if (!cartItemIds.length && !productId) return;
+  const fetchPaymentWithDiscount = async (
+    voucherCode: string,
+    items: ViewPrice[],
+  ) => {
     setLoading(true);
     try {
-      let res: ApiResponse<PaymentProduct>;
-
-      if (cartItemIds.length > 0) {
-        res = await paymentService.calculateForCartItemWithDiscount(
-          voucherCode,
-          cartItemIds,
-        );
-      } else if (productId && quantity) {
-        // Nếu cần có API cho product with discount, thêm vào đây
-        res = await paymentService.calculateForProduct(productId, quantity);
-      } else {
-        setLoading(false);
-        return;
-      }
+      console.log("voucherCode", voucherCode);
+      console.log("items", items);
+      const res = await paymentService.calculateProductPaymentWithDiscount(
+        voucherCode,
+        items,
+      );
 
       if (res.code !== "200" || !res.isSuccess) {
         api.error({
-          title: res.message || "Unable to load payment information",
+          title: "Error",
+          description: res.message,
           placement: "topRight",
           duration: 2,
         });
@@ -227,19 +245,10 @@ const PaymentUser: React.FC = () => {
       }
 
       setPaymentProduct(res.object);
-      console.log(PaymentProduct);
-      // Set selectedVoucher từ discountCode trong response
-      const vouchers: Discount[] = res.object?.vouchers ?? [];
-      console.log(res.object?.discountCode);
-      const matchedVoucher = vouchers.find(
-        (v) => v.code.toLowerCase() === res.object?.discountCode?.toLowerCase(),
-      );
-      console.log(matchedVoucher);
-      setSelectedVoucher(matchedVoucher);
     } catch (err) {
-      console.error("Calculate payment with discount error:", err);
       api.error({
-        title: "Unable to load payment information",
+        title: "Error",
+        description: "Unable to load payment information",
         placement: "topRight",
         duration: 2,
       });
@@ -247,15 +256,6 @@ const PaymentUser: React.FC = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    // Nếu có discount code từ URL, fetch với discount
-    if (discountCode && (cartItemIds.length > 0 || productId)) {
-      fetchPaymentWithDiscount(discountCode);
-    } else {
-      fetchPaymentData();
-    }
-  }, []);
 
   // Simulate page loading
   useEffect(() => {
@@ -281,6 +281,8 @@ const PaymentUser: React.FC = () => {
 
   // Handle voucher selection - Re-fetch data with voucher
   const handleApplyVoucher = async (selectedDiscount: Discount) => {
+    if (!checkoutData?.items) return;
+
     if (subtotal < selectedDiscount.minOrderAmount) {
       api.warning({
         title: "Not Eligible",
@@ -290,63 +292,60 @@ const PaymentUser: React.FC = () => {
       });
       return;
     }
-    // Re-fetch payment data với voucher code
-    await fetchPaymentWithDiscount(selectedDiscount.code);
+
+    // Transform items to ViewPrice format
+    const viewPriceItems: ViewPrice[] = checkoutData.items.map((item: any) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    }));
+
+    await fetchPaymentWithDiscount(selectedDiscount.code, viewPriceItems);
+
+    setSelectedVoucher(selectedDiscount);
     setVoucherModalVisible(false);
 
-    // Notification sẽ hiển thị sau khi selectedVoucher đã được set
-
     api.success({
-      title: `Voucher ${selectedDiscount.code} đã được áp dụng!`,
+      title: "Apply voucher successfully",
+      description: `Apply voucher ${selectedDiscount.code}`,
       placement: "topRight",
-      duration: 2,
+      duration: 3,
     });
   };
 
   // Handle remove voucher - Re-fetch data without voucher
   const handleRemoveVoucher = async () => {
+    if (!checkoutData?.items) return;
+
     setSelectedVoucher(undefined);
-    try {
-      // Re-fetch without discount
-      const res: ApiResponse<PaymentProduct> =
-        await paymentService.calculateForCartItemWithDiscount("", cartItemIds);
-      if (res.code !== "200" || !res.isSuccess) {
-        api.error({
-          title: res.message || "Unable to load payment information",
-          placement: "topRight",
-          duration: 2,
-        });
-        return;
-      }
-      setPaymentProduct(res.object);
-      setSelectedVoucher(undefined);
-      api.success({
-        title: "Voucher đã được gỡ bỏ",
-        placement: "topRight",
-        duration: 2,
-      });
-    } catch (err) {
-      console.error("Calculate payment with discount error:", err);
-      api.error({
-        title: "Unable to load payment information",
-        placement: "topRight",
-        duration: 2,
-      });
-    }
+
+    // Transform items to ViewPrice format
+    const viewPriceItems: ViewPrice[] = checkoutData.items.map((item: any) => ({
+      productId: item.productId,
+      quantity: item.quantity,
+    }));
+
+    await fetchPaymentWithDiscount("", viewPriceItems);
+
+    api.success({
+      title: "Success",
+      description: "Remove voucher successfully",
+      placement: "topRight",
+      duration: 3,
+    });
   };
 
-  // Handle payment
+  // Handle payment - Create order first
   const handlePayment = async () => {
-    if (!selectedAddress || !paymentMethod) {
+    if (!paymentMethod) {
       api.warning({
-        title: "Please select payment details",
+        title: "Please select payment method",
         placement: "topRight",
         duration: 2,
       });
       return;
     }
 
-    if (!PaymentProduct) {
+    if (!PaymentProduct || !PaymentProduct.userAddress) {
       api.warning({
         title: "Payment information not loaded",
         placement: "topRight",
@@ -358,37 +357,147 @@ const PaymentUser: React.FC = () => {
     setLoading(true);
 
     try {
-      setTimeout(() => {
-        const productList = PaymentProduct.productList || [];
-        const fakeProducts: Product[] = productList.map((item) => ({
-          id: parseInt(item.productId) || 0,
-          name: item.productName,
-          image: item.imageUrl || "",
+      // Transform items to ViewPrice format for order creation
+      const viewPriceItems: ViewPrice[] = checkoutData.items.map(
+        (item: any) => ({
+          productId: item.productId,
           quantity: item.quantity,
-          price: item.price,
-        }));
+        }),
+      );
 
-        const newOrder: Order = {
-          id: `ORDER${Date.now()}`,
-          items: fakeProducts,
-          address: selectedAddress,
-          // shipping: shippingMethod,
-          payment: paymentMethod,
-          voucher: selectedVoucher?.code,
-          subtotal,
-          shippingFee,
-          discount,
-          total: totalAmount,
-          createdAt: new Date().toISOString(),
-        };
+      // Create order payload
+      const orderPayload: CreateOrderDTO = {
+        items: viewPriceItems as any,
+        shippingAddress: PaymentProduct.userAddress,
+        paymentMethod: paymentMethod,
+        discountId: selectedVoucher?.id || "",
+      };
 
-        setOrderResult({
-          status: "paid",
-          message: "Order placed successfully!",
-          order: newOrder,
+      // Call API to create order
+      const res: ApiResponse<any> =
+        await orderService.createOrderByUser(orderPayload);
+
+      if (res.code === "200" && res.isSuccess) {
+        const orderId = res.object?.id || res.object;
+        setCreatedOrderId(orderId);
+
+        api.success({
+          title: "Order created successfully!",
+          description: `Order ID: ${orderId}`,
+          placement: "topRight",
+          duration: 3,
         });
-        setLoading(false);
-      }, 2000);
+
+        // Show payment modal
+        setShowPaymentModal(true);
+      } else {
+        api.error({
+          title: "Failed to create order",
+          description: res.message || "An error occurred",
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+    } catch (error) {
+      console.error("Order creation error:", error);
+      api.error({
+        title: "An error occurred while creating the order",
+        placement: "topRight",
+        duration: 2,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle process payment after order created
+  const handleProcessPayment = async () => {
+    if (!createdOrderId) {
+      api.error({
+        title: "No order found",
+        placement: "topRight",
+        duration: 2,
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Call createPayment API
+      const paymentRes: ApiResponse<Payment> =
+        await paymentService.createPayment(createdOrderId);
+
+      if (paymentRes.code === "200" && paymentRes.isSuccess) {
+        api.success({
+          title: "Payment created successfully",
+          placement: "topRight",
+          duration: 2,
+        });
+
+        // If Cash payment, go directly to order result
+        if (paymentMethod === "Cash") {
+          const productList = PaymentProduct!.productList || [];
+          const fakeProducts: Product[] = productList.map((item) => ({
+            id: parseInt(item.productId) || 0,
+            name: item.productName,
+            image: item.imageUrl || "",
+            quantity: item.quantity,
+            price: item.price,
+          }));
+
+          const addressData: Address = {
+            id: 0,
+            name: PaymentProduct!.userFullName || "",
+            phone: PaymentProduct!.userPhoneNumber || "",
+            address: PaymentProduct!.userAddress || "",
+            city: "",
+          };
+
+          const newOrder: Order = {
+            id: createdOrderId,
+            items: fakeProducts,
+            address: addressData,
+            payment: paymentMethod,
+            voucher: selectedVoucher?.code,
+            subtotal,
+            shippingFee,
+            discount,
+            total: totalAmount,
+            createdAt: new Date().toISOString(),
+          };
+
+          setOrderResult({
+            status: "paid",
+            message: "Order placed successfully!",
+            order: newOrder,
+          });
+          setShowPaymentModal(false);
+        }
+        // If Momo payment, call paymentByMomo API
+        else if (paymentMethod === "Transfer") {
+          const momoRes = await paymentService.paymentByMomo(createdOrderId);
+
+          if (momoRes.payUrl) {
+            // Redirect to Momo payment page
+            window.location.href = momoRes.payUrl;
+          } else {
+            api.error({
+              title: "Failed to get Momo payment URL",
+              description: momoRes.message || "An error occurred",
+              placement: "topRight",
+              duration: 3,
+            });
+          }
+        }
+      } else {
+        api.error({
+          title: "Failed to create payment",
+          description: paymentRes.message || "An error occurred",
+          placement: "topRight",
+          duration: 3,
+        });
+      }
     } catch (error) {
       console.error("Payment error:", error);
       api.error({
@@ -434,7 +543,7 @@ const PaymentUser: React.FC = () => {
             </Button>,
             <Button
               key="orders"
-              onClick={() => (window.location.href = "/orders")}
+              onClick={() => (window.location.href = "/user/account/purchase")}
             >
               View Orders
             </Button>,
@@ -450,7 +559,7 @@ const PaymentUser: React.FC = () => {
                 <Text>Shipping Fee:</Text>
                 <Text>{formatCurrency(orderResult.order.shippingFee)}</Text>
               </div>
-              {orderResult.order.discount > 0 && (
+              {orderResult.order.discount > 0 && orderResult.order.voucher && (
                 <div
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
@@ -737,7 +846,7 @@ const PaymentUser: React.FC = () => {
                     <Text>Shipping Fee:</Text>
                     <Text>{formatCurrency(shippingFee)}</Text>
                   </div>
-                  {discount > 0 && (
+                  {discount > 0 && selectedVoucher && (
                     <div
                       style={{
                         display: "flex",
@@ -781,7 +890,7 @@ const PaymentUser: React.FC = () => {
                   block
                   onClick={handlePayment}
                   loading={loading}
-                  disabled={!selectedAddress || !paymentMethod}
+                  disabled={!PaymentProduct?.userAddress || !paymentMethod}
                   style={{
                     marginTop: 24,
                     height: 56,
@@ -808,6 +917,54 @@ const PaymentUser: React.FC = () => {
           onClose={() => setVoucherModalVisible(false)}
           onApply={handleApplyVoucher}
         />
+
+        {/* Payment Modal */}
+        <Modal
+          title="Payment Confirmation"
+          open={showPaymentModal}
+          onCancel={() => {
+            if (!momoPayUrl) {
+              setCreatedOrderId(""); // Cancel order context if not paid
+            }
+            setShowPaymentModal(false);
+            setMomoPayUrl("");
+          }}
+          footer={null}
+        >
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <CheckCircleOutlined
+              style={{ fontSize: 48, color: "#52c41a", marginBottom: 16 }}
+            />
+            <h3 style={{ marginBottom: 8 }}>Order Created Successfully!</h3>
+            <p>Order ID: {createdOrderId}</p>
+            <Divider />
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginBottom: 24,
+              }}
+            >
+              <Text>Total Amount:</Text>
+              <Text strong style={{ fontSize: 18, color: "#d4380d" }}>
+                {formatCurrency(totalAmount)}
+              </Text>
+            </div>
+            <Button
+              type="primary"
+              size="large"
+              block
+              onClick={handleProcessPayment}
+              loading={loading}
+              style={{
+                height: 48,
+                background: "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
+              }}
+            >
+              {paymentMethod === "Transfer" ? "Pay via Momo" : "Pay Now"}
+            </Button>
+          </div>
+        </Modal>
       </div>
     </>
   );

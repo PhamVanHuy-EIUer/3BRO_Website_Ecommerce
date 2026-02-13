@@ -2,7 +2,6 @@
 import { ApiResponse } from "@/models/ApiResponse";
 import { Cart } from "@/models/Cart";
 import { Discount } from "@/models/Discount";
-import { GetDiscountDTO } from "@/models/GetDiscountDTO";
 import { cartService } from "@/services/cart.service";
 import {
   Button,
@@ -24,6 +23,8 @@ import { useRouter } from "next/navigation";
 import Voucher from "@/components/user/cart/Voucher";
 import { productService } from "@/services/product.service";
 import { useAuth } from "@/context/AuthContext";
+import { PaymentProduct } from "@/models/PaymentProduct";
+import { paymentService } from "@/services/payment.service";
 
 const CartContent = () => {
   const router = useRouter();
@@ -38,7 +39,6 @@ const CartContent = () => {
   const [totalPrice, setTotalPrice] = useState<number>(0);
   const [isOpenVoucher, setIsOpenVoucher] = useState(false);
   const [appliedVoucher, setAppliedVoucher] = useState<Discount | null>(null);
-  const [discountData, setDiscountData] = useState<GetDiscountDTO | null>(null);
 
   const handleChooseAll = () => {
     if (selectedRowKeys.length === carts.length) {
@@ -72,13 +72,51 @@ const CartContent = () => {
       .map((cart) => cart.cartItemID);
   };
 
-  const fetchPreviewPrice = async () => {
+  const buildCheckoutPayload = () => {
+    return carts
+      .filter((cart) => selectedRowKeys.includes(cart.cartItemID))
+      .map((cart) => ({
+        cartItemId: cart.cartItemID,
+        productId: cart.productId,
+        quantity: cart.quantity,
+      }));
+  };
+
+  // State to store full payment product data
+  const [paymentData, setPaymentData] = useState<PaymentProduct | null>(null);
+
+  const fetchPreviewPrice = async (voucherCode?: string) => {
     try {
-      const response: ApiResponse<number> = await cartService.previewPrice(
-        buildViewPricePayload(),
-      );
-      if (response.code === "200" && response.isSuccess) {
-        setTotalPrice(response.object ?? 0);
+      const payload = buildViewPricePayload();
+      if (payload.length === 0) {
+        setTotalPrice(0);
+        setPaymentData(null);
+        return;
+      }
+
+      const codeToUse =
+        voucherCode !== undefined ? voucherCode : appliedVoucher?.code || "";
+
+      const response: ApiResponse<PaymentProduct> =
+        await paymentService.calculateProductPaymentWithDiscount(
+          codeToUse,
+          payload,
+        );
+      if (response.code === "200" && response.isSuccess && response.object) {
+        setPaymentData(response.object);
+        setTotalPrice(response.object.finalTotalPrice);
+
+        // Auto-apply voucher if returned from server
+        if (response.object.discountCode && response.object.vouchers) {
+          const autoVoucher = response.object.vouchers.find(
+            (v) => v.code === response.object!.discountCode,
+          );
+          if (autoVoucher) {
+            setAppliedVoucher(autoVoucher);
+            // Create discount data structure compatible with existing simplified view if needed
+            // but ideally we should switch to using paymentData directly
+          }
+        }
       }
     } catch (error) {
       console.error("Error fetching preview price:", error);
@@ -163,15 +201,19 @@ const CartContent = () => {
 
     try {
       setApplyingVoucher(true);
-      const cartItemIds = getSelectedCartItemIds();
-      console.log(cartItemIds);
-      const response: ApiResponse<GetDiscountDTO> =
-        await productService.discountCartItems(discount.code, cartItemIds);
+      const payload = buildViewPricePayload();
+
+      const response: ApiResponse<PaymentProduct> =
+        await paymentService.calculateProductPaymentWithDiscount(
+          discount.code,
+          payload,
+        );
 
       if (response.code === "200" && response.isSuccess && response.object) {
-        setDiscountData(response.object);
+        setPaymentData(response.object);
         setAppliedVoucher(discount);
         setIsOpenVoucher(false);
+        setTotalPrice(response.object.finalTotalPrice);
 
         api.success({
           title: "Apply voucher successfully",
@@ -186,7 +228,6 @@ const CartContent = () => {
           placement: "topRight",
           duration: 3,
         });
-        console.log(response);
       }
     } catch (error: any) {
       console.error("Error applying voucher:", error);
@@ -201,9 +242,10 @@ const CartContent = () => {
     }
   };
 
-  const handleRemoveVoucher = () => {
+  const handleRemoveVoucher = async () => {
     setAppliedVoucher(null);
-    setDiscountData(null);
+    setPaymentData(null);
+    await fetchPreviewPrice("");
   };
 
   useEffect(() => {
@@ -216,7 +258,6 @@ const CartContent = () => {
     } else {
       setTotalPrice(0);
       setAppliedVoucher(null);
-      setDiscountData(null);
     }
   }, [selectedRowKeys]);
 
@@ -390,7 +431,7 @@ const CartContent = () => {
                     </div>
 
                     {/* Price Summary */}
-                    {discountData && (
+                    {paymentData && (
                       <div className="flex justify-end px-5 py-4 border-b border-gray-300 w-full">
                         <div className="flex flex-col gap-3 min-w-87.5">
                           <div className="flex justify-between text-base">
@@ -398,25 +439,25 @@ const CartContent = () => {
                               Original Price:
                             </span>
                             <span className="font-semibold">
-                              {formatCurrency(discountData.currentTotalPrice)}
+                              {formatCurrency(paymentData.currentTotalPrice)}
                             </span>
                           </div>
 
-                          {discountData.shippingFee > 0 && (
+                          {paymentData.shippingFee > 0 && (
                             <div className="flex justify-between text-base">
                               <span className="text-gray-600">
                                 Shipping Fee:
                               </span>
                               <span className="font-semibold">
-                                {formatCurrency(discountData.shippingFee)}
+                                {formatCurrency(paymentData.shippingFee)}
                               </span>
                             </div>
                           )}
 
                           <div className="flex justify-between text-base text-red-500">
-                            <span>Discount ({discountData.discountCode}):</span>
+                            <span>Discount ({paymentData.discountCode}):</span>
                             <span className="font-semibold">
-                              -{formatCurrency(discountData.discountPrice)}
+                              -{formatCurrency(paymentData.discountPrice)}
                             </span>
                           </div>
 
@@ -425,7 +466,7 @@ const CartContent = () => {
                               Total Payment:
                             </span>
                             <span className="font-bold text-red-600 text-xl">
-                              {formatCurrency(discountData.finalTotalPrice)}
+                              {formatCurrency(paymentData.finalTotalPrice)}
                             </span>
                           </div>
                         </div>
@@ -466,8 +507,8 @@ const CartContent = () => {
                       </div>
                       <div className="mx-2 font-semibold text-black block text-xl">
                         {formatCurrency(
-                          discountData
-                            ? discountData.finalTotalPrice
+                          paymentData
+                            ? paymentData.finalTotalPrice
                             : totalPrice,
                         )}
                       </div>
@@ -487,13 +528,23 @@ const CartContent = () => {
                             user?.fullName === null
                           ) {
                             router.push("/user");
-                          } else {
-                            const cartItemIds = getSelectedCartItemIds();
-                            const voucherCode = appliedVoucher?.code || null;
-                            router.push(
-                              `/user/payment?cartItemIds=${cartItemIds.join(",")}${voucherCode ? `&voucherCode=${voucherCode}` : ""}`,
-                            );
+                            return;
                           }
+
+                          const payload = {
+                            items: buildCheckoutPayload(),
+                            voucherCode: appliedVoucher?.code || null,
+                            totalPrice: paymentData
+                              ? paymentData.finalTotalPrice
+                              : totalPrice,
+                          };
+
+                          sessionStorage.setItem(
+                            "checkout_data",
+                            JSON.stringify(payload),
+                          );
+
+                          router.push("/user/payment");
                         }}
                       >
                         CHECK OUT

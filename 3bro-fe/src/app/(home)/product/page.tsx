@@ -1,7 +1,7 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { Pagination, Spin } from "antd";
+import { useEffect, useState } from "react";
+import { Pagination } from "antd";
 import { productService } from "@/services/product.service";
 import { Product } from "@/models/Product";
 import ProductCard from "@/components/products/ProductsCard";
@@ -10,13 +10,14 @@ import { categoryService } from "@/services/category.service";
 import { ApiResponse } from "@/models/ApiResponse";
 import { Category } from "@/models/Category";
 import LoadingUser from "@/components/LoadingUser";
-import { ChevronDown, ChevronUp, Grid, ArrowUpDown } from "lucide-react";
+import { ChevronDown, Grid, ArrowUpDown, PackageX } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { BsCurrencyDollar } from "react-icons/bs";
+import { BiMoney } from "react-icons/bi";
+import { AnimatePresence, motion } from "framer-motion";
 
 const PAGE_SIZE = 16;
 const rangePrice = [
-  { name: "100.000 - 1.000.000", minPrice: 100000, maxPrice: 1000000 },
+  { name: "10.000 - 1.000.000", minPrice: 10000, maxPrice: 1000000 },
   {
     name: "1.000.000 - 10.000.000",
     minPrice: 1000000,
@@ -395,9 +396,9 @@ const Products = () => {
                     className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors duration-200"
                   >
                     <div className="flex items-center gap-3">
-                      <BsCurrencyDollar className="w-5 h-5 text-gray-600" />
+                      <BiMoney className="w-5 h-5 text-gray-600" />
                       <h2 className="text-lg font-semibold text-gray-800">
-                        Price Range
+                        Price Range (VND)
                       </h2>
                     </div>
                     <ChevronDown
@@ -409,7 +410,9 @@ const Products = () => {
 
                   <div
                     className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                      showPrice ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+                      showPrice
+                        ? "max-h-screen opacity-100"
+                        : "max-h-0 opacity-0"
                     }`}
                   >
                     <div className="px-4 pb-4">
@@ -447,11 +450,32 @@ const Products = () => {
                 </h2>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {products.map((item) => (
-                  <ProductCard key={item.id} product={item} />
-                ))}
-              </div>
+              {products.length ? (
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${viewMode}-${page}-${priceRange?.name ?? "all"}-${currentCategoryId}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                      {products.map((item) => (
+                        <ProductCard key={item.id} product={item} />
+                      ))}
+                    </div>
+                  </motion.div>
+                </AnimatePresence>
+              ) : (
+                <div className="empty-state w-full flex flex-col items-center justify-center h-[50vh] ">
+                  <PackageX
+                    size={64}
+                    strokeWidth={1.5}
+                    style={{ color: "rgba(0, 0, 0, 0.4)" }}
+                  />
+                  <p>No Product</p>
+                </div>
+              )}
 
               <div className="flex justify-center mt-10">
                 <Pagination

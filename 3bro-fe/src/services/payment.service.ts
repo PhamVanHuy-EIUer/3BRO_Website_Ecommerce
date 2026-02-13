@@ -1,25 +1,28 @@
 import axiosClient from "@/lib/axios"
+import { ViewPrice } from "@/models/ViewPrice";
 
 export const paymentService = {
-    calculateMoneyForProduct: (productId: string, quantity: number) => axiosClient.post(`/Products/product-discount-directly?productId=${productId}&quantity=${quantity}`).then(res => res.data),
-    calculateMoneyForListCartItem: (cartItemId: string[]) =>
-        axiosClient
-            .post("/Products/item-list", null, {
-                params: { cartItemId },
-            })
-            .then(res => res.data),
-    calculateForCartItemWithDiscount: (discountCode: string, cartItemIds: string[]) => axiosClient.post(`/Products/product-discount-cartitem`, { discountCode, cartItemIds }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
-    calculateForCartItem: (cartItemIds: string[]) => {
-        const query = cartItemIds
-            .map(id => `cartItemId=${id}`)
-            .join("&");
+
+    calculateProductPayment: (price: ViewPrice[]) => axiosClient.post(`/Products/product-autodisccount-directly`, price, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    calculateProductPaymentWithDiscount: (
+        discountCode: string,
+        price: ViewPrice[]
+    ) => {
+        const url =
+            discountCode !== ""
+                ? `/Products/product-disccount-directly?discountCode=${discountCode}`
+                : `/Products/product-disccount-directly`;
 
         return axiosClient
-            .post(`/Products/item-list?${query}`)
+            .post(url, price, {
+                headers: { "Content-Type": "application/json" }
+            })
             .then(res => res.data);
+
     },
-    calculateForProduct: (productId: string, quantity: number) => axiosClient.get(`/Products/product-discount-directly?productId=${productId}&quantity=${quantity}`).then(res => res.data),
     topProductRevenue: (pageSize: number) => axiosClient.get(`/Payments/top-product-revenue?pageSize=${pageSize}`).then(res => res.data),
     totalRevenue: () => axiosClient.get(`/Payments/total-revenue`).then(res => res.data),
     monthlyRevenue: () => axiosClient.get(`/Payments/total-sale`).then(res => res.data),
+    createPayment: (orderId: string) => axiosClient.post(`Payments?orderId=${orderId}`).then(res => res.data),
+    paymentByMomo: (orderId: string) => axiosClient.post(`/Payments/momo`, { orderId }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
 };

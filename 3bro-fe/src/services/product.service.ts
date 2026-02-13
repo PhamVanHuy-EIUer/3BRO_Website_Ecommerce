@@ -42,16 +42,16 @@ export const productService = {
     deleteImageProduct: (imageId: string) => axiosClient.delete(`/ProductImages/${imageId}`).then(res => res.data),
 
     // discountCartItems: (discountCode: string, cartItemsIds: string[]) => axiosClient.post(`/Products/product-discount-cartitem`, { discountCode, cartItemsIds }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
-    discountCartItems: (discountCode: string, cartItemIds: string[]) => {
-        return axiosClient
-            .post("/Products/product-discount-cartitem", {
-                discountCode,
-                cartItemIds
-            }, {
-                headers: { "Content-Type": "application/json" }
-            })
-            .then(res => res.data);
-    },
+    // discountCartItems: (discountCode: string, cartItemIds: string[]) => {
+    //     return axiosClient
+    //         .post("/Products/product-discount-cartitem", {
+    //             discountCode,
+    //             cartItemIds
+    //         }, {
+    //             headers: { "Content-Type": "application/json" }
+    //         })
+    //         .then(res => res.data);
+    // },
 
     productInRangePrice: (minPrice: number, maxPrice: number, currentPage: number, pageSize: number) => axiosClient.get(`/Products/price-range?minPrice=${minPrice}&maxPrice=${maxPrice}&currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
     productOrderAscend: (currentPage: number, pageSize: number) => axiosClient.get(`/Products/ascending-cost?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),

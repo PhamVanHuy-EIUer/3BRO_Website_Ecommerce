@@ -3,15 +3,15 @@ import { ViewPrice } from "@/models/ViewPrice";
 
 export const paymentService = {
 
-    calculateProductPayment: (price: ViewPrice[]) => axiosClient.post(`/Products/product-autodisccount-directly`, price, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    calculateProductPayment: (price: ViewPrice[]) => axiosClient.post(`/Products/product-autodiscount-directly`, price, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
     calculateProductPaymentWithDiscount: (
         discountCode: string,
         price: ViewPrice[]
     ) => {
         const url =
             discountCode !== ""
-                ? `/Products/product-disccount-directly?discountCode=${discountCode}`
-                : `/Products/product-disccount-directly`;
+                ? `/Products/product-discount-directly?discountCode=${discountCode}`
+                : `/Products/product-discount-directly`;
 
         return axiosClient
             .post(url, price, {

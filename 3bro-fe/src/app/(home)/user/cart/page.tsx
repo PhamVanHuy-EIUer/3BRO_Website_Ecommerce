@@ -21,7 +21,6 @@ import { ViewPrice } from "@/models/ViewPrice";
 import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
 import Voucher from "@/components/user/cart/Voucher";
-import { productService } from "@/services/product.service";
 import { useAuth } from "@/context/AuthContext";
 import { PaymentProduct } from "@/models/PaymentProduct";
 import { paymentService } from "@/services/payment.service";

@@ -7,6 +7,8 @@ import { COLORS } from "@/data/data";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { reviewService } from "@/services/review.service";
+import { notification } from "antd";
 
 interface OrderDetailModalProps {
   order: ViewOrderUser;
@@ -30,6 +32,8 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [api, contextHolder] = notification.useNotification();
 
   const handleReviewClick = () => {
     setShowReviewModal(true);
@@ -47,18 +51,46 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
     setReviewText("");
   };
 
-  const handleSubmitReview = () => {
-    // Xử lý submit review ở đây
-    console.log({
-      productId: selectedProduct?.productId,
-      rating,
-      review: reviewText,
-    });
-    handleCloseReview();
+  const handleSubmitReview = async () => {
+    if (!selectedProduct || !rating || !reviewText) return;
+
+    try {
+      setSubmitting(true);
+      const res = await reviewService.postReview(
+        selectedProduct.productId,
+        rating,
+        reviewText,
+      );
+
+      if (res.isSuccess && res.code === "200") {
+        api.success({
+          title: "Success",
+          description: "Review submitted successfully!",
+          placement: "topRight",
+        });
+        handleCloseReview();
+      } else {
+        api.error({
+          title: "Error",
+          description: res.message || "Could not submit review.",
+          placement: "topRight",
+        });
+      }
+    } catch (error) {
+      console.error("Error submitting review:", error);
+      api.error({
+        message: "Error",
+        description: "An unexpected error occurred.",
+        placement: "topRight",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <>
+      {contextHolder}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -306,15 +338,21 @@ const OrderDetailModal: React.FC<OrderDetailModalProps> = ({
                 <button
                   onClick={handleSubmitReview}
                   disabled={
-                    !selectedProduct || rating === 0 || !reviewText.trim()
+                    !selectedProduct ||
+                    rating === 0 ||
+                    !reviewText.trim() ||
+                    submitting
                   }
-                  className={`flex-1 ${bgRed} text-white px-6 py-3 rounded transition ${
-                    !selectedProduct || rating === 0 || !reviewText.trim()
+                  className={`flex-1 ${submitting ? "bg-gray-400" : bgRed} text-white px-6 py-3 rounded transition ${
+                    !selectedProduct ||
+                    rating === 0 ||
+                    !reviewText.trim() ||
+                    submitting
                       ? "opacity-50 cursor-not-allowed"
                       : "hover:bg-red-600"
                   }`}
                 >
-                  Submit Review
+                  {submitting ? "Submitting..." : "Submit Review"}
                 </button>
                 <button
                   onClick={handleCloseReview}

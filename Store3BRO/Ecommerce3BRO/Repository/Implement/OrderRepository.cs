@@ -171,6 +171,7 @@ namespace Ecommerce3BRO.Repository.Implement
                         .Select(od => new UserOrderItem
                         {
                             OrderItemId = od.Id,
+                            ProductId = od.ProductId,
                             ProductName = od.Product.ProductName,
                             ImageUrl = od.Product.ImageUrl,
                             Price = od.UnitPrice,

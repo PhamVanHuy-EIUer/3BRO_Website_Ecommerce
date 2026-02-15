@@ -5,6 +5,7 @@ export type ViewOrderUser = {
     items: [
         {
             orderItemId: string,
+            productId: string,
             productName: string,
             imageUrl: string,
             price: number,

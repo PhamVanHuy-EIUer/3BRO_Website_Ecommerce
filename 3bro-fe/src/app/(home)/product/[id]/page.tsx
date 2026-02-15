@@ -32,7 +32,7 @@ interface Rating {
   five?: number;
 }
 const SingleProduct = () => {
-  const PAGE_SIZE = 4;
+  const PAGE_SIZE = 5;
   const { id } = useParams<{ id: string }>();
   const [api, contextHolder] = notification.useNotification();
   const [product, setProduct] = useState<Product | null>(null);
@@ -130,8 +130,8 @@ const SingleProduct = () => {
           await reviewService.getReviewByProductId(id, currentPage, PAGE_SIZE);
         if (res?.isSuccess && res.list) {
           setProductReview(res.list);
-          setTotalPage(res.totalPage);
-          setReviewCount(res.totalPage);
+          setTotalPage(Math.ceil(res.totalElement / PAGE_SIZE));
+          setReviewCount(res.totalElement);
         } else {
           setProductReview([]);
           api.error({

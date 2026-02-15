@@ -331,7 +331,7 @@ const ReviewPage = ({
           </div>
           {/* Decorative Section */}
           <div className="mt-16 max-xl:max-w-3xl max-xl:mx-auto">
-            <div className="bg-gradient-to-r from-indigo-50 via-purple-50 to-pink-50 rounded-3xl p-8 md:p-12">
+            <div className="bg-linear-to-r from-white-50 via-gray-50 to-orange-50 rounded-3xl p-8 md:p-12">
               <div className="pb-8 border-b border-gray-200 max-xl:max-w-3xl max-xl:mx-auto">
                 <h4 className="font-manrope font-semibold text-2xl leading-10 text-black mb-6">
                   Recent Reviews

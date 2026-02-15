@@ -155,7 +155,8 @@ const CartContent = () => {
         await cartService.deleteProductFromCart(cartItem.productId);
       if (response.code === "200" && response.isSuccess) {
         api.success({
-          message: "Xóa sản phẩm thành công",
+          title: "Success",
+          description: "Delete product successfully",
           placement: "topRight",
           duration: 2,
         });
@@ -215,7 +216,7 @@ const CartContent = () => {
         setTotalPrice(response.object.finalTotalPrice);
 
         api.success({
-          title: "Apply voucher successfully",
+          title: "success",
           description: `Apply voucher ${discount.code}`,
           placement: "topRight",
           duration: 3,

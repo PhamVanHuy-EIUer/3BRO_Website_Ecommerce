@@ -19,6 +19,8 @@ import { CiDeliveryTruck } from "react-icons/ci";
 import { CustomerServiceOutlined } from "@ant-design/icons";
 import { RiRefund2Fill } from "react-icons/ri";
 
+import ChatBox from "@/components/home/ChatBox";
+
 const HomePage = () => {
   const [loading, setLoading] = useState(true);
 
@@ -386,6 +388,7 @@ const HomePage = () => {
           </div>
         </div>
       </div>
+      <ChatBox />
     </div>
   );
 };

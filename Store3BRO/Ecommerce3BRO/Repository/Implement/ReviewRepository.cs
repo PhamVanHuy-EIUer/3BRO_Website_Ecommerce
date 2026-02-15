@@ -128,7 +128,7 @@ namespace Ecommerce3BRO.Repository.Implement
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var totalItems = _context.Review.Where(r => r.IsDeleted == false).Count();
+            var totalItems = _context.Review.Where(r => r.ProductId == productId).Count();
             var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
             var reviews = await _context.Review.Include(p => p.User).Include(p => p.Product).Where(r => r.ProductId == productId)
                 .OrderByDescending(r => r.Rating).Skip((currentPage - 1) * pageSize).Take(pageSize)

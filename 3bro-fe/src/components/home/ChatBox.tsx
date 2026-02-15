@@ -84,10 +84,10 @@ const ChatBox = () => {
                   <Bot size={20} />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">Trợ lý ảo 3Bro</h3>
+                  <h3 className="font-semibold text-sm">Chat Box 3BRO</h3>
                   <div className="flex items-center gap-1.5 opacity-90">
                     <span className="w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse" />
-                    <span className="text-xs">Đang hoạt động</span>
+                    <span className="text-xs">Online</span>
                   </div>
                 </div>
               </div>
@@ -124,7 +124,7 @@ const ChatBox = () => {
                   <div
                     className={`max-w-[75%] p-3 rounded-2xl text-sm leading-relaxed shadow-sm ${
                       msg.role === "user"
-                        ? "bg-indigo-600 text-white rounded-tr-none"
+                        ? "bg-orange-400 text-white rounded-tr-none"
                         : "bg-white text-gray-700 border border-gray-100 rounded-tl-none"
                     }`}
                   >

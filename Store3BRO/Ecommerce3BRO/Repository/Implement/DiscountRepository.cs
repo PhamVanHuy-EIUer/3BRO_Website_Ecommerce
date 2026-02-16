@@ -181,7 +181,7 @@ namespace Ecommerce3BRO.Repository.Implement
         public Task<List<GetDiscountDTO>> GetDiscountByUser(decimal price)
         {
             var findDiscount = _context.Discount
-                .Where(d => d.IsActive == true && d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= price)
+                .Where(d => d.IsActive == true && d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= price&&d.Quantity>0)
                 .Select(discount => new GetDiscountDTO()
                 {
                     Id = discount.Id,

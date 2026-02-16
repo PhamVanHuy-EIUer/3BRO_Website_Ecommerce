@@ -206,6 +206,8 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 findPayment.PaymentDate = DateTime.UtcNow;
             }
+            var findOrder = await _context.Order.FindAsync(findPayment.OrderId);
+            findOrder.Status = 3;
             await _context.SaveChangesAsync();
             return new ApiResponse<GetPaymentDTO>(null, null, "200", "Update payment successfully", true, 0, 0, 0, 0, null, null, null);
 

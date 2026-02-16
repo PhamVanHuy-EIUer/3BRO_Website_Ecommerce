@@ -19,8 +19,12 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<ReviewDTO>> AddNewReviewAsync(Guid userId, ReviewDTO review)
         {
             var user = await _context.User.FindAsync(userId);
-            var findOrder = await _context.OrderDetail.Where(od => od.Order.UserId == userId && !od.IsReturn && od.Order.Status==3 && od.ProductId == review.ProductId).FirstOrDefaultAsync();
-            if (findOrder == null)
+            //var findOrder = await _context.OrderDetail.Where(od => od.Order.UserId == userId && !od.IsReturn && od.Order.Status==3 && od.ProductId == review.ProductId).FirstOrDefaultAsync();
+            var product = await _context.Product.Where(p => p.Id == review.ProductId
+        && p.OrderDetails.Any(od => od.Order.UserId == userId
+                                    && !od.IsReturn
+                                    && od.Order.Status == 3)).FirstOrDefaultAsync();
+            if (product == null)
             {
                 return new ApiResponse<ReviewDTO>(null, null, "400", "You can only review products you have purchased", false, 0, 0, 0, 0, null, null, null);
             }
@@ -124,7 +128,7 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetReviewDTO>(reviews, null, "200", "Get reviews by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<GetReviewDTO>> GetReviewByProduct(Guid productId,int currentPage,int pageSize)
+        public async Task<ApiResponse<GetReviewDTO>> GetReviewByProduct(Guid productId, int currentPage, int pageSize)
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;

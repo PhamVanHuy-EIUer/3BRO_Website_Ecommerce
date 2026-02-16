@@ -520,7 +520,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     ImageUrl = findProduct.ImageUrl
                 });
             }
-            var validDiscounts = await _context.Discount.Where(d => d.StartDate <= DateTime.UtcNow && d.EndDate >= DateTime.UtcNow && d.MinOrderAmount <= totalPrice && d.IsActive).ToListAsync();
+            var validDiscounts = await _discount.GetDiscountByUser(totalPrice);
             if (!validDiscounts.Any())
             {
 
@@ -576,7 +576,7 @@ namespace Ecommerce3BRO.Repository.Implement
             var checkoutWithDiscount = new ShowCheckoutDTO
             {
                 productList = productList,
-                Vouchers = await _discount.GetDiscountByUser(totalPrice),
+                Vouchers = validDiscounts,
                 DiscountPrice = maxDiscount,
                 ShippingFee = shippingFee,
                 CurrentTotalPrice = totalPrice,

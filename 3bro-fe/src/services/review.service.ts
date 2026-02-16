@@ -7,4 +7,5 @@ export const reviewService = {
     getRating: (id: string) => axiosClient.get(`/Reviews/rating${id}`).then(res => res.data),
     getReviewByUser: (currentPage: number, pageSize: number) => axiosClient.get(`/Reviews/by-user?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
     updateReview: (reviewId: string, productId: string, rating: number, comment: string) => axiosClient.put(`/Reviews?reviewId=${reviewId}`, { productId, rating, comment }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    getReviewByAdmin: (currentPage: number, pageSize: number) => axiosClient.get(`/Reviews/by-page?currentPage=${currentPage}&pageSize=${pageSize}`).then(res => res.data),
 }

@@ -2,18 +2,16 @@
 
 import { usePathname } from "next/navigation";
 import {
-  Bell,
-  DollarSign,
   House,
   LogOut,
   Mail,
   Menu,
   Settings,
   ShoppingBag,
-  ShoppingCart,
   Users,
   X,
 } from "lucide-react";
+import { MdRateReview } from "react-icons/md";
 import { useState } from "react";
 import Link from "next/link";
 import { Avatar } from "antd";
@@ -21,6 +19,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { DiscountIcon, OrderIcon } from "@/data/icon";
 import { useAuth } from "@/context/AuthContext";
 
+const Review = () => <MdRateReview size={22} />;
 const menuItems = [
   { id: 1, name: "Dashboard", icon: House, href: "/admin" },
   { id: 2, name: "Products", icon: ShoppingBag, href: "/admin/products" },
@@ -34,7 +33,7 @@ const menuItems = [
     href: "/admin/supports",
     badge: 3,
   },
-  { id: 7, name: "Notifications", icon: Bell, href: "/admin/notifications" },
+  { id: 7, name: "Reviews", icon: Review, href: "/admin/reviews" },
   { id: 8, name: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 

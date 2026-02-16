@@ -123,6 +123,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     ReviewName = r.User.FullName,
                     PhoneNumber = r.User.Phone,
                     Rating = r.Rating,
+                    Comment = r.Comment,
                     ProductName = r.Product.ProductName,
                     ReviewDate = r.CreatedDate
                 }).ToListAsync();

@@ -37,7 +37,7 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpGet("by-user")]
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         public async Task<ApiResponse<GetReviewDTO>> GetReviewByUserAsync([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -77,6 +77,7 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpGet("by-page")]
+        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetReviewDTO>> GetReviewByPage([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             return await _reviewService.GetReviewByPage(currentPage, pageSize);

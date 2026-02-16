@@ -259,7 +259,7 @@ const HomePage = () => {
               <button
                 className="bg-red-500 text-white px-12 py-3 rounded-full hover:bg-red-600 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
                 onClick={() => {
-                  router.push("/product");
+                  router.push("/product/best-product");
                   window.scrollTo({ top: 0, behavior: "smooth" });
                 }}
               >

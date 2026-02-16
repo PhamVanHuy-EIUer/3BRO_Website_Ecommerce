@@ -86,7 +86,7 @@ function RecommendProduct({ products }: { products: Product[] }) {
 
           {/* View All Button */}
           <div className="flex justify-center">
-            <Link href="/product">
+            <Link href="/product/best-product">
               <button className="bg-red-500 text-white px-10 py-2 rounded hover:bg-red-600 transition-colors font-medium">
                 View All
               </button>

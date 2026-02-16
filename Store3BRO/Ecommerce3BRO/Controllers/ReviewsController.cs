@@ -38,15 +38,15 @@ namespace Ecommerce3BRO.Controllers
         }
         [HttpGet("by-user")]
         [Authorize(Roles = "Admin")]
-        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewByUserAsync()
+        public async Task<ApiResponse<GetReviewDTO>> GetReviewByUserAsync([FromQuery] int currentPage, [FromQuery] int pageSize)
         {
             var findUser = User.FindFirst(ClaimTypes.NameIdentifier);
             if (findUser == null)
             {
-                return new ApiResponse<GetReviewDetailDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<GetReviewDTO>(null, null, "401", "Unauthorized", false, 0, 0, 0, 0, null, null, null);
             }
             var userId = Guid.Parse(findUser.Value);
-            var result = await _reviewService.GetReviewByUser(userId);
+            var result = await _reviewService.GetReviewByUser(userId, currentPage, pageSize);
             return result;
         }
         [HttpDelete]

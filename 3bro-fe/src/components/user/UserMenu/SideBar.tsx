@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BoxIcon,
-  BellIcon,
   TicketIcon,
   UserIcon,
   Edit2Icon,
@@ -14,6 +13,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { notification } from "antd";
+import { MdRateReview } from "react-icons/md";
 
 interface SubItem {
   name: string;
@@ -66,20 +66,20 @@ const Sidebar = () => {
       subItems: [],
     },
     {
-      name: "Notifications",
-      icon: <BellIcon className="w-5 h-5" />,
-      path: "/user/account/notification",
+      name: "Review User",
+      icon: <MdRateReview className="w-5 h-5" />,
+      path: "/user/account/review-user",
       subItems: [
-        {
-          name: "Order Updates",
-          icon: <BoxIcon className="w-4 h-4" />,
-          path: "/user/account/notification/order-updates",
-        },
-        {
-          name: "Promotions",
-          icon: <TicketIcon className="w-4 h-4" />,
-          path: "/user/account/notification/promotions",
-        },
+        // {
+        //   name: "Order Updates",
+        //   icon: <BoxIcon className="w-4 h-4" />,
+        //   path: "/user/account/notification/order-updates",
+        // },
+        // {
+        //   name: "Promotions",
+        //   icon: <TicketIcon className="w-4 h-4" />,
+        //   path: "/user/account/notification/promotions",
+        // },
       ],
     },
     {

@@ -119,6 +119,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 .Select(r => new GetReviewDTO
                 {
                     ReviewId = r.Id,
+                    ProductId = r.ProductId,
                     ReviewName = r.User.FullName,
                     PhoneNumber = r.User.Phone,
                     Rating = r.Rating,
@@ -149,22 +150,38 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<GetReviewDTO>(reviews, null, "200", "Get reviews of product by page successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null);
         }
 
-        public async Task<ApiResponse<GetReviewDetailDTO>> GetReviewByUser(Guid userId)
+        public async Task<ApiResponse<GetReviewDTO>> GetReviewByUser(Guid userId, int currentPage, int pageSize)
         {
-            var reviews = await _context.Review.Where(r => r.UserId == userId && !r.IsDeleted)
-                 .Include(r => r.User)
-                 .Include(r => r.Product)
-                 .Select(r => new GetReviewDetailDTO
-                 {
-                     ReviewName = r.User.FullName,
-                     PhoneNumber = r.User.Phone,
-                     Rating = r.Rating,
-                     ProductName = r.Product.ProductName,
-                     Comment = r.Comment,
-                     ReviewDate = r.CreatedDate
-                 }).ToListAsync();
-            return new ApiResponse<GetReviewDetailDTO>(reviews, null, "200", "Get reviews by user successfully", true, 0, 0, 0, reviews.Count, null, null, null);
+            if (currentPage <= 0) currentPage = 1;
+            if (pageSize <= 0) pageSize = 10;
+
+            var query = _context.Review
+                .AsNoTracking()
+                .Where(r => r.UserId == userId && !r.IsDeleted);
+
+            var totalItems = await query.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+
+            var reviews = await query
+                .OrderByDescending(r => r.CreatedDate)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(r => new GetReviewDTO
+                {
+                    ReviewId = r.Id,
+                    ProductId = r.ProductId,
+                    ReviewName = r.User.FullName,
+                    PhoneNumber = r.User.Phone,
+                    Rating = r.Rating,
+                    ProductName = r.Product.ProductName,
+                    Comment = r.Comment,
+                    ReviewDate = r.CreatedDate
+                })
+                .ToListAsync();
+
+            return new ApiResponse<GetReviewDTO>(reviews, null, "200", "Get reviews by user successfully", true, currentPage, pageSize, totalPages, totalItems, null, null, null );
         }
+
 
         public async Task<ApiResponse<GetReviewDTO>> UpdateReviewAsync(Guid reviewId, ReviewDTO review)
         {

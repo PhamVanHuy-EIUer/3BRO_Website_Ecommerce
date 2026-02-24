@@ -373,7 +373,7 @@ const CartContent = () => {
               </div>
               <div className="flex items-center">
                 <Button
-                  className="!rounded-md !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
+                  className="rounded-md! !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
                   onClick={() => router.push("/product")}
                 >
                   SEE PRODUCTS

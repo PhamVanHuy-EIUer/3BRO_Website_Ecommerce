@@ -270,7 +270,7 @@ const HomePage = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 py-16">
-          <div className="relative bg-gradient-to-r from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-2xl">
+          <div className="relative bg-linear-to-r from-gray-900 to-gray-700 rounded-2xl overflow-hidden shadow-2xl">
             <div className="absolute inset-0 opacity-20">
               <Image
                 src="https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1200&h=400&fit=crop"

@@ -15,8 +15,9 @@ import {
   Spin,
   Pagination,
   Empty,
+  Popconfirm,
 } from "antd";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const ReviewUserPage = () => {
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -79,14 +80,14 @@ const ReviewUserPage = () => {
     try {
       const res = await reviewService.updateReview(
         editingReview.reviewId,
-        editingReview.productId || "",
+        editingReview.productId,
         values.rating,
         values.comment,
       );
 
       if (res.isSuccess) {
         api.success({
-          title: "Update review successfully",
+          title: "Update successfully",
           description: "Your review has been updated.",
           placement: "topRight",
           duration: 2,
@@ -104,8 +105,38 @@ const ReviewUserPage = () => {
     } catch (error) {
       console.error("Update review error:", error);
       api.error({
-        title: "Error connection",
-        description: "Không thể cập nhật đánh giá vui lòng thử lại sau.",
+        title: "Update failed",
+        description: "Can't update review, please try again later.",
+        placement: "topRight",
+        duration: 2,
+      });
+    }
+  };
+
+  const handleDelete = async (reviewId: string) => {
+    try {
+      const res = await reviewService.deleteReview(reviewId);
+      if (res.isSuccess) {
+        api.success({
+          title: "Delete successfully",
+          description: "Your review has been deleted.",
+          placement: "topRight",
+          duration: 2,
+        });
+        fetchReviews(currentPage);
+      } else {
+        api.error({
+          title: "Delete failed",
+          description: res.message,
+          placement: "topRight",
+          duration: 2,
+        });
+      }
+    } catch (error) {
+      console.error("Delete review error:", error);
+      api.error({
+        title: "Delete failed",
+        description: "Can't delete review, please try again later.",
         placement: "topRight",
         duration: 2,
       });
@@ -117,7 +148,7 @@ const ReviewUserPage = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 bg-white rounded-2xl shadow-sm min-h-[600px]">
+    <div className="p-4 md:p-8 bg-white rounded-2xl shadow-sm min-h-150">
       {contextHolder}
       <h1 className="text-2xl font-bold mb-8 text-gray-800">My Reviews</h1>
 
@@ -147,13 +178,28 @@ const ReviewUserPage = () => {
                     Review Date: {formatDate(review.reviewDate)}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleEdit(review)}
-                  className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors duration-200 font-medium"
-                >
-                  <EditOutlined />
-                  Edit Review
-                </button>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleEdit(review)}
+                    className="flex items-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-100 transition-colors duration-200 font-medium"
+                  >
+                    <EditOutlined />
+                    Edit
+                  </button>
+                  <Popconfirm
+                    title="Delete review"
+                    description="Are you sure you want to delete this review?"
+                    onConfirm={() => handleDelete(review.reviewId)}
+                    okText="Delete"
+                    cancelText="Cancel"
+                    okButtonProps={{ danger: true }}
+                  >
+                    <button className="flex items-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors duration-200 font-medium">
+                      <DeleteOutlined />
+                      Delete
+                    </button>
+                  </Popconfirm>
+                </div>
               </div>
             </div>
           ))}

@@ -1,44 +1,40 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-// Các route cần bảo vệ và role tương ứng
 const protectedRoutes = [
-    { path: "/admin", roles: ["Admin"] },
-    { path: "/user", roles: ["User", "Admin"] },
+    { path: "/admin", roles: ["admin"] },
+    { path: "/user", roles: ["user", "admin"] },
 ];
 
 export function middleware(req: NextRequest) {
     const pathname = req.nextUrl.pathname;
 
-    const token = req.cookies.get("access_token")?.value;
+    const refreshToken = req.cookies.get("refresh_token")?.value;
 
-    // Lấy role từ cookie (không HttpOnly, để middleware đọc được)
     const rolesCookie = req.cookies.get("role")?.value;
     const roleList = rolesCookie
         ? rolesCookie.split(",").map((r) => r.trim().toLowerCase())
         : [];
 
-    // Loop qua các route cần bảo vệ
     for (const route of protectedRoutes) {
         if (pathname.startsWith(route.path)) {
-            // Nếu không có token → redirect login
-            if (!token) {
+            if (!refreshToken) {
                 return NextResponse.redirect(new URL("/login", req.url));
             }
 
-            // Kiểm tra role
-            const routeRolesLower = route.roles.map((r) => r.toLowerCase());
-            const hasAccess = routeRolesLower.some((r) => roleList.includes(r));
+            const hasAccess = route.roles.some((r) =>
+                roleList.includes(r.toLowerCase())
+            );
 
             if (!hasAccess) {
                 return NextResponse.redirect(new URL("/forbindden", req.url));
             }
         }
     }
+
     return NextResponse.next();
 }
 
-// Matcher cho các route cần middleware
 export const config = {
-    matcher: ["/admin", "/admin/:path*", "/user", "/user/:path*"],
+    matcher: ["/admin/:path*", "/user/:path*"],
 };

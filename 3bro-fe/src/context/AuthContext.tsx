@@ -1,4 +1,5 @@
 "use client";
+
 import {
   createContext,
   useContext,
@@ -34,10 +35,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [authorized, setAuthorized] = useState(false);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
 
-  const [isAdmin, setIsAdmin] = useState(false);
+  // Refresh auth
   const refreshAuth = useCallback(async () => {
     try {
       const res: ApiResponse<User> = await userService.getMe();
@@ -48,47 +51,51 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const admin = res.object.roleList?.includes("Admin") ?? false;
         setIsAdmin(admin);
-
-        console.log("Roles:", res.object.roleList);
       } else {
         setAuthorized(false);
-        setIsAdmin(false);
         setUser(null);
+        setIsAdmin(false);
       }
     } catch (error) {
       console.log("Refresh auth failed:", error);
       setAuthorized(false);
-      setIsAdmin(false);
       setUser(null);
+      setIsAdmin(false);
     } finally {
       setLoading(false);
     }
   }, []);
 
+  // Login
   const login = async (data: LoginRequest) => {
     try {
       const res = await AuthService.login(data);
+
       if (res.code !== "200") {
         throw new Error(res.message);
       }
-      console.log(res);
+
       api.success({
         title: "Success",
         description: "Login successfully",
         duration: 2,
       });
+
       await refreshAuth();
-      console.log("Login successful, user:", user);
     } catch (error: any) {
       api.error({
         title: "Login error",
         description:
-          error.response?.data?.message || "Email or password is incorrect",
+          error.response?.data?.message ||
+          error.message ||
+          "Email or password is incorrect",
       });
+
       throw error;
     }
   };
 
+  // Login with Google
   const loginWithGoogle = async (idToken: string) => {
     try {
       const res = await AuthService.loginWithGoogle(idToken);
@@ -104,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           description: "Login successfully",
           duration: 2,
         });
+
         await refreshAuth();
         return "LOGIN_SUCCESS";
       }
@@ -116,62 +124,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           err.response?.data?.message || err.message || "Login failed",
         duration: 2,
       });
+
       throw err;
     }
   };
 
+  // Logout
   const logout = async () => {
     try {
-      const res = await AuthService.logout();
-      if (res.code !== "200") {
-        throw new Error(res.message);
-      }
-
-      setAuthorized(false);
-      setUser(null);
-      await refreshAuth();
-
-      console.log("Logout successful", res);
-    } catch (error: any) {
-      console.error("Logout error:", error);
-      throw error;
+      await AuthService.logout();
+    } catch (err) {
+      console.warn("Logout API failed but continuing cleanup");
     }
+
+    setAuthorized(false);
+    setUser(null);
+    setIsAdmin(false);
+
+    router.push("/login");
   };
 
-  // Fetch user khi mount
+  // Refresh auth before render
   useEffect(() => {
     refreshAuth();
   }, [refreshAuth]);
 
-  // THÊM: Định kỳ refresh auth mỗi 5 phút để đảm bảo sync với token
+  // Handle logout
   useEffect(() => {
-    if (!authorized) return;
-
-    const interval = setInterval(
-      () => {
-        console.log("Periodic auth refresh...");
-        refreshAuth();
-      },
-      15 * 60 * 1000,
-    ); // 5 phút
-
-    return () => clearInterval(interval);
-  }, [authorized, refreshAuth]);
-
-  // THÊM: Listen cho token refresh event từ axios interceptor
-  useEffect(() => {
-    const handleTokenRefresh = () => {
-      console.log("Token refreshed, updating user...");
-      refreshAuth();
+    const handleLogout = () => {
+      setAuthorized(false);
+      setUser(null);
+      setIsAdmin(false);
+      router.push("/login");
     };
 
-    // Custom event từ axios interceptor
-    window.addEventListener("token-refreshed", handleTokenRefresh);
+    window.addEventListener("auth-logout", handleLogout);
 
     return () => {
-      window.removeEventListener("token-refreshed", handleTokenRefresh);
+      window.removeEventListener("auth-logout", handleLogout);
     };
-  }, [refreshAuth]);
+  }, [router]);
 
   return (
     <AuthContext.Provider

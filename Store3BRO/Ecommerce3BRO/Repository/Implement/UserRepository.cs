@@ -223,8 +223,8 @@ namespace Ecommerce3BRO.Repository.Implement
                 FullName = findUser.FullName,
                 IsActive = findUser.IsActive,
                 Phone = findUser.Phone,
-                Latitude = location.Latitude,
-                Longtitude = location.Longitude,
+                Latitude = location?.Latitude,
+                Longtitude = location?.Longitude,
                 RoleList = roles
             };
             return new ApiResponse<GetUserWithRole>(null, getUserDTO, "200", "Success", true, 0, 0, 0, 0, null, null, null);

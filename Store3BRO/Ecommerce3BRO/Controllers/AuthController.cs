@@ -279,7 +279,7 @@ namespace Ecommerce3BRO.Controllers
                 Expires = DateTime.UtcNow.AddDays(7)
             };
 
-            Response.Cookies.Append("refresh_Token", refreshToken, options);
+            Response.Cookies.Append("refresh_token", refreshToken, options);
 
             await _context.RefreshToken.AddAsync(new RefreshToken
             {

@@ -5,12 +5,48 @@ import { Product } from "@/models/Product";
 import { Eye, Heart, ShoppingCart } from "lucide-react";
 import { useState } from "react";
 import { formatCurrency } from "@/utils/currency";
-import { Rate, Tooltip } from "antd";
+import { Rate, Tooltip, notification } from "antd";
 import { useRouter } from "next/navigation";
+import { cartService } from "@/services/cart.service";
+import { ApiResponse } from "@/models/ApiResponse";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const router = useRouter();
+  const [api, contextHolder] = notification.useNotification();
+
+  const handleAddToCart = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      const response: ApiResponse<any> = await cartService.addCart(
+        product.id,
+        1,
+      );
+      if (response.code === "200" && response.isSuccess) {
+        api.success({
+          title: "Success",
+          description: response.message,
+          placement: "topRight",
+          duration: 3,
+        });
+      } else {
+        api.error({
+          title: "Error",
+          description: response.message || "Cannot add to cart",
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+    } catch (error: any) {
+      console.error("Error adding to cart:", error);
+      api.error({
+        message: "Error",
+        description: error?.response?.data?.message || "Cannot add to cart",
+        placement: "topRight",
+        duration: 3,
+      });
+    }
+  };
 
   const getFirstImage = (imageUrl?: string) => {
     if (!imageUrl) return "/blank.jpg";
@@ -33,6 +69,7 @@ const ProductCard = ({ product }: { product: Product }) => {
       onClick={handleCardClick}
       className="group relative bg-white border border-gray-100 rounded-lg h-full flex flex-col hover:shadow-lg transition-all duration-300 w-full cursor-pointer shadow-md"
     >
+      {contextHolder}
       {/* Image Container */}
       <div className="relative w-full aspect-square overflow-hidden bg-gray-50">
         {/* Action Icons */}
@@ -80,10 +117,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         {/* Add to Cart */}
         <button
           type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            console.log("Add to cart:", product.id);
-          }}
+          onClick={handleAddToCart}
           className="absolute bottom-0 left-0 right-0 bg-black text-white py-3 px-4
                      flex items-center justify-center gap-2
                      opacity-0 group-hover:opacity-100

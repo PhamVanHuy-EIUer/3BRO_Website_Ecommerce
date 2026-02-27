@@ -97,7 +97,7 @@ namespace Ecommerce3BRO.Repository.Implement
              .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
              .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
              .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
-             .Include(o=>o.Payments)
+             .Include(o=>o.Payments).OrderByDescending(o=>o.CreatedDate)
              .ToListAsync();
             var result = orders.Select(o =>
             {

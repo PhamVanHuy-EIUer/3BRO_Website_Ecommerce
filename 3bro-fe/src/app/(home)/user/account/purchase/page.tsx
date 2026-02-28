@@ -48,10 +48,8 @@ const getStatusBadge = (status: string) => {
         Cancelled
       </span>
     ),
-    shipped: (
-      <span className="text-[#FF9800] text-sm uppercase font-medium">
-        Shipped
-      </span>
+    paid: (
+      <span className="text-[#FF9800] text-sm uppercase font-medium">Paid</span>
     ),
     confirmed: (
       <span className="text-[#2196F3] text-sm uppercase font-medium">

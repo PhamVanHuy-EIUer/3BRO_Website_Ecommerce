@@ -142,6 +142,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                  .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
+                .Include(o => o.Payments)
                 .ToListAsync();
 
             var result = orders.Select(o =>
@@ -181,10 +182,14 @@ namespace Ecommerce3BRO.Repository.Implement
                             Quantity = od.Quantity,
                             TotalPrice = od.UnitPrice * od.Quantity,
                         }).ToList(),
-                    ShippingFee=o.ShippingFee,
+                    ShippingFee = o.ShippingFee,
                     SubTotal = subTotal,
-                    DiscountAmount = discountAmount -(o.OrderDetails.Where(od=>od.IsReturn).Sum(od=>od.Quantity*od.UnitPrice)-refundPrice),
-                    TotalAmount = subTotal + o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice))
+                    DiscountAmount = discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice),
+                    TotalAmount = subTotal + o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice)),
+                
+                    PaymentStatus = o.Payments.FirstOrDefault()?.Status,
+                    PaymentMethod = o.PaymentMethod
+
                 };
             }).ToList();
 

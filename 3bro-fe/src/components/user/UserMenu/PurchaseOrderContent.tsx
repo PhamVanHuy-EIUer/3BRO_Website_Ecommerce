@@ -1,11 +1,13 @@
 "use client";
-import React from "react";
+import React, { useState } from "react";
 import { BoxIcon, SearchIcon } from "lucide-react";
 import type { ViewOrderUser } from "@/models/ViewOrderUser";
 import { motion } from "framer-motion";
 import { formatCurrency } from "@/utils/currency";
 import { COLORS, ORDER_TABS, OrderStatus } from "@/data/data";
 import Image from "next/image";
+import { paymentService } from "@/services/payment.service";
+import { notification } from "antd";
 
 interface PurchaseOrderContentProps {
   activeTab: OrderStatus;
@@ -20,6 +22,37 @@ interface PurchaseOrderContentProps {
   formatDate: (dateString: string) => string;
 }
 
+const PAYMENT_STATUS = {
+  UNPAID: 0,
+  PAID: 1,
+  DELETED: 2,
+} as const;
+
+const getPaymentStatusBadge = (status: number) => {
+  switch (status) {
+    case PAYMENT_STATUS.PAID:
+      return (
+        <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded">
+          PAID
+        </span>
+      );
+    case PAYMENT_STATUS.UNPAID:
+      return (
+        <span className="text-xs font-medium text-orange-600 bg-orange-50 px-2 py-1 rounded">
+          UNPAID
+        </span>
+      );
+    case PAYMENT_STATUS.DELETED:
+      return (
+        <span className="text-xs font-medium text-red-600 bg-red-50 px-2 py-1 rounded">
+          DELETE
+        </span>
+      );
+    default:
+      return null;
+  }
+};
+
 const PurchaseOrderContent: React.FC<PurchaseOrderContentProps> = ({
   activeTab,
   setActiveTab,
@@ -33,9 +66,39 @@ const PurchaseOrderContent: React.FC<PurchaseOrderContentProps> = ({
   formatDate,
 }) => {
   const { redColor, bgRed } = COLORS;
+  const [api, contextHolder] = notification.useNotification();
+  const [payingOrderId, setPayingOrderId] = useState<string | null>(null);
+
+  const handlePayOrder = async (orderId: string) => {
+    try {
+      setPayingOrderId(orderId);
+      const response = await paymentService.paymentByMomo(orderId);
+      if (response.payUrl) {
+        window.location.href = response.payUrl;
+      } else {
+        api.error({
+          title: "Payment failed",
+          description: "Unable to create MoMo payment",
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+    } catch (error: any) {
+      console.error("Error creating MoMo payment:", error);
+      api.error({
+        title: "Payment failed",
+        description: "Unable to create MoMo payment",
+        placement: "topRight",
+        duration: 3,
+      });
+    } finally {
+      setPayingOrderId(null);
+    }
+  };
 
   return (
     <>
+      {contextHolder}
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -107,6 +170,7 @@ const PurchaseOrderContent: React.FC<PurchaseOrderContentProps> = ({
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
+                    {getPaymentStatusBadge(order.paymentStatus)}
                     {getStatusBadge(order.status)}
                   </div>
                 </div>
@@ -165,11 +229,18 @@ const PurchaseOrderContent: React.FC<PurchaseOrderContentProps> = ({
                     >
                       View Details
                     </button>
-                    <button
-                      className={`${bgRed} text-white px-6 py-2 rounded text-sm hover:bg-red-600 transition`}
-                    >
-                      Buy Again
-                    </button>
+                    {order.paymentStatus === PAYMENT_STATUS.UNPAID &&
+                      order.paymentMethod === "Transfer" && (
+                        <button
+                          className={`${bgRed} text-white px-6 py-2 rounded text-sm hover:bg-red-600 transition disabled:opacity-50 disabled:cursor-not-allowed`}
+                          disabled={payingOrderId === order.orderId}
+                          onClick={() => handlePayOrder(order.orderId)}
+                        >
+                          {payingOrderId === order.orderId
+                            ? "Processing..."
+                            : "Pay Now"}
+                        </button>
+                      )}
                   </div>
                 </div>
               </div>

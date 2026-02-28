@@ -21,13 +21,14 @@ import { ViewPrice } from "@/models/ViewPrice";
 import { DeleteProductId } from "@/models/DeleteProductId";
 import { useRouter } from "next/navigation";
 import Voucher from "@/components/user/cart/Voucher";
+import { productService } from "@/services/product.service";
 import { useAuth } from "@/context/AuthContext";
 import { PaymentProduct } from "@/models/PaymentProduct";
 import { paymentService } from "@/services/payment.service";
 
 const CartContent = () => {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, refreshAuth } = useAuth();
   const [api, contextHolder] = notification.useNotification();
   const [carts, setCarts] = useState<Cart[]>([]);
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
@@ -39,7 +40,45 @@ const CartContent = () => {
   const [isOpenVoucher, setIsOpenVoucher] = useState(false);
   const [appliedVoucher, setAppliedVoucher] = useState<Discount | null>(null);
 
+  // Helper: check if user profile is incomplete and show modal
+  const isProfileIncomplete = (): boolean => {
+    const missingFields: string[] = [];
+    if (!user?.fullName) missingFields.push("Full Name");
+    if (!user?.phone) missingFields.push("Phone Number");
+    if (!user?.address) missingFields.push("Address");
+
+    if (missingFields.length > 0) {
+      Modal.confirm({
+        title: "Profile information incomplete",
+        content: (
+          <div>
+            <p>
+              Please update the following information before selecting products:
+            </p>
+            <ul style={{ paddingLeft: 20, marginTop: 8 }}>
+              {missingFields.map((field) => (
+                <li key={field} style={{ color: "#ff4d4f", fontWeight: 500 }}>
+                  {field}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ),
+        okText: "Go to Edit Profile",
+        cancelText: "Cancel",
+        onOk: () => {
+          router.push(
+            "/user/account/profile/edit-profile?returnUrl=%2Fuser%2Fcart",
+          );
+        },
+      });
+      return true;
+    }
+    return false;
+  };
+
   const handleChooseAll = () => {
+    if (isProfileIncomplete()) return;
     if (selectedRowKeys.length === carts.length) {
       setSelectedRowKeys([]);
     } else {
@@ -123,6 +162,10 @@ const CartContent = () => {
   };
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    // Allow deselection without profile check
+    if (newSelectedRowKeys.length > selectedRowKeys.length) {
+      if (isProfileIncomplete()) return;
+    }
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -155,8 +198,7 @@ const CartContent = () => {
         await cartService.deleteProductFromCart(cartItem.productId);
       if (response.code === "200" && response.isSuccess) {
         api.success({
-          title: "Success",
-          description: "Delete product successfully",
+          message: "Xóa sản phẩm thành công",
           placement: "topRight",
           duration: 2,
         });
@@ -216,7 +258,7 @@ const CartContent = () => {
         setTotalPrice(response.object.finalTotalPrice);
 
         api.success({
-          title: "success",
+          title: "Apply voucher successfully",
           description: `Apply voucher ${discount.code}`,
           placement: "topRight",
           duration: 3,
@@ -249,6 +291,7 @@ const CartContent = () => {
   };
 
   useEffect(() => {
+    refreshAuth(); // Always fetch latest user data on mount
     handlefetchCart();
   }, []);
 
@@ -373,7 +416,7 @@ const CartContent = () => {
               </div>
               <div className="flex items-center">
                 <Button
-                  className="rounded-md! !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
+                  className="!rounded-md !px-3 !py-5 !bg-[#ff6857] !border-none hover:!text-white"
                   onClick={() => router.push("/product")}
                 >
                   SEE PRODUCTS
@@ -523,13 +566,7 @@ const CartContent = () => {
                         }}
                         className="!rounded-none !px-5 !py-5 !font-semibold !font-sans !text-md !border-none hover:!bg-[#ff6857] hover:!text-white"
                         onClick={() => {
-                          if (
-                            user?.address === null ||
-                            user?.fullName === null
-                          ) {
-                            router.push("/user");
-                            return;
-                          }
+                          if (isProfileIncomplete()) return;
 
                           const payload = {
                             items: buildCheckoutPayload(),

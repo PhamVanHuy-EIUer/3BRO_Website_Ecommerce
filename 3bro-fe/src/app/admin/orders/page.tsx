@@ -39,7 +39,7 @@ const { Option } = Select;
 enum OrderStatus {
   Pending = 0,
   Confirmed = 1,
-  Shipping = 2,
+  Paid = 2,
   Completed = 3,
   Cancelled = 4,
 }
@@ -55,8 +55,8 @@ const statusConfig = {
     color: "processing",
     icon: <BankOutlined />,
   },
-  [OrderStatus.Shipping]: {
-    label: "Shipping",
+  [OrderStatus.Paid]: {
+    label: "Paid",
     color: "purple",
     icon: <TruckOutlined />,
   },
@@ -523,7 +523,7 @@ const AdminOrder = () => {
                       {[
                         OrderStatus.Pending,
                         OrderStatus.Confirmed,
-                        OrderStatus.Shipping,
+                        OrderStatus.Paid,
                         OrderStatus.Completed,
                         OrderStatus.Cancelled,
                       ].map((status) => {

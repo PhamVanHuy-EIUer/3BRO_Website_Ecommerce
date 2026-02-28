@@ -25,4 +25,5 @@ export const paymentService = {
     monthlyRevenue: () => axiosClient.get(`/Payments/total-sale`).then(res => res.data),
     createPayment: (orderId: string) => axiosClient.post(`Payments?orderId=${orderId}`).then(res => res.data),
     paymentByMomo: (orderId: string) => axiosClient.post(`/Payments/momo`, { orderId }, { headers: { "Content-Type": "application/json" } }).then(res => res.data),
+    updatePaymentStatus: (id: string, status: number) => axiosClient.put(`/Payments/${id}?status=${status}`).then(res => res.data)
 };

@@ -11,10 +11,12 @@ namespace Ecommerce3BRO.Repository.Implement
     {
         private readonly Ecommerce3BROContext _context;
         private readonly IOrderRepository _orderRepository;
-        public ShipmentRepository(Ecommerce3BROContext context, IOrderRepository orderRepository)
+        private readonly IPaymentRepository _paymentRepository;
+        public ShipmentRepository(Ecommerce3BROContext context, IOrderRepository orderRepository, IPaymentRepository paymentRepository)
         {
             _context = context;
             _orderRepository = orderRepository;
+            _paymentRepository = paymentRepository;
         }
         public async Task<ApiResponse<ShipmentDTO>> AddNewShipmentAsync(ShipmentDTO shipmentDTO)
         {
@@ -108,8 +110,14 @@ namespace Ecommerce3BRO.Repository.Implement
                 Status = ((ShipmentStatus)findShipment.Status).ToString(),
                 TrackingNumber = findShipment.TrackingNumber
             };
+            var payment = await _context.Payment.Where(p => p.OrderId == findShipment.OrderId).FirstOrDefaultAsync();
+            if (payment==null)
+            {
+                return new ApiResponse<GetShipmentDTO>(null, null, "400", "Payment not found", false, 0, 0, 0, 0, null, null, null);
+            }
             if (findShipment.Status == 2)
             {
+                await _paymentRepository.UpdateStatusPayment(payment.Id, 1);
                 await _orderRepository.UpdateOrderStatus(findShipment.OrderId, 3);
             }
             await _context.SaveChangesAsync();

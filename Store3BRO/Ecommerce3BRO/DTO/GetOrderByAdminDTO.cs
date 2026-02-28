@@ -11,5 +11,7 @@
         public decimal RefundPrice { get; set; }
         public decimal NetRevenue { get; set; }
         public string Status { get; set; }
+        public Guid? PaymentId { get; set; }
+        public int? PaymentStatus { get; set; }
     }
 }

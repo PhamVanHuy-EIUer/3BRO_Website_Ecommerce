@@ -18,7 +18,7 @@ namespace Ecommerce3BRO.Service.Implement
         }
 
         public async Task<MomoCreatePaymentResponse> CreatePaymentAsync(
-            Guid orderId,
+            string orderId,
             decimal amount,
             string orderInfo)
         {

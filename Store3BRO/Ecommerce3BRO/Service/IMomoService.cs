@@ -5,7 +5,7 @@ namespace Ecommerce3BRO.Service
     public interface IMomoService
     {
         Task<MomoCreatePaymentResponse> CreatePaymentAsync(
-            Guid orderId,
+            string orderId,
             decimal amount,
             string orderInfo
         );

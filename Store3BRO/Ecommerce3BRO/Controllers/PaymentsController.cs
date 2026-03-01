@@ -66,9 +66,9 @@ namespace Ecommerce3BRO.Controllers
 
             if (order.Status != 0)
                 return BadRequest("Order is not valid to pay");
-
+            var momoOrderId = $"{order.Id}_{DateTime.UtcNow.Ticks}";
             var momoResponse = await _momoService.CreatePaymentAsync(
-                order.Id,
+                momoOrderId,
                 total,
                 $"Pay order {order.Id} by 3BRO Store"
             );

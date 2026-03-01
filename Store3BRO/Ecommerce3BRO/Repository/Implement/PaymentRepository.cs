@@ -29,6 +29,21 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetPaymentDTO>(null, null, "404", "Payment not found", false, 0, 0, 0, 0, null, null, null);
             }
+            var findPayment = await _context.Payment.FirstOrDefaultAsync(p => p.OrderId == orderId);
+            if (findPayment != null)
+            {
+                var pay = new GetPaymentDTO()
+                {
+                    Amount = findPayment.Amount,
+                    CreatedDate = findPayment.CreatedDate,
+                    PaymentMethod = findPayment.PaymentMethod,
+                    Status = ((PaymentStatus)findPayment.Status).ToString(),
+                    TransactionCode = findPayment.TransactionCode,
+                    OrderUserName = order.User.FullName,
+                    Id = findPayment.Id
+                };
+                return new ApiResponse<GetPaymentDTO>(null, pay, "200", "Add payment successfully", true, 0, 0, 0, 0, null, null, null);
+            }
             var refundPrice = order.OrderDetails
                   .Where(od => od.IsReturn)
                   .SelectMany(od => od.Refunds)

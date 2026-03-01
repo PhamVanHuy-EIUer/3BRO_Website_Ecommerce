@@ -16,5 +16,7 @@ export type ViewOrderUser = {
     subTotal: number,
     discountAmount: number,
     shippingFee: number,
-    totalAmount: number
+    totalAmount: number,
+    paymentStatus: number,
+    paymentMethod: string
 }

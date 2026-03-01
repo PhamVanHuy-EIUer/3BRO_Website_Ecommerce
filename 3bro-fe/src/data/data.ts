@@ -49,9 +49,9 @@ export const discount = [
 ]
 
 
-export type OrderStatus = "All" | "Pending" | "Confirmed" | "Shipped" | "Completed" | "Cancelled";
+export type OrderStatus = "All" | "Pending" | "Confirmed" | "Paid" | "Completed" | "Cancelled";
 
-export const ORDER_TABS: OrderStatus[] = ["All", "Pending", "Confirmed", "Shipped", "Completed", "Cancelled"];
+export const ORDER_TABS: OrderStatus[] = ["All", "Pending", "Confirmed", "Paid", "Completed", "Cancelled"];
 
 export const COLORS = {
     redColor: "text-[#DB4444]",

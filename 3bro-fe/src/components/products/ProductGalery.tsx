@@ -1,14 +1,14 @@
 "use client";
 import { Product } from "@/models/Product";
 import { ProductImage } from "@/models/ProductImage";
-import { ChangeEvent, use, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Heart, Minus, Plus, Truck, RotateCcw } from "lucide-react";
-import { notification, Rate } from "antd";
+import { Modal, notification, Rate } from "antd";
 import { formatCurrency } from "@/utils/currency";
 import { ApiResponse } from "@/models/ApiResponse";
 import { cartService } from "@/services/cart.service";
 import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { ZoomInOutlined, ZoomOutOutlined } from "@ant-design/icons";
 import Image from "next/image";
 import MainImage from "./MainImage";
@@ -37,12 +37,53 @@ export default function ProductGallery({
   const [active, setActive] = useState(getFirstImage(product.imageUrl));
   const [numberProducts, setNumberProducts] = useState(1);
   const router = useRouter();
+  const pathname = usePathname();
   // Check if product is in stock
   const isInStock = product.stock > 0;
   const stockStatus = isInStock ? "In Stock" : "Out of Stock";
   const stockColor = isInStock ? "text-green-500" : "text-red-500";
   const [api, contextHolder] = notification.useNotification();
-  const { authorized } = useAuth();
+  const { authorized, user, refreshAuth } = useAuth();
+
+  // Always fetch latest user data on mount (e.g. after returning from edit-profile)
+  useEffect(() => {
+    if (authorized) refreshAuth();
+  }, []);
+
+  // Helper: check if user profile is incomplete and show modal
+  const isProfileIncomplete = (): boolean => {
+    const missingFields: string[] = [];
+    if (!user?.fullName) missingFields.push("Full Name");
+    if (!user?.phone) missingFields.push("Phone Number");
+    if (!user?.address) missingFields.push("Address");
+
+    if (missingFields.length > 0) {
+      Modal.confirm({
+        title: "Profile information incomplete",
+        content: (
+          <div>
+            <p>Please update the following information before purchasing:</p>
+            <ul style={{ paddingLeft: 20, marginTop: 8 }}>
+              {missingFields.map((field) => (
+                <li key={field} style={{ color: "#ff4d4f", fontWeight: 500 }}>
+                  {field}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ),
+        okText: "Go to Edit Profile",
+        cancelText: "Cancel",
+        onOk: () => {
+          router.push(
+            `/user/account/profile/edit-profile?returnUrl=${encodeURIComponent(pathname)}`,
+          );
+        },
+      });
+      return true;
+    }
+    return false;
+  };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
@@ -54,6 +95,7 @@ export default function ProductGallery({
 
   const hadleAddToCart = async () => {
     if (!authorized) return router.push("/login");
+    if (isProfileIncomplete()) return;
     try {
       const res: ApiResponse<any> = await cartService.addCart(
         product.id,
@@ -81,6 +123,7 @@ export default function ProductGallery({
 
   const handleBuyNow = () => {
     if (!authorized) return router.push("/login");
+    if (isProfileIncomplete()) return;
 
     // Create checkout payload with ViewPrice format
     const payload = {

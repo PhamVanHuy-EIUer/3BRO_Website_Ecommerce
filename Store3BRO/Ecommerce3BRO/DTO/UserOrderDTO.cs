@@ -22,6 +22,10 @@
 
     
         public decimal TotalAmount { get; set; }
+
+        public int? PaymentStatus { get; set; }
+
+        public string? PaymentMethod { get; set; }
     }
 
 }

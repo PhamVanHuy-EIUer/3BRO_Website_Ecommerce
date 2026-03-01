@@ -97,7 +97,7 @@ const HomePage = () => {
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex gap-8">
             {/* Sidebar Categories */}
-            <div className="w-64 shrink-0 bg-white rounded-xl shadow-sm p-4 h-fit">
+            {/* <div className="w-64 shrink-0 bg-white rounded-xl shadow-sm p-4 h-fit">
               <nav className="space-y-2">
                 {categories.map((category, index) => (
                   <div
@@ -114,7 +114,7 @@ const HomePage = () => {
                   </div>
                 ))}
               </nav>
-            </div>
+            </div> */}
 
             {/* Banner Carousel */}
             <div className="flex-1 min-w-0">

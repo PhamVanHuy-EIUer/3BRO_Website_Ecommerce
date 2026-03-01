@@ -2,6 +2,7 @@
 import "leaflet/dist/leaflet.css";
 
 import { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { notification } from "antd";
 import { useAuth } from "@/context/AuthContext";
@@ -35,6 +36,9 @@ export default function EditProfile() {
   //   const [locationError, setLocationError] = useState("");
   const [api, contextHolder] = notification.useNotification();
   const { user, refreshAuth, authorized } = useAuth();
+  const searchParams = useSearchParams();
+  const returnUrl = searchParams.get("returnUrl");
+  const editRouter = useRouter();
   const [loading, setLoading] = useState(false);
   const { bgRed } = COLORS;
   const [latitude, setLatitude] = useState(user?.latitude || 10.8231);
@@ -293,7 +297,13 @@ export default function EditProfile() {
           description: "Profile information updated successfully",
           duration: 2,
         });
-        refreshAuth();
+        await refreshAuth();
+        // Redirect back to the page user came from (e.g. product page)
+        if (returnUrl) {
+          // Wait for React to commit the updated user state before navigating
+          await new Promise((resolve) => setTimeout(resolve, 500));
+          editRouter.push(returnUrl);
+        }
       }
     } catch (error) {
       console.error(error);

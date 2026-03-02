@@ -38,11 +38,11 @@ function LoginPage() {
       const loginRequest: LoginRequest = { email, password };
       await login(loginRequest);
       console.log(isAdmin);
-      if (isAdmin) {
-        router.replace("/admin");
-      } else {
-        router.replace("/");
-      }
+      // if (isAdmin) {
+      //   router.replace("/admin");
+      // } else {
+      //   router.replace("/");
+      // }
     } catch (err: any) {
       console.log(err);
     } finally {

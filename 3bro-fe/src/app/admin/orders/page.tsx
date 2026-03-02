@@ -523,9 +523,9 @@ const AdminOrder = () => {
                       {[
                         OrderStatus.Pending,
                         OrderStatus.Confirmed,
-                        OrderStatus.Paid,
-                        OrderStatus.Completed,
-                        OrderStatus.Cancelled,
+                        // OrderStatus.Paid,
+                        // OrderStatus.Completed,
+                        // OrderStatus.Cancelled,
                       ].map((status) => {
                         const config = statusConfig[status];
                         const isSelected = selectedStatus === status;

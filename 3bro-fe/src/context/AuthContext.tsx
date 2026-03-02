@@ -8,6 +8,7 @@ import {
   useCallback,
   ReactElement,
   JSXElementConstructor,
+  use,
 } from "react";
 import { userService } from "@/services/user.service";
 import { AuthService } from "@/services/auth.service";
@@ -81,7 +82,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         duration: 2,
       });
 
-      await refreshAuth();
+      const resUser: ApiResponse<User> = await userService.getMe();
+      if (resUser.code === "200" && resUser.object) {
+        setAuthorized(true);
+        setUser(resUser.object);
+        console.log(resUser);
+      }
+
+      console.log(user);
+      if (resUser.object?.roleList?.includes("Admin") ?? false) {
+        router.push("/admin");
+      } else {
+        router.push("/");
+      }
     } catch (error: any) {
       api.error({
         title: "Login error",
@@ -112,7 +125,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           duration: 2,
         });
 
-        await refreshAuth();
+        const resUser: ApiResponse<User> = await userService.getMe();
+        if (resUser.code === "200" && resUser.object) {
+          setAuthorized(true);
+          setUser(resUser.object);
+          console.log(resUser);
+        }
+
+        console.log(user);
+        if (resUser.object?.roleList?.includes("Admin") ?? false) {
+          router.push("/admin");
+        } else {
+          router.push("/");
+        }
         return "LOGIN_SUCCESS";
       }
 

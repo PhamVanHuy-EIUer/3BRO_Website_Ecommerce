@@ -15,7 +15,7 @@ namespace Ecommerce3BRO.Repository.Implement
         private readonly Ecommerce3BROContext _context;
         private readonly IDiscountRepository _discount;
         private readonly ShopLocation _shop;
-        public OrderRepository(Ecommerce3BROContext context, IDiscountRepository discount,ShopLocation shop)
+        public OrderRepository(Ecommerce3BROContext context, IDiscountRepository discount, ShopLocation shop)
         {
             _context = context;
             _discount = discount;
@@ -34,7 +34,7 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<GetOrderDTO>(null, null, "400", "Some products not found", false, 0, 0, 0, 0, null, null, null);
             }
-            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l=>l.UserId==findUser.Id&&l.IsActive);
+            var findLocation = await _context.UserLocation.FirstOrDefaultAsync(l => l.UserId == findUser.Id && l.IsActive);
             decimal shippingFee = CountShippingFee.CountFee((double)_shop.Latitude, (double)_shop.Longitude, (double)findLocation.Latitude, (double)findLocation.Longitude);
             var newOrder = new Order
             {
@@ -97,7 +97,7 @@ namespace Ecommerce3BRO.Repository.Implement
              .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
              .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
              .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
-             .Include(o=>o.Shipments).OrderByDescending(o=>o.CreatedDate)
+             .Include(o => o.Shipments).OrderByDescending(o => o.CreatedDate)
              .ToListAsync();
             var result = orders.Select(o =>
             {
@@ -129,7 +129,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     DiscountPrice = discountPrice,
                     NetRevenue = o.TotalAmount - refundPrice - discountPrice + o.ShippingFee,
                     ShipmentId = o.Shipments.FirstOrDefault()?.Id,
-            
+
                 };
             }).ToList();
             return new ApiResponse<GetOrderByAdminDTO>(result, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);
@@ -138,7 +138,7 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId)
         {
             var orders = await _context.Order
-                .Where(o => o.UserId == userId).OrderByDescending(o=>o.OrderDate)
+                .Where(o => o.UserId == userId).OrderByDescending(o => o.OrderDate)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                  .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
@@ -186,7 +186,7 @@ namespace Ecommerce3BRO.Repository.Implement
                     SubTotal = subTotal,
                     DiscountAmount = discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice),
                     TotalAmount = subTotal + o.ShippingFee - (discountAmount - (o.OrderDetails.Where(od => od.IsReturn).Sum(od => od.Quantity * od.UnitPrice) - refundPrice)),
-                
+
                     PaymentStatus = o.Payments.FirstOrDefault()?.Status,
                     PaymentMethod = o.PaymentMethod
 
@@ -203,7 +203,6 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 OrderId = o.Id,
                 CustomerName = o.User.FullName,
-
                 ProductNames = string.Join(", ",
             o.OrderDetails
              .Select(od => od.Product.ProductName)
@@ -270,6 +269,7 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<Order>(null, findOrder, "200", "Order cancelled successfully", true, 0, 0, 0, 0, "Cancelled", null, null);
         }
 
+
         public async Task<ApiResponse<OrderDTO>> UpdateOrderStatus(Guid orderId, int status)
         {
             var findOrder = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderId);
@@ -278,8 +278,33 @@ namespace Ecommerce3BRO.Repository.Implement
                 return new ApiResponse<OrderDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
             }
             findOrder.Status = status;
+            if (status == 1)
+            {
+                var newShipment = new Shipment
+                {
+                    CreatedDate = DateTime.Now,
+                    ShipperName = "HTH_Delivery",
+                    TrackingNumber = Guid.NewGuid().ToString("N")[..12].ToUpper(),
+                    OrderId = orderId,
+                    Status = 0
+                };
+                await _context.Shipment.AddAsync(newShipment);
+            }
             await _context.SaveChangesAsync();
             return new ApiResponse<OrderDTO>(null, null, "200", "Order status updated successfully", true, 0, 0, 0, 0, ((OrderStatus)status).ToString(), null, null);
         }
+
+        //public async Task<ApiResponse<OrderDTO>> ConfirmOrder(Guid orderId)
+        //{
+        //    var findOrder = await _context.Order.FirstOrDefaultAsync(o => o.Id == orderId);
+        //    if (findOrder == null)
+        //    {
+        //        return new ApiResponse<OrderDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
+        //    }
+        //    findOrder.Status = 1;
+        //    await _shipment.AddNewShipmentAsync(orderId);
+        //    await _context.SaveChangesAsync();
+        //    return new ApiResponse<OrderDTO>(null, null, "200", "Order status updated successfully", true, 0, 0, 0, 0, "Confirmed", null, null);
+        //}
     }
 }

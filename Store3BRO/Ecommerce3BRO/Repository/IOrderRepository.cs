@@ -12,7 +12,9 @@ namespace Ecommerce3BRO.Repository
         public Task<ApiResponse<ViewOrderDetailDTO>> GetOrderDetailByIdAsync(Guid orderId);
         public Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId);
         public Task<ApiResponse<GetOrderByAdminDTO>> GetOrderByStatus(string status);
+        //public Task<ApiResponse<OrderDTO>> ConfirmOrder(Guid orderId);
         public Task<ApiResponse<OrderDTO>> UpdateOrderStatus(Guid orderId, int status);
+
 
     }
 }

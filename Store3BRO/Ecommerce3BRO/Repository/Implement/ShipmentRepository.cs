@@ -18,19 +18,25 @@ namespace Ecommerce3BRO.Repository.Implement
             _orderRepository = orderRepository;
             _paymentRepository = paymentRepository;
         }
-        public async Task<ApiResponse<ShipmentDTO>> AddNewShipmentAsync(ShipmentDTO shipmentDTO)
+        public async Task<ApiResponse<ShipmentDTO>> AddNewShipmentAsync(Guid orderId)
         {
             var newShipment = new Shipment()
             {
                 CreatedDate = DateTime.Now,
-                ShipperName = shipmentDTO.ShipperName,
-                TrackingNumber = shipmentDTO.TrackingNumber,
-                OrderId = shipmentDTO.OrderId,
+                ShipperName ="HTH_Delivery",
+                TrackingNumber = Guid.NewGuid().ToString("N")[..12].ToUpper(),
+                OrderId = orderId,
                 Status = 0
             };
             await _context.Shipment.AddAsync(newShipment);
             await _context.SaveChangesAsync();
-            return new ApiResponse<ShipmentDTO>(null, shipmentDTO, "200", "Add new shipment successfully", true, 0, 0, 0, 0, null, null, null);
+            var dto = new ShipmentDTO
+            {
+                OrderId = newShipment.OrderId,
+                ShipperName = newShipment.ShipperName,
+                TrackingNumber = newShipment.TrackingNumber
+            };
+            return new ApiResponse<ShipmentDTO>(null,dto, "200", "Add new shipment successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
         public async Task<ApiResponse<ShipmentDTO>> DeleteShipmentByIdAsync(Guid shipmentId)

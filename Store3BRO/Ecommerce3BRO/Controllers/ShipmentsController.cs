@@ -21,20 +21,20 @@ namespace Ecommerce3BRO.Controllers
             var result = await _shipmentService.GetAllShipmentByPageAsync(currentPage, pageSize);
             return result;
         }
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<ApiResponse<ShipmentDTO>> AddNewShipment([FromBody] ShipmentDTO shipment)
-        {
-            if (!ModelState.IsValid)
-            {
-                return new ApiResponse<ShipmentDTO>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
-            x => x.Key,
-            x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
-        ));
-            }
-            var result = await _shipmentService.AddNewShipmentAsync(shipment);
-            return result;
-        }
+        //[HttpPost]
+        //[Authorize(Roles = "Admin")]
+        //public async Task<ApiResponse<ShipmentDTO>> AddNewShipment([FromBody] ShipmentDTO shipment)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return new ApiResponse<ShipmentDTO>(null, null, "400", "Invalid information", false, 0, 0, 0, 0, null, null, ModelState.ToDictionary(
+        //    x => x.Key,
+        //    x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
+        //));
+        //    }
+        //    var result = await _shipmentService.AddNewShipmentAsync(shipment);
+        //    return result;
+        //}
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetShipmentDTO>> UpdateShipment([FromRoute] Guid id, [FromQuery] int status)

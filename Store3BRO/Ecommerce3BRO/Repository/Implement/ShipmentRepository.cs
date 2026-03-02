@@ -82,24 +82,22 @@ namespace Ecommerce3BRO.Repository.Implement
 
         }
 
-        public async Task<ApiResponse<GetShipmentDTO>> UpdateShipmentAsync(Guid shipmentId, UpdateShipmentDTO shipmentDTO)
+        public async Task<ApiResponse<GetShipmentDTO>> UpdateShipmentAsync(Guid shipmentId, int status)
         {
             var findShipment = await _context.Shipment.FindAsync(shipmentId);
             if (findShipment == null)
             {
                 return new ApiResponse<GetShipmentDTO>(null, null, "400", "Shipment not found", false, 0, 0, 0, 0, null, null, null);
             }
-            if (shipmentDTO.Status == 1)
+            if (status==1)
             {
                 findShipment.ShipDate = DateTime.UtcNow;
             }
-            if (shipmentDTO.Status == 2)
+            if (status == 2)
             {
                 findShipment.DeliveryDate = DateTime.UtcNow;
             }
-            findShipment.Status = shipmentDTO.Status;
-            findShipment.ShipperName = shipmentDTO.ShipperName;
-            findShipment.TrackingNumber = shipmentDTO.TrackingNumber;
+            findShipment.Status = status;
             var getShipment = new GetShipmentDTO
             {
                 DeliveryDate = findShipment.DeliveryDate,

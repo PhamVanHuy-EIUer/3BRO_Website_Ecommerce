@@ -142,8 +142,7 @@
               "RelativeToolTip": "Ecommerce3BRO\\Repository\\Implement\\OrderRepository.cs",
               "ViewState": "AgIAAJoAAAAAAAAAAAAkwKYAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-28T16:13:42.144Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-28T16:13:42.144Z"
             },
             {
               "$type": "Document",
@@ -223,9 +222,9 @@
               "Title": "appsettings.json",
               "DocumentMoniker": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
               "RelativeDocumentMoniker": "Ecommerce3BRO\\appsettings.json",
-              "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\appsettings.json*",
-              "RelativeToolTip": "Ecommerce3BRO\\appsettings.json*",
-              "ViewState": "AgIAAAIAAABAMDMzMzMbwB8AAAA/AAAAAAAAAA==",
+              "ToolTip": "E:\\PROJECTB\\3BRO_Website_Ecommerce\\Store3BRO\\Ecommerce3BRO\\appsettings.json",
+              "RelativeToolTip": "Ecommerce3BRO\\appsettings.json",
+              "ViewState": "AgIAACUAAAAAAAAAAAAAAB8AAAA/AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-02-28T13:47:56.439Z",
               "EditorCaption": ""

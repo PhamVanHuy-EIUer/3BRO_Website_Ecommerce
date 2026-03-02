@@ -8,6 +8,7 @@ import {
   Menu,
   Settings,
   ShoppingBag,
+  Truck,
   Users,
   X,
 } from "lucide-react";
@@ -34,7 +35,8 @@ const menuItems = [
     badge: 3,
   },
   { id: 7, name: "Reviews", icon: Review, href: "/admin/reviews" },
-  { id: 8, name: "Settings", icon: Settings, href: "/admin/settings" },
+  { id: 8, name: "Shipments", icon: Truck, href: "/admin/shipments" },
+  { id: 9, name: "Settings", icon: Settings, href: "/admin/settings" },
 ];
 
 const SideBar = () => {

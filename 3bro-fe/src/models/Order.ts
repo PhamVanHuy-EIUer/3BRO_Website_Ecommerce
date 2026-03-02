@@ -6,4 +6,6 @@ export type Order = {
     refundPrice: number,
     netRevenue: number,
     status: string,
+    paymentId: string,
+    paymentStatus: number
 };

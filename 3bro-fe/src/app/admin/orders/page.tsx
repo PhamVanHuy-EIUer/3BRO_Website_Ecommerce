@@ -235,17 +235,17 @@ const AdminOrder = () => {
 
   // Table columns
   const columns: ColumnsType<Order> = [
-    {
-      title: "Order ID",
-      dataIndex: "orderId",
-      key: "orderId",
-      width: 150,
-      render: (orderId: string) => (
-        <span className="font-medium text-blue-600 font-mono text-sm">
-          #{orderId.slice(0, 8)}
-        </span>
-      ),
-    },
+    // {
+    //   title: "Order ID",
+    //   dataIndex: "orderId",
+    //   key: "orderId",
+    //   width: 150,
+    //   render: (orderId: string) => (
+    //     <span className="font-medium text-blue-600 font-mono text-sm">
+    //       #{orderId.slice(0, 8)}
+    //     </span>
+    //   ),
+    // },
     {
       title: "Customer",
       dataIndex: "customerName",

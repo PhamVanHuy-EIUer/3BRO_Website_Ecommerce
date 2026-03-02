@@ -95,13 +95,14 @@ const AdminShipment = () => {
         setShipments(data.list);
         setTotal(data.totalElement || data.list.length);
       } else {
-        api.error({ message: "Error", description: data.message });
+        api.error({ title: "Error", description: data.message, duration: 2 });
       }
     } catch (error) {
       console.error("Error fetching shipments:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Failed to fetch shipments.",
+        duration: 2,
       });
       setShipments([]);
     } finally {
@@ -118,14 +119,15 @@ const AdminShipment = () => {
         setShipments(data.list);
         setTotal(data.totalElement || data.list.length);
       } else {
-        api.error({ message: "Error", description: data.message });
+        api.error({ title: "Error", description: data.message, duration: 2 });
         setShipments([]);
       }
     } catch (error) {
       console.error("Error fetching shipments by status:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Failed to fetch shipments by status.",
+        duration: 2,
       });
       setShipments([]);
     } finally {
@@ -186,27 +188,28 @@ const AdminShipment = () => {
     if (!editingShipment) return;
     try {
       setSubmitting(true);
-      // updateShipment(id, status) — đúng theo service
       const res: ApiResponse<any> = await shipmentService.updateShipment(
         editingShipment.id,
         values.status,
       );
       if (res.isSuccess || res.code === "200") {
         api.success({
-          message: "Success",
+          title: "Success",
           description: "Shipment status updated!",
+          duration: 2,
         });
         handleEditClose();
         if (statusFilter === "all") fetchAllShipments();
         else handleStatusFilterChange(statusFilter);
       } else {
-        api.error({ message: "Error", description: res.message });
+        api.error({ title: "Error", description: res.message, duration: 2 });
       }
     } catch (error) {
       console.error("Error updating shipment:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "An error occurred while updating.",
+        duration: 2,
       });
     } finally {
       setSubmitting(false);
@@ -218,24 +221,26 @@ const AdminShipment = () => {
       const res = await shipmentService.deleteShipment(id);
       if (res.isSuccess || res.code === "200") {
         api.success({
-          message: "Success",
+          title: "Success",
           description: "Shipment deleted successfully!",
+          duration: 2,
         });
         if (statusFilter === "all") fetchAllShipments();
         else handleStatusFilterChange(statusFilter);
       } else {
-        api.error({ message: "Error", description: res.message });
+        api.error({ title: "Error", description: res.message, duration: 2 });
       }
     } catch (error) {
       console.error("Error deleting shipment:", error);
       api.error({
-        message: "Error",
+        title: "Error",
         description: "Failed to delete shipment.",
+        duration: 2,
       });
     }
   };
 
-  const allShipmentsForStats = shipments; // dùng danh sách hiện tại
+  const allShipmentsForStats = shipments;
   const stats = [
     {
       label: "Total Shipments",
@@ -526,19 +531,17 @@ const AdminShipment = () => {
               </Option>
               <Option value={1}>
                 <span className="flex items-center gap-2">
-                  <CarOutlined className="text-blue-500" /> Shipping (Đang giao)
+                  <CarOutlined className="text-blue-500" /> Shipping
                 </span>
               </Option>
               <Option value={2}>
                 <span className="flex items-center gap-2">
                   <CheckCircleOutlined className="text-green-500" /> Delivered
-                  (Đã giao)
                 </span>
               </Option>
               <Option value={3}>
                 <span className="flex items-center gap-2">
-                  <CloseCircleOutlined className="text-red-500" /> Failed (Giao
-                  thất bại)
+                  <CloseCircleOutlined className="text-red-500" /> Failed
                 </span>
               </Option>
             </Select>

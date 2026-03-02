@@ -277,21 +277,33 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<OrderDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
             }
-            findOrder.Status = status;
-            if (status == 1)
+            if (findOrder.Status != 0)
             {
-                var newShipment = new Shipment
-                {
-                    CreatedDate = DateTime.Now,
-                    ShipperName = "HTH_Delivery",
-                    TrackingNumber = Guid.NewGuid().ToString("N")[..12].ToUpper(),
-                    OrderId = orderId,
-                    Status = 0
-                };
-                await _context.Shipment.AddAsync(newShipment);
+                return new ApiResponse<OrderDTO>(null, null, "409", "Order must be Pending to Confirm", false, 0, 0, 0, 0, null, null, null);
             }
-            await _context.SaveChangesAsync();
-            return new ApiResponse<OrderDTO>(null, null, "200", "Order status updated successfully", true, 0, 0, 0, 0, ((OrderStatus)status).ToString(), null, null);
+            if (findOrder.PaymentMethod.Equals("Cash"))
+            {
+                findOrder.Status = status;
+                if (status == 1)
+                {
+                    var newShipment = new Shipment
+                    {
+                        CreatedDate = DateTime.Now,
+                        ShipperName = "HTH_Delivery",
+                        TrackingNumber = Guid.NewGuid().ToString("N")[..12].ToUpper(),
+                        OrderId = orderId,
+                        Status = 0
+                    };
+                    await _context.Shipment.AddAsync(newShipment);
+                }
+                await _context.SaveChangesAsync();
+                return new ApiResponse<OrderDTO>(null, null, "200", "Order status updated successfully", true, 0, 0, 0, 0, ((OrderStatus)status).ToString(), null, null);
+            }
+            else
+            {
+                return new ApiResponse<OrderDTO>(null, null, "400", "Only order with cash method must be confirmed", false, 0, 0, 0, 0, ((OrderStatus)status).ToString(), null, null);
+            }
+            
         }
 
         //public async Task<ApiResponse<OrderDTO>> ConfirmOrder(Guid orderId)

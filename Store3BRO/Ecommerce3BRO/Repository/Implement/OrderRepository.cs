@@ -97,7 +97,7 @@ namespace Ecommerce3BRO.Repository.Implement
              .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
              .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
              .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
-             .Include(o=>o.Payments).OrderByDescending(o=>o.CreatedDate)
+             .Include(o=>o.Shipments).OrderByDescending(o=>o.CreatedDate)
              .ToListAsync();
             var result = orders.Select(o =>
             {
@@ -128,8 +128,8 @@ namespace Ecommerce3BRO.Repository.Implement
                     RefundPrice = refundPrice,
                     DiscountPrice = discountPrice,
                     NetRevenue = o.TotalAmount - refundPrice - discountPrice + o.ShippingFee,
-                    PaymentId = o.Payments.FirstOrDefault()?.Id,
-                    PaymentStatus = o.Payments.FirstOrDefault()?.Status
+                    ShipmentId = o.Shipments.FirstOrDefault()?.Id,
+            
                 };
             }).ToList();
             return new ApiResponse<GetOrderByAdminDTO>(result, null, "200", "Orders retrieved successfully", true, 0, 0, 0, 0, null, null, null);

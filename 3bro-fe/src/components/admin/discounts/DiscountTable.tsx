@@ -729,7 +729,7 @@ export default function DiscountManagement() {
                       onChange={(value: number | null) =>
                         setFormData({ ...formData, minOrderAmount: value ?? 0 })
                       }
-                      addonAfter="VNĐ"
+                      // addonAfter="VNĐ"
                     />
                   </Space.Compact>
                 </Col>

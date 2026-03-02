@@ -37,7 +37,7 @@ namespace Ecommerce3BRO.Controllers
         }
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<ApiResponse<GetShipmentDTO>> UpdateShipment([FromRoute] Guid id, [FromBody] UpdateShipmentDTO shipment)
+        public async Task<ApiResponse<GetShipmentDTO>> UpdateShipment([FromRoute] Guid id, [FromQuery] int status)
         {
             if (!ModelState.IsValid)
             {
@@ -46,7 +46,7 @@ namespace Ecommerce3BRO.Controllers
             x => x.Value.Errors.Select(e => e.ErrorMessage).ToArray()
         ));
             }
-            var result = await _shipmentService.UpdateShipmentAsync(id, shipment);
+            var result = await _shipmentService.UpdateShipmentAsync(id, status);
             return result;
         }
         [HttpDelete("{id}")]

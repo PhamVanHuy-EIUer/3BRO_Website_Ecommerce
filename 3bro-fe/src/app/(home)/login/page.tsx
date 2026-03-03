@@ -57,10 +57,6 @@ function LoginPage() {
       const result = await loginWithGoogle(credential);
 
       if (result === "SETUP_PASSWORD") return;
-
-      const isAdmin = user?.roleList?.includes("Admin") ?? false;
-
-      router.replace(isAdmin ? "/admin" : "/");
     } catch (err) {
       console.error("Google login error:", err);
     } finally {

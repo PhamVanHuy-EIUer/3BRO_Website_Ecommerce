@@ -66,7 +66,7 @@ export default function GoogleSignInButton({
           theme: "outline",
           size: "large",
           text: "signup_with",
-          width: "100%",
+          width: buttonRef.current.offsetWidth,
           logo_alignment: "left",
         });
 

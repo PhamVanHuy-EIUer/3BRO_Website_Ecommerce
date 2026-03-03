@@ -134,6 +134,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         console.log(user);
         if (resUser.object?.roleList?.includes("Admin") ?? false) {
+          console.log("Go here");
           router.push("/admin");
         } else {
           router.push("/");
@@ -167,6 +168,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsAdmin(false);
 
     router.push("/login");
+    // console.log("Logout");
   };
 
   // Refresh auth before render

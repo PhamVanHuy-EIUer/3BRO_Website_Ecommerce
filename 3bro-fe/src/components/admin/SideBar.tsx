@@ -165,7 +165,7 @@ const SideBar = () => {
 
           {isOpen && (
             <button
-              onClick={() => logout}
+              onClick={logout}
               className="w-full mt-3 px-4 py-2.5 flex items-center justify-center gap-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
               <LogOut size={18} />
@@ -175,7 +175,7 @@ const SideBar = () => {
 
           {!isOpen && (
             <button
-              onClick={() => logout}
+              onClick={logout}
               className="group relative w-full mt-3 p-2.5 flex items-center justify-center text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <LogOut size={20} />

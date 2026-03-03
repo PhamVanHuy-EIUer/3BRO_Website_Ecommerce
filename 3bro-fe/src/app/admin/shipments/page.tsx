@@ -485,7 +485,7 @@ const AdminShipment = () => {
         open={isEditModalVisible}
         onCancel={handleEditClose}
         footer={null}
-        destroyOnHidden
+        // destroyOnHidden
         centered
       >
         {editingShipment && (

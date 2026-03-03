@@ -127,7 +127,6 @@ namespace Ecommerce3BRO.Controllers
 
         // add user
         [HttpPost("add-user")]
-        [Authorize(Roles = "Admin")]
         public async Task<ApiResponse<GetUserDTO>> AddNewUser([FromBody] UserDTO user)
         {
             if (!ModelState.IsValid)

@@ -277,10 +277,6 @@ namespace Ecommerce3BRO.Repository.Implement
             {
                 return new ApiResponse<OrderDTO>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
             }
-            if (findOrder.Status != 0)
-            {
-                return new ApiResponse<OrderDTO>(null, null, "409", "Order must be Pending to Confirm", false, 0, 0, 0, 0, null, null, null);
-            }
             if (findOrder.PaymentMethod.Equals("Cash"))
             {
                 findOrder.Status = status;

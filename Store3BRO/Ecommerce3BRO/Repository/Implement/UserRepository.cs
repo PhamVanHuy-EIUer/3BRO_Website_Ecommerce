@@ -254,20 +254,26 @@ namespace Ecommerce3BRO.Repository.Implement
         {
             if (currentPage <= 0) currentPage = 1;
             if (pageSize <= 0) pageSize = 10;
-            var listOfPage = await _context.User.Where(u => u.IsDeleted == false)
-       .OrderByDescending(u => u.CreatedDate)
-       .Skip((currentPage - 1) * pageSize)
-       .Take(pageSize)
-       .Select(u => new GetUserDTO
-       {
-           Id = u.Id,
-           Address = u.Address,
-           Email = u.Email,
-           IsActive = u.IsActive,
-           CreatedDate = u.CreatedDate,
-           FullName = u.FullName,
-           Phone = u.Phone
-       }).ToListAsync();
+
+            var listOfPage = await _context.User
+                .Where(u => !u.IsDeleted)
+                .Where(u => u.UserRoles.Count == 1)
+                .Where(u => u.UserRoles.Any(ur => ur.Role.RoleName == "User"))
+                .OrderByDescending(u => u.CreatedDate)
+                .Skip((currentPage - 1) * pageSize)
+                .Take(pageSize)
+                .Select(u => new GetUserDTO
+                {
+                    Id = u.Id,
+                    Address = u.Address,
+                    Email = u.Email,
+                    IsActive = u.IsActive,
+                    CreatedDate = u.CreatedDate,
+                    FullName = u.FullName,
+                    Phone = u.Phone
+                })
+                .ToListAsync();
+
             return listOfPage;
         }
 

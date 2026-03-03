@@ -37,7 +37,7 @@ namespace Ecommerce3BRO.Controllers
             return result;
         }
         [HttpPost("apply-roleUser")]
-        [Authorize(Roles = "Admin")]
+        
         public async Task<ApiResponse<GetRoleDTO>> ApplyRoleForUser([FromQuery] Guid userId, [FromQuery] Guid roleId)
         {
             var result = await _roleRepository.ApplyRoleForUser(userId, roleId);

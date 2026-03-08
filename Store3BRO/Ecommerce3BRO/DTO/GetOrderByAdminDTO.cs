@@ -12,6 +12,7 @@
         public decimal NetRevenue { get; set; }
         public string Status { get; set; }
         public Guid? ShipmentId { get; set; }
+        public string PaymentMethod {  get; set; }
         
     }
 }

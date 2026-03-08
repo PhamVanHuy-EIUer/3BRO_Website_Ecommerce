@@ -526,7 +526,6 @@ const AdminShipment = () => {
               <Option value={0}>
                 <span className="flex items-center gap-2">
                   <ClockCircleOutlined className="text-amber-500" /> Pending
-                  (Chờ lấy hàng)
                 </span>
               </Option>
               <Option value={1}>

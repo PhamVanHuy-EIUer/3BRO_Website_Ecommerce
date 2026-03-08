@@ -23,5 +23,5 @@ export const orderService = {
             })
             .then(res => res.data);
     },
-
+    cancelOrder: (id: string) => axiosClient.put(`/Orders/remove-order/${id}`).then(res => res.data),
 }

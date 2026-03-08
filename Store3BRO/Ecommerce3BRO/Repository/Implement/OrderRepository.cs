@@ -138,7 +138,7 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId)
         {
             var orders = await _context.Order
-                .Where(o => o.UserId == userId).OrderByDescending(o => o.OrderDate)
+                .Where(o => o.UserId == userId && o.Status!=4).OrderByDescending(o => o.OrderDate)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                  .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)
@@ -241,16 +241,16 @@ namespace Ecommerce3BRO.Repository.Implement
             return new ApiResponse<ViewOrderDetailDTO>(detailOrders, null, "200", "Order details retrieved successfully", true, 0, 0, 0, 0, null, null, null);
         }
 
-        public async Task<ApiResponse<Order>> RemoveOrderAsync(Guid orderId)
+        public async Task<ApiResponse<String>> RemoveOrderAsync(Guid orderId)
         {
             var findOrder = _context.Order.Include(o => o.OrderDetails).ThenInclude(od => od.Product).FirstOrDefault(o => o.Id == orderId);
             if (findOrder == null)
             {
-                return new ApiResponse<Order>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<String>(null, null, "404", "Order not found", false, 0, 0, 0, 0, null, null, null);
             }
             if (findOrder.Status != 0)
             {
-                return new ApiResponse<Order>(null, null, "400", "Only pending orders can be cancelled", false, 0, 0, 0, 0, null, null, null);
+                return new ApiResponse<String>(null, null, "400", "Only pending orders can be cancelled", false, 0, 0, 0, 0, null, null, null);
             }
             findOrder.Status = 4;
             foreach (var item in findOrder.OrderDetails)
@@ -266,7 +266,7 @@ namespace Ecommerce3BRO.Repository.Implement
                 await _context.SaveChangesAsync();
             }
             await _context.SaveChangesAsync();
-            return new ApiResponse<Order>(null, findOrder, "200", "Order cancelled successfully", true, 0, 0, 0, 0, "Cancelled", null, null);
+            return new ApiResponse<String>(null, null ,"200", "Order cancelled successfully", true, 0, 0, 0, 0, "Cancelled", null, null);
         }
 
 

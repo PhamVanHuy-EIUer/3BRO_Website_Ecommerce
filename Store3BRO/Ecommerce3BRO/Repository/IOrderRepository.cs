@@ -7,7 +7,7 @@ namespace Ecommerce3BRO.Repository
     public interface IOrderRepository
     {
         public Task<ApiResponse<GetOrderDTO>> AddNewOrderWithItemsAsync(Guid userId, OrderDTO order);
-        public Task<ApiResponse<Order>> RemoveOrderAsync(Guid orderId);
+        public Task<ApiResponse<String>> RemoveOrderAsync(Guid orderId);
         public Task<ApiResponse<GetOrderByAdminDTO>> GetAllOrderByAdminAsync();
         public Task<ApiResponse<ViewOrderDetailDTO>> GetOrderDetailByIdAsync(Guid orderId);
         public Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId);

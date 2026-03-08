@@ -148,6 +148,7 @@ export default function PurchasePage() {
         loading={loading}
         filteredOrders={filteredOrders}
         onSelectOrder={handleSelectOrder}
+        onCancelSuccess={fetchOrders}
         getFirstImage={getFirstImage}
         getStatusBadge={getStatusBadge}
         formatDate={formatDate}

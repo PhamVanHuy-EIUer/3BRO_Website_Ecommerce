@@ -44,31 +44,41 @@ enum OrderStatus {
   Cancelled = 4,
 }
 
+// Map từ string status (backend trả về) sang OrderStatus enum
+const statusStringMap: Record<string, OrderStatus> = {
+  pending: OrderStatus.Pending,
+  confirmed: OrderStatus.Confirmed,
+  paid: OrderStatus.Paid,
+  completed: OrderStatus.Completed,
+  cancelled: OrderStatus.Cancelled,
+};
+
+const getStatusEnum = (status: string): OrderStatus => {
+  const num = parseInt(status);
+  if (!isNaN(num) && num in OrderStatus) return num as OrderStatus;
+  return statusStringMap[status.toLowerCase()] ?? OrderStatus.Pending;
+};
+
 const statusConfig = {
   [OrderStatus.Pending]: {
     label: "Pending",
     color: "warning",
-    icon: <ClockCircleOutlined />,
   },
   [OrderStatus.Confirmed]: {
     label: "Confirmed",
     color: "processing",
-    icon: <BankOutlined />,
   },
   [OrderStatus.Paid]: {
     label: "Paid",
     color: "purple",
-    icon: <TruckOutlined />,
   },
   [OrderStatus.Completed]: {
     label: "Completed",
     color: "success",
-    icon: <CheckCircleOutlined />,
   },
   [OrderStatus.Cancelled]: {
     label: "Cancelled",
     color: "error",
-    icon: <CloseCircleOutlined />,
   },
 };
 
@@ -115,7 +125,7 @@ const AdminOrder = () => {
     setShowModal(true);
     setLoadingDetail(true);
     setEditingStatus(false);
-    setSelectedStatus(parseInt(order.status));
+    setSelectedStatus(getStatusEnum(order.status));
 
     try {
       const details: ApiResponse<OrderDetail> =
@@ -305,10 +315,10 @@ const AdminOrder = () => {
       key: "status",
       width: 150,
       render: (status: string) => {
-        const statusNum = parseInt(status);
-        const config = statusConfig[statusNum as OrderStatus];
+        const statusNum = getStatusEnum(status);
+        const config = statusConfig[statusNum];
         return (
-          <Tag icon={config?.icon} color={config?.color} className="px-3 py-1">
+          <Tag color={config?.color} className="px-3 py-1">
             {config?.label || status}
           </Tag>
         );
@@ -489,33 +499,48 @@ const AdminOrder = () => {
                     <ClockCircleOutlined className="text-blue-600" />
                     Order Status
                   </h3>
-                  {!editingStatus && (
-                    <Button
-                      type="primary"
-                      icon={<EditOutlined />}
-                      onClick={() => setEditingStatus(true)}
-                      className="flex items-center gap-2 px-6 h-10 bg-blue-600 hover:bg-blue-700 border-none shadow-sm transition-transform active:scale-95"
-                    >
-                      Edit Status
-                    </Button>
-                  )}
+                  {/* Chỉ hiện nút Edit khi: đơn Pending VÀ thanh toán bằng cash */}
+                  {!editingStatus &&
+                    getStatusEnum(selectedOrder.status) ===
+                      OrderStatus.Pending &&
+                    selectedOrder.paymentMethod?.toLowerCase() === "cash" && (
+                      <Button
+                        type="primary"
+                        icon={<EditOutlined />}
+                        onClick={() => setEditingStatus(true)}
+                        className="flex items-center gap-2 px-6 h-10 bg-blue-600 hover:bg-blue-700 border-none shadow-sm transition-transform active:scale-95"
+                      >
+                        Edit Status
+                      </Button>
+                    )}
                 </div>
 
                 {!editingStatus ? (
-                  <div className="flex items-center">
-                    {(() => {
-                      const statusNum = parseInt(selectedOrder.status);
-                      const config = statusConfig[statusNum as OrderStatus];
-                      return (
-                        <Tag
-                          icon={config?.icon}
-                          color={config?.color}
-                          className="px-4 py-2 text-base rounded-lg flex items-center gap-2 w-fit border-0"
-                        >
-                          {config?.label || selectedOrder.status}
-                        </Tag>
-                      );
-                    })()}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center">
+                      {(() => {
+                        const statusNum = getStatusEnum(selectedOrder.status);
+                        const config = statusConfig[statusNum];
+                        return (
+                          <Tag
+                            color={config?.color}
+                            className="px-4 py-2 text-base rounded-lg flex items-center gap-2 w-fit border-0"
+                          >
+                            {config?.label || selectedOrder.status}
+                          </Tag>
+                        );
+                      })()}
+                    </div>
+                    {/* Thông báo khi đơn là transfer và đang Pending */}
+                    {/* {getStatusEnum(selectedOrder.status) ===
+                      OrderStatus.Pending &&
+                      selectedOrder.paymentMethod?.toLowerCase() !== "cash" && (
+                        <div className="flex items-center gap-2 text-sm text-amber-700  border-none rounded-lg py-2 w-fit">
+                          <span className="text-black font-bold ">
+                            Order is paid by transfer - please wait for payment
+                          </span>
+                        </div>
+                      )} */}
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -530,7 +555,7 @@ const AdminOrder = () => {
                         const config = statusConfig[status];
                         const isSelected = selectedStatus === status;
                         const isCurrent =
-                          parseInt(selectedOrder.status) === status;
+                          getStatusEnum(selectedOrder.status) === status;
 
                         return (
                           <button
@@ -554,9 +579,7 @@ const AdminOrder = () => {
                               text-lg transition-colors
                               ${isSelected ? "text-blue-600" : "text-gray-400 group-hover:text-blue-500"}
                             `}
-                              >
-                                {config.icon}
-                              </div>
+                              ></div>
                               <span
                                 className={`
                                 font-medium text-sm
@@ -583,7 +606,7 @@ const AdminOrder = () => {
                         onClick={handleUpdateStatus}
                         loading={updatingStatus}
                         disabled={
-                          selectedStatus === parseInt(selectedOrder.status)
+                          selectedStatus === getStatusEnum(selectedOrder.status)
                         }
                         size="large"
                         className="bg-green-600 hover:bg-green-700 min-w-[140px]"
@@ -593,7 +616,9 @@ const AdminOrder = () => {
                       <Button
                         onClick={() => {
                           setEditingStatus(false);
-                          setSelectedStatus(parseInt(selectedOrder.status));
+                          setSelectedStatus(
+                            getStatusEnum(selectedOrder.status),
+                          );
                         }}
                         size="large"
                         className="hover:bg-gray-100"

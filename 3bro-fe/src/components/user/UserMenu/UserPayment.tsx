@@ -35,7 +35,7 @@ import { ApiResponse } from "@/models/ApiResponse";
 import { PaymentProduct } from "@/models/PaymentProduct";
 import { paymentService } from "@/services/payment.service";
 import { Discount } from "@/models/Discount";
-import Voucher from "@/components/user/cart/Voucher"; // Import Voucher component
+import Voucher from "@/components/user/cart/Voucher";
 import PageLoading from "@/components/Loading";
 import LoadingUser from "@/components/LoadingUser";
 import { Trash2 } from "lucide-react";
@@ -89,26 +89,11 @@ interface Order {
   createdAt: string;
 }
 
-interface OrderCreate {
-  id: string;
-  paymentMethod: string;
-  shippingAddress: string;
-}
-
 interface OrderResult {
   status: "pending" | "paid" | "failed";
   message: string;
   order: Order;
 }
-
-// Fake Data
-// const fakeAddress: Address = {
-//   id: 1,
-//   name: "",
-//   phone: "",
-//   address: "",
-//   city: "",
-// };
 
 const paymentMethods: PaymentMethod[] = [
   {
@@ -117,7 +102,6 @@ const paymentMethods: PaymentMethod[] = [
     icon: <WalletOutlined />,
   },
   { id: "Transfer", name: "Momo", icon: <CreditCardOutlined /> },
-  // { id: "ewallet", name: "E-Wallet", icon: <WalletOutlined /> },
 ];
 
 const PaymentUser: React.FC = () => {
@@ -134,9 +118,6 @@ const PaymentUser: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [orderResult, setOrderResult] = useState<OrderResult | null>(null);
   const [api, contextHolder] = notification.useNotification();
-  const [createdOrderId, setCreatedOrderId] = useState<string>("");
-  const [momoPayUrl, setMomoPayUrl] = useState<string>("");
-  const [showPaymentModal, setShowPaymentModal] = useState<boolean>(false);
 
   useEffect(() => {
     const data = sessionStorage.getItem("checkout_data");
@@ -154,7 +135,6 @@ const PaymentUser: React.FC = () => {
     const parsed = JSON.parse(data);
     setCheckoutData(parsed);
 
-    // Transform items to ViewPrice format (only productId and quantity)
     const viewPriceItems: ViewPrice[] = parsed.items.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity,
@@ -169,13 +149,9 @@ const PaymentUser: React.FC = () => {
 
   const getFirstImage = (imageUrl: string | null | undefined) => {
     if (!imageUrl) return "/blank.jpg";
-
-    // Nếu đã là URL đầy đủ (http hoặc https), trả về trực tiếp
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
       return imageUrl;
     }
-
-    // Nếu là đường dẫn tương đối, thêm base URL
     const baseUrl = "https://localhost:7041";
     const path = imageUrl.startsWith("/") ? imageUrl : `/${imageUrl}`;
     return `${baseUrl}${path}`;
@@ -199,7 +175,6 @@ const PaymentUser: React.FC = () => {
 
       setPaymentProduct(res.object);
 
-      // Auto-apply voucher if server returned a discount code
       if (res.object && res.object.discountCode && res.object.vouchers) {
         const autoAppliedVoucher = res.object.vouchers.find(
           (voucher) => voucher.code === res.object!.discountCode,
@@ -220,15 +195,12 @@ const PaymentUser: React.FC = () => {
     }
   };
 
-  // Fetch payment calculation with discount
   const fetchPaymentWithDiscount = async (
     voucherCode: string,
     items: ViewPrice[],
   ) => {
     setLoading(true);
     try {
-      console.log("voucherCode", voucherCode);
-      console.log("items", items);
       const res = await paymentService.calculateProductPaymentWithDiscount(
         voucherCode,
         items,
@@ -257,7 +229,6 @@ const PaymentUser: React.FC = () => {
     }
   };
 
-  // Simulate page loading
   useEffect(() => {
     const timer = setTimeout(() => {
       setPageLoading(false);
@@ -265,7 +236,6 @@ const PaymentUser: React.FC = () => {
     return () => clearTimeout(timer);
   }, []);
 
-  // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat("vi-VN", {
       style: "currency",
@@ -273,13 +243,11 @@ const PaymentUser: React.FC = () => {
     }).format(amount);
   };
 
-  // Get values from PaymentProduct
   const subtotal = PaymentProduct?.currentTotalPrice || 0;
   const shippingFee = PaymentProduct?.shippingFee || 0;
   const discount = PaymentProduct?.discountPrice || 0;
   const totalAmount = PaymentProduct?.finalTotalPrice || 0;
 
-  // Handle voucher selection - Re-fetch data with voucher
   const handleApplyVoucher = async (selectedDiscount: Discount) => {
     if (!checkoutData?.items) return;
 
@@ -293,7 +261,6 @@ const PaymentUser: React.FC = () => {
       return;
     }
 
-    // Transform items to ViewPrice format
     const viewPriceItems: ViewPrice[] = checkoutData.items.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity,
@@ -312,13 +279,11 @@ const PaymentUser: React.FC = () => {
     });
   };
 
-  // Handle remove voucher - Re-fetch data without voucher
   const handleRemoveVoucher = async () => {
     if (!checkoutData?.items) return;
 
     setSelectedVoucher(undefined);
 
-    // Transform items to ViewPrice format
     const viewPriceItems: ViewPrice[] = checkoutData.items.map((item: any) => ({
       productId: item.productId,
       quantity: item.quantity,
@@ -334,7 +299,7 @@ const PaymentUser: React.FC = () => {
     });
   };
 
-  // Handle payment - Create order first
+  // Handle Place Order: create order → create payment → handle by method
   const handlePayment = async () => {
     if (!paymentMethod) {
       api.warning({
@@ -357,7 +322,7 @@ const PaymentUser: React.FC = () => {
     setLoading(true);
 
     try {
-      // Transform items to ViewPrice format for order creation
+      // Step 1: Create order
       const viewPriceItems: ViewPrice[] = checkoutData.items.map(
         (item: any) => ({
           productId: item.productId,
@@ -365,7 +330,6 @@ const PaymentUser: React.FC = () => {
         }),
       );
 
-      // Create order payload
       const orderPayload: CreateOrderDTO = {
         items: viewPriceItems as any,
         shippingAddress: PaymentProduct.userAddress,
@@ -373,89 +337,59 @@ const PaymentUser: React.FC = () => {
         discountId: selectedVoucher?.id || "",
       };
 
-      // Call API to create order
-      const res: ApiResponse<any> =
+      const orderRes: ApiResponse<any> =
         await orderService.createOrderByUser(orderPayload);
 
-      if (res.code === "200" && res.isSuccess) {
-        const orderId = res.object?.id || res.object;
-        setCreatedOrderId(orderId);
-
-        api.success({
-          title: "Order created successfully!",
-          description: `Order ID: ${orderId}`,
-          placement: "topRight",
-          duration: 3,
-        });
-
-        // Show payment modal
-        setShowPaymentModal(true);
-      } else {
+      if (!orderRes.isSuccess || orderRes.code !== "200") {
         api.error({
           title: "Failed to create order",
-          description: res.message || "An error occurred",
+          description: orderRes.message || "An error occurred",
           placement: "topRight",
           duration: 3,
         });
+        return;
       }
-    } catch (error) {
-      console.error("Order creation error:", error);
-      api.error({
-        title: "An error occurred while creating the order",
-        placement: "topRight",
-        duration: 2,
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  // Handle process payment after order created
-  const handleProcessPayment = async () => {
-    if (!createdOrderId) {
-      api.error({
-        title: "No order found",
-        placement: "topRight",
-        duration: 2,
-      });
-      return;
-    }
+      const orderId = orderRes.object?.id || orderRes.object;
 
-    setLoading(true);
-
-    try {
-      // Call createPayment API
+      // Step 2: Create payment
       const paymentRes: ApiResponse<Payment> =
-        await paymentService.createPayment(createdOrderId);
+        await paymentService.createPayment(orderId);
 
-      if (paymentRes.code === "200" && paymentRes.isSuccess) {
-        api.success({
-          title: "Payment created successfully",
+      if (!paymentRes.isSuccess || paymentRes.code !== "200") {
+        api.error({
+          title: "Failed to create payment",
+          description: paymentRes.message || "An error occurred",
           placement: "topRight",
-          duration: 2,
+          duration: 3,
         });
+        return;
+      }
 
-        // If Cash payment, go directly to order result
-        if (paymentMethod === "Cash") {
-          const productList = PaymentProduct!.productList || [];
-          const fakeProducts: Product[] = productList.map((item) => ({
-            id: parseInt(item.productId) || 0,
-            name: item.productName,
-            image: item.imageUrl || "",
-            quantity: item.quantity,
-            price: item.price,
-          }));
+      // Step 3a: Cash → show success screen
+      if (paymentMethod === "Cash") {
+        const productList = PaymentProduct.productList || [];
+        const fakeProducts: Product[] = productList.map((item) => ({
+          id: parseInt(item.productId) || 0,
+          name: item.productName,
+          image: item.imageUrl || "",
+          quantity: item.quantity,
+          price: item.price,
+        }));
 
-          const addressData: Address = {
-            id: 0,
-            name: PaymentProduct!.userFullName || "",
-            phone: PaymentProduct!.userPhoneNumber || "",
-            address: PaymentProduct!.userAddress || "",
-            city: "",
-          };
+        const addressData: Address = {
+          id: 0,
+          name: PaymentProduct.userFullName || "",
+          phone: PaymentProduct.userPhoneNumber || "",
+          address: PaymentProduct.userAddress || "",
+          city: "",
+        };
 
-          const newOrder: Order = {
-            id: createdOrderId,
+        setOrderResult({
+          status: "paid",
+          message: "Order placed successfully!",
+          order: {
+            id: orderId,
             items: fakeProducts,
             address: addressData,
             payment: paymentMethod,
@@ -465,38 +399,24 @@ const PaymentUser: React.FC = () => {
             discount,
             total: totalAmount,
             createdAt: new Date().toISOString(),
-          };
-
-          setOrderResult({
-            status: "paid",
-            message: "Order placed successfully!",
-            order: newOrder,
-          });
-          setShowPaymentModal(false);
-        }
-        // If Momo payment, call paymentByMomo API
-        else if (paymentMethod === "Transfer") {
-          const momoRes = await paymentService.paymentByMomo(createdOrderId);
-
-          if (momoRes.payUrl) {
-            // Redirect to Momo payment page
-            window.location.href = momoRes.payUrl;
-          } else {
-            api.error({
-              title: "Failed to get Momo payment URL",
-              description: momoRes.message || "An error occurred",
-              placement: "topRight",
-              duration: 3,
-            });
-          }
-        }
-      } else {
-        api.error({
-          title: "Failed to create payment",
-          description: paymentRes.message || "An error occurred",
-          placement: "topRight",
-          duration: 3,
+          },
         });
+      }
+
+      // Step 3b: Momo → call momo API then redirect
+      else if (paymentMethod === "Transfer") {
+        const momoRes = await paymentService.paymentByMomo(orderId);
+
+        if (momoRes.payUrl) {
+          window.location.href = momoRes.payUrl;
+        } else {
+          api.error({
+            title: "Failed to get Momo payment URL",
+            description: momoRes.message || "An error occurred",
+            placement: "topRight",
+            duration: 3,
+          });
+        }
       }
     } catch (error) {
       console.error("Payment error:", error);
@@ -505,11 +425,11 @@ const PaymentUser: React.FC = () => {
         placement: "topRight",
         duration: 2,
       });
+    } finally {
       setLoading(false);
     }
   };
 
-  // Loading state
   if (pageLoading) {
     return (
       <div
@@ -525,7 +445,6 @@ const PaymentUser: React.FC = () => {
     );
   }
 
-  // Order result view
   if (orderResult) {
     return (
       <div style={{ padding: "40px 20px", maxWidth: 800, margin: "0 auto" }}>
@@ -564,11 +483,7 @@ const PaymentUser: React.FC = () => {
                   style={{ display: "flex", justifyContent: "space-between" }}
                 >
                   <Text style={{ color: "#52c41a" }}>
-                    Discount{" "}
-                    {orderResult.order.voucher
-                      ? `(${orderResult.order.voucher})`
-                      : ""}
-                    :
+                    Discount ({orderResult.order.voucher}):
                   </Text>
                   <Text strong style={{ color: "#52c41a" }}>
                     -{formatCurrency(orderResult.order.discount)}
@@ -633,8 +548,6 @@ const PaymentUser: React.FC = () => {
                   </Space>
                 </Card>
 
-                {/* Shipping Method */}
-
                 {/* Voucher Section */}
                 <Card
                   title={
@@ -695,7 +608,7 @@ const PaymentUser: React.FC = () => {
                           onClick={handleRemoveVoucher}
                           icon={<Trash2 />}
                           loading={loading}
-                        ></Button>
+                        />
                       </Space>
                     </div>
                   ) : (
@@ -802,13 +715,11 @@ const PaymentUser: React.FC = () => {
                         style={{ borderRadius: 8, objectFit: "cover" }}
                         fallback="/blank.jpg"
                       />
-
                       <Flex vertical style={{ flex: 1 }}>
                         <Text strong>{item.productName}</Text>
                         <Text type="secondary" style={{ fontSize: 12 }}>
                           {item.categoryName}
                         </Text>
-
                         <Space>
                           <Text type="secondary">x{item.quantity}</Text>
                           <Text strong style={{ color: "#d4380d" }}>
@@ -816,12 +727,10 @@ const PaymentUser: React.FC = () => {
                           </Text>
                         </Space>
                       </Flex>
-
                       <Text strong style={{ color: "#d4380d" }}>
                         {formatCurrency(item.subTotalPrice)}
                       </Text>
                     </Flex>
-
                     <Divider style={{ margin: "12px 0" }} />
                   </div>
                 ))}
@@ -854,8 +763,7 @@ const PaymentUser: React.FC = () => {
                       }}
                     >
                       <Text style={{ color: "#52c41a" }}>
-                        Discount{" "}
-                        {selectedVoucher ? `(${selectedVoucher.code})` : ""}:
+                        Discount ({selectedVoucher.code}):
                       </Text>
                       <Text strong style={{ color: "#52c41a" }}>
                         -{formatCurrency(discount)}
@@ -911,60 +819,12 @@ const PaymentUser: React.FC = () => {
           </Row>
         </div>
 
-        {/* Voucher Modal - Sử dụng Voucher component */}
+        {/* Voucher Modal */}
         <Voucher
           isOpen={voucherModalVisible}
           onClose={() => setVoucherModalVisible(false)}
           onApply={handleApplyVoucher}
         />
-
-        {/* Payment Modal */}
-        <Modal
-          title="Payment Confirmation"
-          open={showPaymentModal}
-          onCancel={() => {
-            if (!momoPayUrl) {
-              setCreatedOrderId(""); // Cancel order context if not paid
-            }
-            setShowPaymentModal(false);
-            setMomoPayUrl("");
-          }}
-          footer={null}
-        >
-          <div style={{ textAlign: "center", padding: "20px 0" }}>
-            <CheckCircleOutlined
-              style={{ fontSize: 48, color: "#52c41a", marginBottom: 16 }}
-            />
-            <h3 style={{ marginBottom: 8 }}>Order Created Successfully!</h3>
-            <p>Order ID: {createdOrderId}</p>
-            <Divider />
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginBottom: 24,
-              }}
-            >
-              <Text>Total Amount:</Text>
-              <Text strong style={{ fontSize: 18, color: "#d4380d" }}>
-                {formatCurrency(totalAmount)}
-              </Text>
-            </div>
-            <Button
-              type="primary"
-              size="large"
-              block
-              onClick={handleProcessPayment}
-              loading={loading}
-              style={{
-                height: 48,
-                background: "linear-gradient(135deg, #d4380d 0%, #ff6b35 100%)",
-              }}
-            >
-              {paymentMethod === "Transfer" ? "Pay via Momo" : "Pay Now"}
-            </Button>
-          </div>
-        </Modal>
       </div>
     </>
   );

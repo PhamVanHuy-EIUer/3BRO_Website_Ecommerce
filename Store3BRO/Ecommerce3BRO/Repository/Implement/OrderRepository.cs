@@ -138,7 +138,7 @@ namespace Ecommerce3BRO.Repository.Implement
         public async Task<ApiResponse<UserOrderDTO>> GetAllOrderByUserAsync(Guid userId)
         {
             var orders = await _context.Order
-                .Where(o => o.UserId == userId && o.Status!=4).OrderByDescending(o => o.OrderDate)
+                .Where(o => o.UserId == userId).OrderByDescending(o => o.OrderDate)
                 .Include(o => o.OrderDetails).ThenInclude(od => od.Product)
                  .Include(o => o.OrderDetails).ThenInclude(od => od.Refunds)
                 .Include(o => o.OrderDiscounts).ThenInclude(od => od.Discount)

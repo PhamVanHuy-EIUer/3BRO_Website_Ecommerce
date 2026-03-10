@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -40,6 +41,10 @@ namespace Ecommerce3BRO.Controllers
         ));
             }
             var findUser = await _context.User.FirstOrDefaultAsync(fu => fu.Email == login.Email);
+            if (findUser != null && findUser.IsDeleted)
+            {
+                return new ApiResponse<UserDTO?>(null, null, "400", "The user account has been locked.", false, 0, 0, 0, 0, null, null, null);
+            }
             if (findUser != null && !findUser.IsActive)
             {
                 return new ApiResponse<UserDTO?>(null, null, "400", "Please active account before login", false, 0, 0, 0, 0, null, null, null);
@@ -150,6 +155,10 @@ namespace Ecommerce3BRO.Controllers
 
             var user = await _context.User
                 .FirstOrDefaultAsync(u => u.GoogleId == googleId);
+            if (user != null && user.IsDeleted)
+            {
+                return BadRequest(new ApiResponse<UserDTO?>(null, null, "400", "The user account has been locked.", false, 0, 0, 0, 0, null, null, null));
+            }
 
             if (user == null)
             {

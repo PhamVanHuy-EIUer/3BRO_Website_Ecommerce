@@ -229,13 +229,13 @@ const NavBar = () => {
             {!loading && authorized && (
               <div className="flex items-center gap-3">
                 {/* Wishlist */}
-                <Link
+                {/* <Link
                   href="/user/wishlist"
                   className="relative p-2 hover:bg-gray-100 rounded-full transition-all duration-300 group"
                   aria-label="Wishlist"
                 >
                   <CiHeart className="text-2xl text-gray-700 group-hover:text-red-500 transition-colors" />
-                </Link>
+                </Link> */}
 
                 {/* Cart */}
                 <button

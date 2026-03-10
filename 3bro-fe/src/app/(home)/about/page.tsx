@@ -99,8 +99,8 @@ const AboutUsContent: React.FC = () => {
                   backgroundPosition: "top",
                 }}
               ></div>
-              <h3 className="text-black text-lg font-semibold">John Doe</h3>
-              <p className={`${textGray} text-sm`}>Founder & CEO</p>
+              <h3 className="text-black text-lg font-semibold">Hao Nguyen</h3>
+              <p className={`${textGray} text-sm`}>Backend Developer</p>
             </div>
             {/* Team Member 2 */}
             <div className="flex flex-col items-center">
@@ -113,8 +113,8 @@ const AboutUsContent: React.FC = () => {
                   backgroundPosition: "top",
                 }}
               ></div>
-              <h3 className="text-black text-lg font-semibold">Jane Smith</h3>
-              <p className={`${textGray} text-sm`}>Creative Director</p>
+              <h3 className="text-black text-lg font-semibold">Huy Pham</h3>
+              <p className={`${textGray} text-sm`}>Frontend Developer</p>
             </div>
             {/* Team Member 3 */}
             <div className="flex flex-col items-center">
@@ -127,8 +127,8 @@ const AboutUsContent: React.FC = () => {
                   backgroundPosition: "top",
                 }}
               ></div>
-              <h3 className="text-black text-lg font-semibold">Mike Johnson</h3>
-              <p className={`${textGray} text-sm`}>Head of Operations</p>
+              <h3 className="text-black text-lg font-semibold">Tan Nguyen</h3>
+              <p className={`${textGray} text-sm`}>Project Manager</p>
             </div>
           </div>
         </section>

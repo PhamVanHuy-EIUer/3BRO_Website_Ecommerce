@@ -65,7 +65,7 @@ namespace Ecommerce3BRO.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.Now.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(15)
             });
             var oldTokens = await _context.RefreshToken
     .Where(x => x.UserId == findUser.Id && !x.IsRevoked)
@@ -258,7 +258,7 @@ namespace Ecommerce3BRO.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.Now.AddMinutes(15)
+                Expires = DateTime.UtcNow.AddMinutes(15)
             });
             var oldTokens = await _context.RefreshToken
                 .Where(x => x.UserId == user.Id && !x.IsRevoked)

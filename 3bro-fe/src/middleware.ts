@@ -9,7 +9,7 @@ const protectedRoutes = [
 export function middleware(req: NextRequest) {
     const pathname = req.nextUrl.pathname;
 
-    const refreshToken = req.cookies.get("refresh_token")?.value;
+    const accessToken = req.cookies.get("access_token")?.value;
 
     const rolesCookie = req.cookies.get("role")?.value;
     const roleList = rolesCookie
@@ -18,7 +18,7 @@ export function middleware(req: NextRequest) {
 
     for (const route of protectedRoutes) {
         if (pathname.startsWith(route.path)) {
-            if (!refreshToken) {
+            if (!accessToken) {
                 return NextResponse.redirect(new URL("/login", req.url));
             }
 

@@ -137,35 +137,46 @@ namespace Ecommerce3BRO.Repository.Implement
 
         public async Task<ApiResponse<TotalSaleDTO>> GetAllSalesByMonth()
         {
-            var payments = await _context.Payment.Where(p => p.Status == 1).ToListAsync();
-            var currentTime = _time.currentime();
-            var pastTime = _time.sixPastTime();
-            var listSale = payments.Where(p => p.PaymentDate >= pastTime && p.PaymentDate < currentTime)
+            var payments = await _context.Payment
+        .Where(p => p.Status == 1)
+        .ToListAsync();
+
+            var currentTime = _time.StartOfCurrentMonth();
+            var pastTime = _time.StartOfSixMonthAgo();
+
+            var listSale = payments
+                .Where(p => p.PaymentDate >= pastTime)
                 .GroupBy(p => new
                 {
                     Year = p.PaymentDate.Value.Year,
-                    Month = p.PaymentDate.Value.Month,
-                }).Select(g => new TotalSaleDTO
+                    Month = p.PaymentDate.Value.Month
+                })
+                .Select(g => new TotalSaleDTO
                 {
                     Year = g.Key.Year,
                     Month = ((MonthEnum)g.Key.Month).ToString(),
                     NumOfProduct = g.Count(),
                     TotalSale = g.Sum(x => x.Amount)
-                }).ToList();
+                })
+                .ToList();
+
             var result = Enumerable.Range(0, 6)
-         .Select(i =>
-    {
-        var date = currentTime.AddMonths(-6 + i);
-        var sale = listSale.FirstOrDefault(s =>
-            s.Year == date.Year && s.Month == ((MonthEnum)date.Month).ToString());
-        return new TotalSaleDTO
-        {
-            Year = date.Year,
-            Month = ((MonthEnum)date.Month).ToString(),
-            NumOfProduct = sale?.NumOfProduct ?? 0,
-            TotalSale = sale?.TotalSale ?? 0
-        };
-    }).ToList();
+                .Select(i =>
+                {
+                    var date = pastTime.AddMonths(i);
+
+                    var sale = listSale.FirstOrDefault(s =>
+                        s.Year == date.Year &&
+                        s.Month == ((MonthEnum)date.Month).ToString());
+
+                    return new TotalSaleDTO
+                    {
+                        Year = date.Year,
+                        Month = ((MonthEnum)date.Month).ToString(),
+                        NumOfProduct = sale?.NumOfProduct ?? 0,
+                        TotalSale = sale?.TotalSale ?? 0
+                    };
+                }).ToList();
             return new ApiResponse<TotalSaleDTO>(result, null, "200", "Get all total sales by month successfully", true, 0, 0, 0, 0, null, null, null);
         }
 

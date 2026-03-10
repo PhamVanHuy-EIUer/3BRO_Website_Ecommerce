@@ -2,7 +2,20 @@
 {
     public class TakeCurrentTime
     {
-        public DateTime currentime()
+        public DateTime StartOfCurrentMonth()
+        {
+            var nowUtc = DateTime.UtcNow;
+
+            return new DateTime(
+                nowUtc.Year,
+                nowUtc.Month,
+                1,
+                0, 0, 0,
+                DateTimeKind.Utc
+            );
+        }
+
+        public DateTime StartOfSixMonthAgo()
         {
             var nowUtc = DateTime.UtcNow;
 
@@ -13,24 +26,8 @@
                 0, 0, 0,
                 DateTimeKind.Utc
             );
-            return startOfCurrentMonth;
+
+            return startOfCurrentMonth.AddMonths(-5); // 5 tháng trước + tháng hiện tại = 6
         }
-
-        public DateTime sixPastTime()
-        {
-            var nowUtc = DateTime.UtcNow;
-
-            var startOfCurrentMonth = new DateTime(
-                nowUtc.Year,
-                nowUtc.Month,
-                1,
-                0, 0, 0,
-                DateTimeKind.Utc
-            );
-
-            var fromDate = startOfCurrentMonth.AddMonths(-6);
-            return fromDate;
-        }
-
     }
 }

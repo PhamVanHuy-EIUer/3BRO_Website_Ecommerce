@@ -14,6 +14,8 @@ import {
 import { useAuth } from "@/context/AuthContext";
 import { notification } from "antd";
 import { MdRateReview } from "react-icons/md";
+import { ApiResponse } from "@/models/ApiResponse";
+import { AuthService } from "@/services/auth.service";
 
 interface SubItem {
   name: string;
@@ -29,7 +31,7 @@ interface MenuItem {
 }
 
 const Sidebar = () => {
-  const { user, logout } = useAuth();
+  const { user, refreshAuth } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const [api, contextHolder] = notification.useNotification();
@@ -102,14 +104,22 @@ const Sidebar = () => {
 
   const handleLogout = async () => {
     try {
-      await logout();
-
-      api.success({
-        title: "Success",
-        description: "Logout successfully",
-        duration: 2,
-      });
-
+      const res: ApiResponse<any> = await AuthService.logout();
+      if (res.isSuccess) {
+        api.success({
+          title: "Success",
+          description: "Logout successfully",
+          duration: 2,
+        });
+        refreshAuth();
+      } else {
+        api.error({
+          title: "Error",
+          description: res.message,
+          duration: 2,
+        });
+        return;
+      }
       router.push("/login");
     } catch (err) {
       api.error({

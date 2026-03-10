@@ -212,10 +212,8 @@ const SingleProduct = () => {
             <RecommendProduct products={recommendedProducts} />
           </div>
         </div>
-      ) : loading ? (
-        <PageLoading />
       ) : (
-        <NotFound />
+        loading && <PageLoading />
       )}
     </div>
   );

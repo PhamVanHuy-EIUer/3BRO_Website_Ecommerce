@@ -1,23 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Roboto, Poppins } from "next/font/google";
+import { Poppins } from "next/font/google";
 import "./globals.css";
 import AntdRegistry from "./antd-registy";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-const geistRoboto = Roboto({
-  variable: "--font-roboto",
-  subsets: ["latin"],
-  weight: ["100", "300", "400", "500", "700", "900"],
-});
 
 const geistPoppins = Poppins({
   variable: "--font-poppins",

@@ -43,7 +43,7 @@ export const useUserMangement = (PAGE_SIZE: number) => {
             const res: ApiResponse<User> = await userService.getAllUsersByPage(page, PAGE_SIZE);
             if (res.isSuccess) {
                 setUsers(res.list);
-                setTotal(res.totalElement ?? 0);
+                setTotal(res.list.length ?? 0);
                 console.log(users)
             }
         } catch (err) {

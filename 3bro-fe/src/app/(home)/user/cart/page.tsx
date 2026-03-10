@@ -198,7 +198,8 @@ const CartContent = () => {
         await cartService.deleteProductFromCart(cartItem.productId);
       if (response.code === "200" && response.isSuccess) {
         api.success({
-          message: "Xóa sản phẩm thành công",
+          title: "Success",
+          description: "Delete product successfully",
           placement: "topRight",
           duration: 2,
         });
@@ -230,7 +231,6 @@ const CartContent = () => {
 
   const handleApplyVoucher = async (discount: Discount) => {
     console.log(discount.code);
-    // Kiểm tra đơn tối thiểu
     if (totalPrice < discount.minOrderAmount) {
       api.warning({
         title: "Not Eligible",
@@ -372,6 +372,7 @@ const CartContent = () => {
         isOpen={isOpenVoucher}
         onClose={() => setIsOpenVoucher(false)}
         onApply={handleApplyVoucher}
+        vouchers={paymentData?.vouchers}
       />
 
       <Spin spinning={applyingVoucher} description="Applying voucher...">

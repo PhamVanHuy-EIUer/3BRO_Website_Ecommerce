@@ -19,14 +19,6 @@ public partial class Ecommerce3BROContext : DbContext
 
     public  DbSet<Category> Category { get; set; }
 
-    public  DbSet<DeletedOrder> DeletedOrder { get; set; }
-
-    public  DbSet<DeletedOrderItem> DeletedOrderItem { get; set; }
-
-    public  DbSet<DeletedProduct> DeletedProduct { get; set; }
-
-    public  DbSet<DeletedUser> DeletedUser { get; set; }
-
     public  DbSet<Discount> Discount { get; set; }
 
     public DbSet<Order> Order { get; set; }
